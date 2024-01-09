@@ -7,13 +7,22 @@ Authenticated users can join companies, create, and manage projects. Projects in
 start dates, deadlines, expenses, and varying levels of importance and difficulty. Employees request
 to be assigned to projects and receive rewards for completed tasks, incorporating a gamification
 aspect with a scoring system.
-Tech Stack: Java Spring MVC, Spring Security, PostgreSQL, React JS
+
+### Tech Stack
+- Java Spring MVC
+- Spring Security
+- Spring OAuth2 Client
+- JJWT
+- PostgreSQL
+- React JS
+- Docker, Docker Compose
+- Nginx
 
 ### Deployment
 
 The Dockerfiles for the different modules use multiple stage builds. The built Docker images are
-collected by a Docker Compose configuration. The database is also built here from official
-PostgreSQL docker image.
+collected by a Docker Compose configuration. The database is also built here from the official
+PostgreSQL image.
 The project uses Nginx as reverse-proxy and static file server.
 
 ### Setup & build
