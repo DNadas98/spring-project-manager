@@ -66,15 +66,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
       if (jwtService.isAccessTokenExpired(accessTokenString)) {
         logger.error("Access Token is expired");
-        sendUnauthorizedResponse(response);
-        response.getWriter().write("{\"isAccessTokenExpired\": true}");
+        setAccessTokenExpiredResponse(response);
         return;
       }
 
       userEmail = jwtService.extractSubjectFromAccessToken(accessTokenString);
       if (userEmail == null) {
         logger.error("Access Token is invalid");
-        sendUnauthorizedResponse(response);
+        setUnauthorizedResponse(response);
         return;
       }
 
@@ -83,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (!jwtService.isAccessTokenValid(accessTokenString, userDetails)) {
           logger.error("Access Token is invalid");
-          sendUnauthorizedResponse(response);
+          setUnauthorizedResponse(response);
           return;
         }
 
@@ -96,11 +95,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
     } catch (Exception e) {
       logger.error(e.getMessage());
-      sendUnauthorizedResponse(response);
+      setUnauthorizedResponse(response);
     }
   }
 
-  private void sendUnauthorizedResponse(HttpServletResponse response) throws IOException {
+  private void setAccessTokenExpiredResponse(HttpServletResponse response) throws IOException {
+    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.getWriter().write("{\"error\":\"Unauthorized\", \"isAccessTokenExpired\": true}");
+  }
+
+  private void setUnauthorizedResponse(HttpServletResponse response) throws IOException {
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.getWriter().write("{\"error\":\"Unauthorized\"}");
