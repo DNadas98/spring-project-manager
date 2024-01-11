@@ -106,7 +106,11 @@ public class JwtService {
   }
 
   private boolean isTokenExpired(String token, String secret, SignatureAlgorithm algorithm) {
-    return extractExpirationFromToken(token, secret, algorithm).before(new Date());
+    try {
+      return extractExpirationFromToken(token, secret, algorithm).before(new Date());
+    } catch (ExpiredJwtException e) {
+      return true;
+    }
   }
 
   private <T> T extractClaimFromToken(
