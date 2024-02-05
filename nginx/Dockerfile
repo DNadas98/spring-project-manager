@@ -15,8 +15,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html/frontend
 RUN chmod -R 755 /usr/share/nginx/html/frontend
 
 # ssl
-COPY --chmod=600 --chown=nginx:nginx  ssl/ssl-cert-snakeoil.key /etc/nginx/ssl/ssl-cert-snakeoil.key
-COPY --chmod=600 --chown=nginx:nginx  ssl/ssl-cert-snakeoil.crt /etc/nginx/ssl/ssl-cert-snakeoil.crt
+COPY --chmod=600 --chown=nginx:nginx  ssl/fake-ssl-cert /etc/nginx/ssl/spring-project-manager.crt
+COPY --chmod=600 --chown=nginx:nginx  ssl/fake-ssl-key /etc/nginx/ssl/spring-project-manager.key
 
 # config
 COPY --chown=nginx:nginx --chmod=644 nginx/nginx.conf /etc/nginx/conf.d/default.conf
