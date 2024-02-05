@@ -22,7 +22,7 @@
     <img src="https://avatars.githubusercontent.com/u/125133206?v=4" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Full-stack Web Developer Portfolio</h3>
+<h3 align="center">Spring Project Manager</h3>
   <p align="center">
     Created by <a href="https://github.com/DNadas98">DNadas98 (Dániel Nádas)</a>
     <br />
@@ -192,6 +192,21 @@ for available endpoints and API usage guide
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+## Images
+The frontend is still work in progress.
+The project uses Material UI.
+
+### Home page
+
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/homepage.png" alt="Homepage">
+
+### Sign-up form
+
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/sign_up_form.png" alt="Sign-up form">
+
+### Update project form
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/update_project_details_form.png" alt="Update project form">
 
 ## Contact
 
