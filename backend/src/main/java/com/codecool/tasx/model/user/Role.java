@@ -1,5 +1,6 @@
 package com.codecool.tasx.model.user;
 
 public enum Role {
-  USER, EDITOR, ADMIN
+  COMPANY_ADMIN, COMPANY_EDITOR, COMPANY_EMPLOYEE,
+  PROJECT_EDITOR, PROJECT_ASSIGNED_EMPLOYEE
 }

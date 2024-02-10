@@ -12,13 +12,13 @@ import com.codecool.tasx.model.requests.ProjectJoinRequest;
 import com.codecool.tasx.model.requests.ProjectJoinRequestDao;
 import com.codecool.tasx.model.requests.RequestStatus;
 import com.codecool.tasx.model.user.User;
-import com.codecool.tasx.service.auth.CustomAccessControlService;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,18 +29,16 @@ public class ProjectRequestService {
   private final ProjectDao projectDao;
   private final ProjectJoinRequestDao requestDao;
   private final UserProvider userProvider;
-  private final CustomAccessControlService accessControlService;
   private final ProjectConverter projectConverter;
   private final Logger logger;
 
   @Autowired
   public ProjectRequestService(
     ProjectDao projectDao, ProjectJoinRequestDao requestDao, UserProvider userProvider,
-    CustomAccessControlService accessControlService, ProjectConverter projectConverter) {
+    ProjectConverter projectConverter) {
     this.projectDao = projectDao;
     this.requestDao = requestDao;
     this.userProvider = userProvider;
-    this.accessControlService = accessControlService;
     this.projectConverter = projectConverter;
     this.logger = LoggerFactory.getLogger(this.getClass());
   }
@@ -64,12 +62,11 @@ public class ProjectRequestService {
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_EDITOR)")
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
     Long companyId, Long projectId) {
-    User user = userProvider.getAuthenticatedUser();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    accessControlService.verifyProjectOwnerAccess(project, user);
     List<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(
       project,
       RequestStatus.PENDING);
@@ -84,12 +81,9 @@ public class ProjectRequestService {
   }
 
   @Transactional(rollbackOn = Exception.class)
+  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSIGNED_EMPLOYEE)")
   public void handleJoinRequest(
     Long companyId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
-    User user = userProvider.getAuthenticatedUser();
-    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
-      () -> new ProjectNotFoundException(projectId));
-    accessControlService.verifyAssignedToProjectAccess(project, user);
     ProjectJoinRequest request = requestDao.findByCompanyIdAndProjectIdAndRequestId(
       companyId, projectId, requestId).orElseThrow(
       () -> new ProjectJoinRequestNotFoundException(requestId));

@@ -27,7 +27,7 @@ public class User implements UserDetails, OAuth2User {
   private String password;
 
   @Enumerated(EnumType.STRING)
-  private Set<Role> roles;
+  private Set<GlobalRole> globalRoles;
 
   @OneToMany(mappedBy = "companyOwner", fetch = FetchType.EAGER)
   private List<Company> ownedCompanies;
@@ -52,8 +52,8 @@ public class User implements UserDetails, OAuth2User {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.roles = new HashSet<>();
-    roles.add(Role.USER);
+    this.globalRoles = new HashSet<>();
+    globalRoles.add(GlobalRole.USER);
     this.ownedCompanies = new ArrayList<>();
     this.companies = new ArrayList<>();
     this.ownedProjects = new ArrayList<>();
@@ -64,8 +64,8 @@ public class User implements UserDetails, OAuth2User {
   public User(String username, String email) {
     this.username = username;
     this.email = email;
-    this.roles = new HashSet<>();
-    roles.add(Role.USER);
+    this.globalRoles = new HashSet<>();
+    globalRoles.add(GlobalRole.USER);
     this.ownedCompanies = new ArrayList<>();
     this.companies = new ArrayList<>();
     this.ownedProjects = new ArrayList<>();
@@ -103,12 +103,12 @@ public class User implements UserDetails, OAuth2User {
     this.score = score;
   }
 
-  public Set<Role> getRoles() {
-    return Set.copyOf(roles);
+  public Set<GlobalRole> getRoles() {
+    return Set.copyOf(globalRoles);
   }
 
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
+  public void setRoles(Set<GlobalRole> globalRoles) {
+    this.globalRoles = globalRoles;
   }
 
   public List<Company> getOwnedCompanies() {
@@ -153,7 +153,7 @@ public class User implements UserDetails, OAuth2User {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(
+    return globalRoles.stream().map(globalRole -> new SimpleGrantedAuthority(globalRole.name())).collect(
       Collectors.toSet());
   }
 
@@ -224,7 +224,7 @@ public class User implements UserDetails, OAuth2User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, email, roles);
+    return Objects.hash(id, username, email, globalRoles);
   }
 
   @Override
@@ -237,7 +237,7 @@ public class User implements UserDetails, OAuth2User {
     }
     return Objects.equals(id, user.id) && Objects.equals(
       username, user.username) && Objects.equals(email, user.email) && Objects.equals(
-      roles, user.roles);
+      globalRoles, user.globalRoles);
   }
 
   @Override
@@ -246,7 +246,7 @@ public class User implements UserDetails, OAuth2User {
       "id=" + id +
       ", username='" + username + '\'' +
       ", email='" + email + '\'' +
-      ", roles=" + roles +
+      ", globalRoles=" + globalRoles +
       '}';
   }
 }
