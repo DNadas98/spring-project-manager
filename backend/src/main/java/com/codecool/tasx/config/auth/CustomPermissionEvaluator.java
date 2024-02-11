@@ -18,6 +18,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
+/**
+ * @see SecurityConfig
+ * @see org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
+ * @see org.springframework.security.access.expression.method.MethodSecurityExpressionHandler
+ */
 @Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 

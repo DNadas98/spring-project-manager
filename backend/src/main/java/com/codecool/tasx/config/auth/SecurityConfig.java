@@ -1,6 +1,9 @@
 package com.codecool.tasx.config.auth;
 
+import com.codecool.tasx.model.company.CompanyDao;
+import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.user.UserDao;
+import com.codecool.tasx.service.auth.CustomAccessControlService;
 import com.codecool.tasx.service.auth.JwtService;
 import com.codecool.tasx.service.auth.oauth2.CookieService;
 import com.codecool.tasx.service.auth.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -9,6 +12,8 @@ import com.codecool.tasx.service.auth.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,7 +29,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
   private final UserDao userDao;
   private final JwtService jwtService;
@@ -71,7 +76,7 @@ public class SecurityConfig {
     return config.getAuthenticationManager();
   }
 
-  //OAuth2
+  // OAuth2
 
   @Bean
   public AuthenticationSuccessHandler authenticationSuccessHandler() {
@@ -84,5 +89,26 @@ public class SecurityConfig {
     return new OAuth2AuthenticationFailureHandler(
       cookieAuthorizationRequestRepository,
       cookieService);
+  }
+
+  // Method-level security
+
+  /**
+   * {@link EnableMethodSecurity} would not pick up {@link CustomPermissionEvaluator} by default<br>
+   * <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler">
+   * Spring Security Docs</a> <br>
+   *
+   * @param accessControlService {@link CustomAccessControlService}
+   * @param companyDao           {@link CompanyDao}
+   * @param projectDao           {@link ProjectDao}
+   * @return
+   */
+  @Bean
+  public MethodSecurityExpressionHandler expressionHandler(
+    CustomAccessControlService accessControlService, CompanyDao companyDao, ProjectDao projectDao) {
+    var expressionHandler = new DefaultMethodSecurityExpressionHandler();
+    expressionHandler.setPermissionEvaluator(
+      new CustomPermissionEvaluator(accessControlService, companyDao, projectDao));
+    return expressionHandler;
   }
 }

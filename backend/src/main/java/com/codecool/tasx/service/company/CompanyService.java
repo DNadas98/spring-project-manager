@@ -54,7 +54,7 @@ public class CompanyService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_EMLOYEE)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_EMPLOYEE)")
   public CompanyResponsePrivateDTO getCompanyById(Long companyId)
     throws CompanyNotFoundException, UnauthorizedException {
     Company company = companyDao.findById(companyId).orElseThrow(
