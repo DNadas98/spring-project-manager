@@ -42,7 +42,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   /**
-   * @param authentication     represents the user in question. Should not be null.
+   * @param authentication     <strong>Passed in automatically</strong> from the {@link org.springframework.security.core.context.SecurityContextHolder}<br>
+   *                           Represents the user in question. Should not be null.
    * @param targetDomainObject the domain object for which permissions should be
    *                           checked. May be null in which case implementations should return false, as the null
    *                           condition can be checked explicitly in the expression.
@@ -53,8 +54,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Override
   public boolean hasPermission(
     Authentication authentication, Object targetDomainObject, Object permission) {
-    if ((authentication == null) || (targetDomainObject == null) ||
-      !(permission instanceof Role)) {
+    if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof Role)) {
       return false;
     }
     User user = (User) authentication.getPrincipal();
@@ -71,36 +71,38 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
    * Alternative method for evaluating a permission where only the identifier of the
    * target object is available, rather than the target instance itself.
    *
-   * @param authentication represents the user in question. Should not be null.
+   * @param authentication <strong>Passed in automatically</strong> from the {@link org.springframework.security.core.context.SecurityContextHolder}<br>
+   *                       Represents the user in question. Should not be null.
    * @param targetId       the identifier for the object instance (usually a Long)
    * @param targetType     a String representing the target's type (usually a Java
    *                       classname). Not null.
    * @param permission     a representation of the permission object as supplied by the
    *                       expression system. Not null.
    * @return true if the permission is granted, false otherwise
-   * @Warning Not fully typesafe, targetType as string
    */
   @Override
   public boolean hasPermission(
     Authentication authentication, Serializable targetId, String targetType, Object permission) {
     try {
-      if ((authentication == null) || (targetId == null) || !(permission instanceof Role)) {
+      if ((authentication == null) || (targetId == null) || (targetType.isEmpty()) ||
+        (permission == null)) {
         return false;
       }
       User user = (User) authentication.getPrincipal();
       Long id = (Long) targetId;
+      Role role = Role.valueOf(permission.toString());
 
       switch (targetType) {
         case "Company" -> {
           Company company = companyDao.findById(id).orElseThrow(
             () -> new CompanyNotFoundException(id)
           );
-          return handleCompanyPermissions(user, company, (Role) permission);
+          return handleCompanyPermissions(user, company, role);
         }
         case "Project" -> {
           Project project = projectDao.findById(id).orElseThrow(
             () -> new ProjectNotFoundException(id));
-          return handleProjectPermissions(user, project, (Role) permission);
+          return handleProjectPermissions(user, project, role);
         }
         default -> {
           return false;
@@ -113,9 +115,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean handleCompanyPermissions(
-    User user, Object targetDomainObject, Role permissionType) {
+    User user, Object targetDomainObject, Role role) {
     Company company = (Company) targetDomainObject;
-    switch (permissionType) {
+    switch (role) {
       case COMPANY_ADMIN:
         return customAccessControlService.hasCompanyOwnerAccess(user, company);
       case COMPANY_EMPLOYEE:
@@ -126,9 +128,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean handleProjectPermissions(
-    User user, Object targetDomainObject, Role permissionType) {
+    User user, Object targetDomainObject, Role role) {
     Project project = (Project) targetDomainObject;
-    switch (permissionType) {
+    switch (role) {
       case PROJECT_EDITOR:
         return customAccessControlService.hasProjectOwnerAccess(user, project);
       case PROJECT_ASSIGNED_EMPLOYEE:

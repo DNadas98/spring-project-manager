@@ -62,7 +62,7 @@ public class ProjectRequestService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_EDITOR)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
     Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -81,7 +81,7 @@ public class ProjectRequestService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSIGNED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public void handleJoinRequest(
     Long companyId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
     ProjectJoinRequest request = requestDao.findByCompanyIdAndProjectIdAndRequestId(

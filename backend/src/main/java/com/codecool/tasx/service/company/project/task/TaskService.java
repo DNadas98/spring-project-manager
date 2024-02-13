@@ -52,7 +52,7 @@ public class TaskService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public List<TaskResponsePublicDto> getAllTasks(Long companyId, Long projectId)
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -62,7 +62,7 @@ public class TaskService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public TaskResponsePublicDto getTaskById(Long companyId, Long projectId, Long taskId)
     throws UnauthorizedException {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
@@ -71,7 +71,7 @@ public class TaskService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public List<TaskResponsePublicDto> getTasksByStatus(
     Long companyId, Long projectId, TaskStatus status)
     throws ProjectNotFoundException, UnauthorizedException {
@@ -82,7 +82,7 @@ public class TaskService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public List<TaskResponsePublicDto> getFinishedTasks(Long companyId, Long projectId)
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -92,7 +92,7 @@ public class TaskService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public List<TaskResponsePublicDto> getUnfinishedTasks(Long companyId, Long projectId)
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -102,7 +102,7 @@ public class TaskService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public TaskResponsePublicDto createTask(
     TaskCreateRequestDto createRequestDto, Long companyId, Long projectId)
     throws ConstraintViolationException {
@@ -118,7 +118,7 @@ public class TaskService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public TaskResponsePublicDto updateTask(
     TaskUpdateRequestDto updateRequestDto, Long companyId, Long projectId, Long taskId)
     throws ConstraintViolationException {
@@ -158,7 +158,7 @@ public class TaskService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public void deleteTask(Long companyId, Long projectId, Long taskId) {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));

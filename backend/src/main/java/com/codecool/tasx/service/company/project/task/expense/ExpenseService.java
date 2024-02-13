@@ -37,7 +37,7 @@ public class ExpenseService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public List<ExpenseResponseDto> getAllExpenses(Long companyId, Long projectId, Long taskId)
     throws ProjectNotFoundException, UnauthorizedException {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
@@ -49,7 +49,7 @@ public class ExpenseService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public ExpenseResponseDto getExpense(
     Long companyId, Long projectId, Long taskId, Long expenseId) throws UnauthorizedException {
     Expense expense = expenseDao.findByCompanyIdAndProjectIdAndTaskIdAndExpenseId(
@@ -59,7 +59,7 @@ public class ExpenseService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public ExpenseResponseDto createExpense(
     ExpenseCreateRequestDto createRequestDto, Long companyId, Long projectId, Long taskId)
     throws ConstraintViolationException {
@@ -73,7 +73,7 @@ public class ExpenseService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public ExpenseResponseDto updateExpense(
     ExpenseUpdateRequestDto updateRequestDto, Long companyId, Long projectId, Long taskId,
     Long expenseId) throws ConstraintViolationException {
@@ -88,7 +88,7 @@ public class ExpenseService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public void deleteExpense(Long companyId, Long projectId, Long taskId, Long expenseId) {
     Expense expense = expenseDao.findByCompanyIdAndProjectIdAndTaskIdAndExpenseId(
       companyId, projectId, taskId, expenseId).orElseThrow(() -> new ExpenseNotFoundException());

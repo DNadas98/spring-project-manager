@@ -45,7 +45,7 @@ public class ProjectService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithoutUser(Long companyId)
     throws UnauthorizedException {
     User user = userProvider.getAuthenticatedUser();
@@ -57,7 +57,7 @@ public class ProjectService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_EMLOYEE)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithUser(Long companyId)
     throws UnauthorizedException {
     User user = userProvider.getAuthenticatedUser();
@@ -68,7 +68,7 @@ public class ProjectService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_ASSINGED_EMPLOYEE)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public ProjectResponsePrivateDTO getProjectById(Long companyId, Long projectId)
     throws UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -77,7 +77,7 @@ public class ProjectService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_EMLOYEE)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public ProjectResponsePrivateDTO createProject(
     ProjectCreateRequestDto createRequestDto, Long companyId) throws ConstraintViolationException {
     Company company = companyDao.findById(companyId).orElseThrow(
@@ -91,7 +91,7 @@ public class ProjectService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_EDITOR)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public ProjectResponsePrivateDTO updateProject(
     ProjectUpdateRequestDto updateRequestDto, Long companyId, Long projectId)
     throws ConstraintViolationException {
@@ -106,7 +106,7 @@ public class ProjectService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', Role.PROJECT_EDITOR)")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public void deleteProject(Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));

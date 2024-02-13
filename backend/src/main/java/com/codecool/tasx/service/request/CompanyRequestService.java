@@ -61,7 +61,7 @@ public class CompanyRequestService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_ADMIN)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_ADMIN')")
   public List<CompanyJoinRequestResponseDto> getJoinRequestsOfCompany(Long companyId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
@@ -78,7 +78,7 @@ public class CompanyRequestService {
     return companyConverter.getCompanyJoinRequestResponseDtos(requests);
   }
 
-  @PreAuthorize("hasPermission(#companyId, 'Company', Role.COMPANY_ADMIN)")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_ADMIN')")
   @Transactional(rollbackOn = Exception.class)
   public void handleJoinRequest(
     Long companyId, Long requestId, CompanyJoinRequestUpdateDto updateDto) {
