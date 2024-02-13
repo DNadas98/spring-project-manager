@@ -1,4 +1,4 @@
 package com.codecool.tasx.controller.dto.user;
 
-public record UserResponsePrivateDto(Long userId, String username, String email, long score) {
+public record UserResponsePrivateDto(Long userId, String username, long score) {
 }

@@ -9,7 +9,7 @@ import com.codecool.tasx.exception.company.CompanyNotFoundException;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.CompanyConverter;
 import jakarta.transaction.Transactional;
@@ -40,16 +40,16 @@ public class CompanyService {
 
   @Transactional
   public List<CompanyResponsePublicDTO> getCompaniesWithoutUser() throws UnauthorizedException {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     List<Company> companies = companyDao.findAllWithoutEmployeeAndJoinRequest(
-      user, List.of(RequestStatus.PENDING, RequestStatus.DECLINED));
+      applicationUser, List.of(RequestStatus.PENDING, RequestStatus.DECLINED));
     return companyConverter.getCompanyResponsePublicDtos(companies);
   }
 
   @Transactional
   public List<CompanyResponsePublicDTO> getCompaniesWithUser() throws UnauthorizedException {
-    User user = userProvider.getAuthenticatedUser();
-    List<Company> companies = user.getCompanies();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    List<Company> companies = applicationUser.getCompanies();
     return companyConverter.getCompanyResponsePublicDtos(companies);
   }
 
@@ -65,10 +65,10 @@ public class CompanyService {
   @Transactional(rollbackOn = Exception.class)
   public CompanyResponsePrivateDTO createCompany(
     CompanyCreateRequestDto createRequestDto) throws ConstraintViolationException {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Company company = companyDao.save(
-      new Company(createRequestDto.name(), createRequestDto.description(), user));
-    company.addEmployee(user);
+      new Company(createRequestDto.name(), createRequestDto.description(), applicationUser));
+    company.addEmployee(applicationUser);
     return companyConverter.getCompanyResponsePrivateDto(company);
   }
 

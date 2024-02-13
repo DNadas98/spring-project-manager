@@ -9,6 +9,8 @@ services:
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres
+    ports:
+      - "54321:5432"
     networks:
       - backend_network
     restart: always

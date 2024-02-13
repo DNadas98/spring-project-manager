@@ -1,7 +1,8 @@
 package com.codecool.tasx.service.auth.oauth2;
 
+import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.OAuth2ProcessingException;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.account.OAuth2UserAccount;
 import com.codecool.tasx.service.auth.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,20 +48,23 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(
       request,
       response);
-    User user = getUser(authentication);
-    String refreshToken = jwtService.generateRefreshToken(user);
+
+    OAuth2UserAccount userAccount = getAccount(authentication);
+
+    String refreshToken = jwtService.generateRefreshToken(new TokenPayloadDto(
+      userAccount.getEmail(), userAccount.getAccountType()
+    ));
     cookieService.addRefreshCookie(refreshToken, response);
     super.getRedirectStrategy().sendRedirect(request, response, FRONTEND_REDIRECT_URI);
   }
 
 
-  private User getUser(Authentication authentication) throws OAuth2ProcessingException {
-    User user;
+  private OAuth2UserAccount getAccount(Authentication authentication)
+    throws OAuth2ProcessingException {
     try {
-      user = (User) authentication.getPrincipal();
-      return user;
+      return (OAuth2UserAccount) authentication.getPrincipal();
     } catch (Exception e) {
-      throw new OAuth2ProcessingException("Failed to parse user from context");
+      throw new OAuth2ProcessingException("Failed to parse applicationUser from context");
     }
   }
 }

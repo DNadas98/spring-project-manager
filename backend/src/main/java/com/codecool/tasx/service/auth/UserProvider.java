@@ -1,15 +1,18 @@
 package com.codecool.tasx.service.auth;
 
 import com.codecool.tasx.exception.auth.UnauthorizedException;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.account.UserAccount;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserProvider {
-  public User getAuthenticatedUser() throws UnauthorizedException {
+  public ApplicationUser getAuthenticatedUser() throws UnauthorizedException {
     try {
-      return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      UserAccount userAccount =
+        (UserAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      return userAccount.getApplicationUser();
     } catch (Exception e) {
       throw new UnauthorizedException();
     }

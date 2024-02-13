@@ -2,7 +2,7 @@ package com.codecool.tasx.model.company.project.task;
 
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.task.expense.Expense;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 
 import java.time.Duration;
@@ -27,12 +27,12 @@ public class Task {
 
   @ManyToOne
   @JoinColumn(name = "task_owner_id")
-  private User taskOwner;
+  private ApplicationUser taskOwner;
 
   @ManyToMany
   @JoinTable(name = "task_assigned_employees", joinColumns = @JoinColumn(name = "task_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
-  private List<User> assignedEmployees;
+  private List<ApplicationUser> assignedEmployees;
 
   @ManyToOne
   @JoinColumn(name = "project_id")
@@ -46,7 +46,7 @@ public class Task {
 
   public Task(
     String name, String description, Importance importance, int difficulty,
-    LocalDateTime startDate, LocalDateTime deadline, TaskStatus taskStatus, User taskOwner,
+    LocalDateTime startDate, LocalDateTime deadline, TaskStatus taskStatus, ApplicationUser taskOwner,
     Project project) {
     this.name = name;
     this.description = description;
@@ -126,19 +126,19 @@ public class Task {
     this.taskStatus = taskStatus;
   }
 
-  public User getTaskOwner() {
+  public ApplicationUser getTaskOwner() {
     return taskOwner;
   }
 
-  public void setTaskOwner(User taskOwner) {
+  public void setTaskOwner(ApplicationUser taskOwner) {
     this.taskOwner = taskOwner;
   }
 
-  public List<User> getAssignedEmployees() {
+  public List<ApplicationUser> getAssignedEmployees() {
     return List.copyOf(this.assignedEmployees);
   }
 
-  public void setAssignedEmployees(List<User> assignedEmployees) {
+  public void setAssignedEmployees(List<ApplicationUser> assignedEmployees) {
     this.assignedEmployees = assignedEmployees;
   }
 
@@ -158,8 +158,8 @@ public class Task {
     this.expenses = expenses;
   }
 
-  public void assignEmployee(User user) {
-    this.assignedEmployees.add(user);
+  public void assignEmployee(ApplicationUser applicationUser) {
+    this.assignedEmployees.add(applicationUser);
   }
 
   public long getPoints() {

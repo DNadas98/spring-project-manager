@@ -2,8 +2,9 @@ package com.codecool.tasx.config.auth;
 
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.ProjectDao;
-import com.codecool.tasx.model.user.UserDao;
+import com.codecool.tasx.model.user.account.UserAccountDao;
 import com.codecool.tasx.service.auth.CustomAccessControlService;
+import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
 import com.codecool.tasx.service.auth.JwtService;
 import com.codecool.tasx.service.auth.oauth2.CookieService;
 import com.codecool.tasx.service.auth.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,7 +33,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
-  private final UserDao userDao;
+  private final UserAccountDao userAccountDao;
   private final JwtService jwtService;
   private final CookieService cookieService;
   private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
@@ -39,9 +41,9 @@ public class SecurityConfig {
 
   @Autowired
   public SecurityConfig(
-    UserDao userDao, JwtService jwtService, CookieService cookieService,
+    UserAccountDao userAccountDao, JwtService jwtService, CookieService cookieService,
     HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository) {
-    this.userDao = userDao;
+    this.userAccountDao = userAccountDao;
     this.jwtService = jwtService;
     this.cookieService = cookieService;
     this.cookieAuthorizationRequestRepository = cookieAuthorizationRequestRepository;
@@ -53,8 +55,10 @@ public class SecurityConfig {
    */
   @Bean
   public UserDetailsService userDetailsService() {
-    return username -> userDao.findOneByEmail(username).orElseThrow(
-      () -> new UsernameNotFoundException("User account not found"));
+    return username -> (UserDetails) userAccountDao.findOneByEmailAndAccountType(
+      username, AccountType.LOCAL).orElseThrow(() -> new UsernameNotFoundException(
+      String.format("%s account not found with the provided e-mail address",
+        AccountType.LOCAL.getDisplayName())));
   }
 
   @Bean
@@ -86,8 +90,7 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationFailureHandler authenticationFailureHandler() {
-    return new OAuth2AuthenticationFailureHandler(
-      cookieAuthorizationRequestRepository,
+    return new OAuth2AuthenticationFailureHandler(cookieAuthorizationRequestRepository,
       cookieService);
   }
 

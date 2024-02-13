@@ -12,8 +12,8 @@ import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.company.project.task.Task;
 import com.codecool.tasx.model.company.project.task.TaskDao;
 import com.codecool.tasx.model.company.project.task.TaskStatus;
-import com.codecool.tasx.model.user.User;
-import com.codecool.tasx.model.user.UserDao;
+import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.ApplicationUserDao;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.TaskConverter;
 import jakarta.transaction.Transactional;
@@ -34,18 +34,18 @@ public class TaskService {
     TaskStatus.FAILED);
   private final TaskDao taskDao;
   private final ProjectDao projectDao;
-  private final UserDao userDao;
+  private final ApplicationUserDao applicationUserDao;
   private final TaskConverter taskConverter;
   private final UserProvider userProvider;
   private final Logger logger;
 
   @Autowired
   public TaskService(
-    TaskDao taskDao, ProjectDao projectDao, UserDao userDao, TaskConverter taskConverter,
+    TaskDao taskDao, ProjectDao projectDao, ApplicationUserDao applicationUserDao, TaskConverter taskConverter,
     UserProvider userProvider) {
     this.taskDao = taskDao;
     this.projectDao = projectDao;
-    this.userDao = userDao;
+    this.applicationUserDao = applicationUserDao;
     this.taskConverter = taskConverter;
     this.userProvider = userProvider;
     this.logger = LoggerFactory.getLogger(this.getClass());
@@ -108,11 +108,11 @@ public class TaskService {
     throws ConstraintViolationException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Task task = new Task(createRequestDto.name(), createRequestDto.description(),
       createRequestDto.importance(), createRequestDto.difficulty(), createRequestDto.startDate(),
-      createRequestDto.deadline(), createRequestDto.taskStatus(), user, project);
-    task.assignEmployee(user);
+      createRequestDto.deadline(), createRequestDto.taskStatus(), applicationUser, project);
+    task.assignEmployee(applicationUser);
     taskDao.save(task);
     return taskConverter.getTaskResponsePublicDto(task);
   }
@@ -134,10 +134,10 @@ public class TaskService {
   }
 
   private void acquirePointsForTask(Task task) throws UnauthorizedException {
-    List<User> assignedEmployees = task.getAssignedEmployees();
-    for (User employee : assignedEmployees) {
+    List<ApplicationUser> assignedEmployees = task.getAssignedEmployees();
+    for (ApplicationUser employee : assignedEmployees) {
       employee.setScore(employee.getScore() + task.calculatePoints());
-      userDao.save(employee);
+      applicationUserDao.save(employee);
     }
   }
 

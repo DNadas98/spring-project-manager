@@ -11,7 +11,7 @@ import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.requests.CompanyJoinRequest;
 import com.codecool.tasx.model.requests.CompanyJoinRequestDao;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.CompanyConverter;
 import jakarta.transaction.Transactional;
@@ -45,18 +45,19 @@ public class CompanyRequestService {
 
   @Transactional
   public CompanyJoinRequestResponseDto createJoinRequest(Long companyId) {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    if (company.getEmployees().contains(user)) {
+    if (company.getEmployees().contains(applicationUser)) {
       throw new UserAlreadyInCompanyException();
     }
-    Optional<CompanyJoinRequest> duplicateRequest = requestDao.findOneByCompanyAndUser(
-      company, user);
+    Optional<CompanyJoinRequest> duplicateRequest = requestDao.findOneByCompanyAndApplicationUser(
+      company, applicationUser);
     if (duplicateRequest.isPresent()) {
       throw new DuplicateCompanyJoinRequestException();
     }
-    CompanyJoinRequest savedRequest = requestDao.save(new CompanyJoinRequest(company, user));
+    CompanyJoinRequest savedRequest = requestDao.save(new CompanyJoinRequest(company,
+      applicationUser));
     return companyConverter.getCompanyJoinRequestResponseDto(savedRequest);
   }
 
@@ -73,8 +74,8 @@ public class CompanyRequestService {
 
   @Transactional
   public List<CompanyJoinRequestResponseDto> getJoinRequestsOfUser() {
-    User user = userProvider.getAuthenticatedUser();
-    List<CompanyJoinRequest> requests = requestDao.findByUser(user);
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    List<CompanyJoinRequest> requests = requestDao.findByApplicationUser(applicationUser);
     return companyConverter.getCompanyJoinRequestResponseDtos(requests);
   }
 
@@ -86,7 +87,7 @@ public class CompanyRequestService {
       () -> new CompanyJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
-      request.getCompany().addEmployee(request.getUser());
+      request.getCompany().addEmployee(request.getApplicationUser());
       requestDao.delete(request);
     }
   }

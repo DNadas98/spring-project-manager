@@ -11,7 +11,7 @@ import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.requests.ProjectJoinRequest;
 import com.codecool.tasx.model.requests.ProjectJoinRequestDao;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
 import jakarta.transaction.Transactional;
@@ -45,19 +45,20 @@ public class ProjectRequestService {
 
   @Transactional
   public ProjectJoinRequestResponseDto createJoinRequest(Long companyId, Long projectId) {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    if (project.getAssignedEmployees().contains(user)) {
+    if (project.getAssignedEmployees().contains(applicationUser)) {
       throw new UserAlreadyInProjectException();
     }
-    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndUser(
+    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndApplicationUser(
       project,
-      user);
+      applicationUser);
     if (duplicateRequest.isPresent()) {
       throw new DuplicateProjectJoinRequestException();
     }
-    ProjectJoinRequest savedRequest = requestDao.save(new ProjectJoinRequest(project, user));
+    ProjectJoinRequest savedRequest = requestDao.save(new ProjectJoinRequest(project,
+      applicationUser));
     return projectConverter.getProjectJoinRequestResponseDto(savedRequest);
   }
 
@@ -75,8 +76,8 @@ public class ProjectRequestService {
 
   @Transactional
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfUser() {
-    User user = userProvider.getAuthenticatedUser();
-    List<ProjectJoinRequest> requests = requestDao.findByUser(user);
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    List<ProjectJoinRequest> requests = requestDao.findByApplicationUser(applicationUser);
     return projectConverter.getProjectJoinRequestResponseDtos(requests);
   }
 
@@ -94,7 +95,7 @@ public class ProjectRequestService {
     }
   }
 
-  private void addUserToProject(User user, Project project) {
-    project.assignEmployee(user);
+  private void addUserToProject(ApplicationUser applicationUser, Project project) {
+    project.assignEmployee(applicationUser);
   }
 }

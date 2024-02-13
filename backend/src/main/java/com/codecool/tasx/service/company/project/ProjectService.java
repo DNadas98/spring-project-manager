@@ -12,7 +12,7 @@ import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
 import jakarta.transaction.Transactional;
@@ -48,11 +48,11 @@ public class ProjectService {
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithoutUser(Long companyId)
     throws UnauthorizedException {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
     List<Project> projects = projectDao.findAllWithoutEmployeeAndJoinRequestInCompany(
-      user, List.of(RequestStatus.PENDING, RequestStatus.DECLINED), company);
+      applicationUser, List.of(RequestStatus.PENDING, RequestStatus.DECLINED), company);
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
@@ -60,10 +60,10 @@ public class ProjectService {
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithUser(Long companyId)
     throws UnauthorizedException {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    List<Project> projects = projectDao.findAllWithEmployeeAndCompany(user, company);
+    List<Project> projects = projectDao.findAllWithEmployeeAndCompany(applicationUser, company);
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
@@ -82,10 +82,10 @@ public class ProjectService {
     ProjectCreateRequestDto createRequestDto, Long companyId) throws ConstraintViolationException {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Project project = new Project(createRequestDto.name(), createRequestDto.description(),
-      createRequestDto.startDate(), createRequestDto.deadline(), user, company);
-    project.assignEmployee(user);
+      createRequestDto.startDate(), createRequestDto.deadline(), applicationUser, company);
+    project.assignEmployee(applicationUser);
     projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(project);
   }

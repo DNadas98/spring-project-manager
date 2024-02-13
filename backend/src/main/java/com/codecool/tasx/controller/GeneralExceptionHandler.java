@@ -51,7 +51,7 @@ public class GeneralExceptionHandler {
   public ResponseEntity<?> handleUserAlreadyInCompany(UserAlreadyInCompanyException e) {
     logger.error(e.getMessage(), e);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-      Map.of("error", "User is already in the requested company"));
+      Map.of("error", "ApplicationUser is already in the requested company"));
   }
 
   @ExceptionHandler(DuplicateCompanyJoinRequestException.class)

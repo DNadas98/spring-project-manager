@@ -1,14 +1,15 @@
-package com.codecool.tasx.config.auth;
+package com.codecool.tasx.service.auth;
 
+import com.codecool.tasx.config.auth.PermissionType;
+import com.codecool.tasx.config.auth.SecurityConfig;
 import com.codecool.tasx.exception.company.CompanyNotFoundException;
 import com.codecool.tasx.exception.company.project.ProjectNotFoundException;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.ProjectDao;
-import com.codecool.tasx.model.user.Role;
-import com.codecool.tasx.model.user.User;
-import com.codecool.tasx.service.auth.CustomAccessControlService;
+import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.account.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,15 +55,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Override
   public boolean hasPermission(
     Authentication authentication, Object targetDomainObject, Object permission) {
-    if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof Role)) {
+    if ((authentication == null) || (targetDomainObject == null) ||
+      !(permission instanceof PermissionType)) {
       return false;
     }
-    User user = (User) authentication.getPrincipal();
+    ApplicationUser applicationUser = (ApplicationUser) authentication.getPrincipal();
 
     if (targetDomainObject instanceof Company) {
-      return handleCompanyPermissions(user, targetDomainObject, (Role) permission);
+      return handleCompanyPermissions(
+        applicationUser, targetDomainObject, (PermissionType) permission);
     } else if (targetDomainObject instanceof Project) {
-      return handleProjectPermissions(user, targetDomainObject, (Role) permission);
+      return handleProjectPermissions(
+        applicationUser, targetDomainObject, (PermissionType) permission);
     }
     return false;
   }
@@ -88,21 +92,22 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         (permission == null)) {
         return false;
       }
-      User user = (User) authentication.getPrincipal();
+      UserAccount account = (UserAccount) authentication.getPrincipal();
+      ApplicationUser applicationUser = account.getApplicationUser();
       Long id = (Long) targetId;
-      Role role = Role.valueOf(permission.toString());
+      PermissionType permissionType = PermissionType.valueOf(permission.toString());
 
       switch (targetType) {
         case "Company" -> {
           Company company = companyDao.findById(id).orElseThrow(
             () -> new CompanyNotFoundException(id)
           );
-          return handleCompanyPermissions(user, company, role);
+          return handleCompanyPermissions(applicationUser, company, permissionType);
         }
         case "Project" -> {
           Project project = projectDao.findById(id).orElseThrow(
             () -> new ProjectNotFoundException(id));
-          return handleProjectPermissions(user, project, role);
+          return handleProjectPermissions(applicationUser, project, permissionType);
         }
         default -> {
           return false;
@@ -115,26 +120,26 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean handleCompanyPermissions(
-    User user, Object targetDomainObject, Role role) {
+    ApplicationUser applicationUser, Object targetDomainObject, PermissionType permissionType) {
     Company company = (Company) targetDomainObject;
-    switch (role) {
+    switch (permissionType) {
       case COMPANY_ADMIN:
-        return customAccessControlService.hasCompanyOwnerAccess(user, company);
+        return customAccessControlService.hasCompanyOwnerAccess(applicationUser, company);
       case COMPANY_EMPLOYEE:
-        return customAccessControlService.hasCompanyEmployeeAccess(user, company);
+        return customAccessControlService.hasCompanyEmployeeAccess(applicationUser, company);
       default:
         return false;
     }
   }
 
   private boolean handleProjectPermissions(
-    User user, Object targetDomainObject, Role role) {
+    ApplicationUser applicationUser, Object targetDomainObject, PermissionType permissionType) {
     Project project = (Project) targetDomainObject;
-    switch (role) {
+    switch (permissionType) {
       case PROJECT_EDITOR:
-        return customAccessControlService.hasProjectOwnerAccess(user, project);
+        return customAccessControlService.hasProjectOwnerAccess(applicationUser, project);
       case PROJECT_ASSIGNED_EMPLOYEE:
-        return customAccessControlService.hasAssignedToProjectAccess(user, project);
+        return customAccessControlService.hasAssignedToProjectAccess(applicationUser, project);
       default:
         return false;
     }

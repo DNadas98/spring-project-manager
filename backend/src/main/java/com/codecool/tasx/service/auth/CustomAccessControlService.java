@@ -2,7 +2,7 @@ package com.codecool.tasx.service.auth;
 
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.Project;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,56 +12,56 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomAccessControlService {
   /**
-   * Verifies that the {@link User} is the owner of the {@link Company}
+   * Verifies that the {@link ApplicationUser} is the owner of the {@link Company}
    *
    * @return
    */
-  public boolean hasCompanyOwnerAccess(User user, Company company) {
-    if (!company.getCompanyOwner().equals(user)) {
+  public boolean hasCompanyOwnerAccess(ApplicationUser applicationUser, Company company) {
+    if (!company.getCompanyOwner().equals(applicationUser)) {
       return false;
     }
     return true;
   }
 
   /**
-   * Verifies that the {@link User} is an employee of the {@link Company}
+   * Verifies that the {@link ApplicationUser} is an employee of the {@link Company}
    * or is the owner of the {@link Company}
    *
    * @return
    */
-  public boolean hasCompanyEmployeeAccess(User user, Company company) {
-    if (!company.getEmployees().contains(user)
-      && company.getCompanyOwner().equals(user)) {
+  public boolean hasCompanyEmployeeAccess(ApplicationUser applicationUser, Company company) {
+    if (!company.getEmployees().contains(applicationUser)
+      && company.getCompanyOwner().equals(applicationUser)) {
       return false;
     }
     return true;
   }
 
   /**
-   * Verifies that the {@link User} is the owner of the {@link Project}
+   * Verifies that the {@link ApplicationUser} is the owner of the {@link Project}
    * or the owner of the {@link Company}
    *
    * @return
    */
-  public boolean hasProjectOwnerAccess(User user, Project project) {
-    if (!project.getProjectOwner().equals(user)
-      && !project.getCompany().getCompanyOwner().equals(user)) {
+  public boolean hasProjectOwnerAccess(ApplicationUser applicationUser, Project project) {
+    if (!project.getProjectOwner().equals(applicationUser)
+      && !project.getCompany().getCompanyOwner().equals(applicationUser)) {
       return false;
     }
     return true;
   }
 
   /**
-   * Verifies that the {@link User} is assigned to the {@link Project}
+   * Verifies that the {@link ApplicationUser} is assigned to the {@link Project}
    * or is the owner of the {@link Project}
    * or the owner of the {@link Company}
    *
    * @return
    */
-  public boolean hasAssignedToProjectAccess(User user, Project project) {
-    if (!project.getAssignedEmployees().contains(user)
-      && !project.getProjectOwner().equals(user)
-      && !project.getCompany().getCompanyOwner().equals(user)) {
+  public boolean hasAssignedToProjectAccess(ApplicationUser applicationUser, Project project) {
+    if (!project.getAssignedEmployees().contains(applicationUser)
+      && !project.getProjectOwner().equals(applicationUser)
+      && !project.getCompany().getCompanyOwner().equals(applicationUser)) {
       return false;
     }
     return true;
