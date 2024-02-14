@@ -72,8 +72,8 @@
 
 ## About The Project
 
-The application allows users to create local accounts or sign in via OAuth 2.0. Authenticated users
-can join companies, create, and manage projects. Projects include tasks with start dates, deadlines,
+The application allows users to create local accounts or sign in via Google, Facebook or GitHub accounts. (OAuth 2.0)<br>
+Authenticated users can join companies, create, and manage projects. Projects include tasks with start dates, deadlines,
 expenses, and varying levels of importance and difficulty. Employees request to be assigned to
 projects and receive rewards for completed tasks, incorporating a gamification aspect with a scoring
 system.
@@ -123,16 +123,14 @@ The project uses Nginx as reverse-proxy and static file server.
 - Optional: [Node.js, NPM](https://nodejs.org/en/download)
   - The frontend is developed using the latest Node and NPM versions currently available
   - The frontend project is set up using [Vite JS](https://vitejs.dev/)
--
-
-Optional: [Google Cloud Console OAuth 2.0 Credentials](https://developers.google.com/identity/protocols/oauth2)
-
-- The app can start without this and provides a local Sign-Up and Sign-In option too. If left out,
-  only the OAuth 2.0 Google Sing-In option will break.
-- To test the Google Sign-in using OAuth 2.0, the app requires a valid client ID and client
-  secret. Use the [official guide](https://developers.google.com/identity/protocols/oauth2) to
-  create a "Consent Screen", add the app as client, and copy the
-  client ID and secret. Paste these to their respective lines in the `.env` file
+- Optional: Obtain OAuth 2.0 client credentials for Google, Facebook and Github to test the OAuth 2.0 Sign-in features
+  - [Google Cloud Console OAuth 2.0 Credentials](https://developers.google.com/identity/protocols/oauth2)
+  - [Facebook OAuth 2.0 Credentials](https://developers.facebook.com/docs/development/create-an-app/facebook-login-use-case)
+  - [GitHub OAuth 2.0 Credentials](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+  - <strong>The app can start without this and provides local registration and login option too.</strong> If left out,
+    only the OAuth 2.0 Sing-In options will not work.
+  - To test the OAuth 2.0 Sign-in options, the app requires a valid client ID and client
+    secret. Use the linked guides to add the application as client, then copy the client ID and secret. Paste these to their respective lines in the `.env` file
 
 ### Setup & Run
 
