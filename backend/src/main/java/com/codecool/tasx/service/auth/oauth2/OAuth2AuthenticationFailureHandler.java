@@ -5,39 +5,41 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @Component
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-  private final HttpCookieOAuth2AuthorizationRequestRepository
-    httpCookieOAuth2AuthorizationRequestRepository;
-  private final CookieService cookieService;
-
+  private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository;
   @Value("${BACKEND_OAUTH2_FRONTEND_REDIRECT_URI}")
   private String FRONTEND_REDIRECT_URI;
 
   @Autowired
   public OAuth2AuthenticationFailureHandler(
-    HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository,
-    CookieService cookieService) {
-    this.httpCookieOAuth2AuthorizationRequestRepository =
-      httpCookieOAuth2AuthorizationRequestRepository;
-    this.cookieService = cookieService;
+    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository) {
+    this.requestRepository = requestRepository;
   }
 
   @Override
   public void onAuthenticationFailure(
     HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
     throws IOException {
-    httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(
-      request, response);
+    requestRepository.removeAuthorizationRequest(request, response);
 
-    cookieService.clearRefreshCookie(response);
+    String errorMessage = exception.getMessage() == null
+      ? "An error occurred while processing the authentication request"
+      : exception.getMessage();
 
-    getRedirectStrategy().sendRedirect(request, response, FRONTEND_REDIRECT_URI);
+    String redirectUrl = UriComponentsBuilder.fromUriString(FRONTEND_REDIRECT_URI)
+      .queryParam("error", URLEncoder.encode(errorMessage))
+      .build().toUriString();
+    getRedirectStrategy().sendRedirect(request, response, redirectUrl);
   }
 }

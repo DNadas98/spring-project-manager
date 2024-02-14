@@ -2,7 +2,7 @@ package com.codecool.tasx.service.auth.oauth2;
 
 import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.OAuth2ProcessingException;
-import com.codecool.tasx.model.user.account.OAuth2UserAccount;
+import com.codecool.tasx.model.auth.account.OAuth2UserAccount;
 import com.codecool.tasx.service.auth.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +20,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-  private final HttpCookieOAuth2AuthorizationRequestRepository
-    httpCookieOAuth2AuthorizationRequestRepository;
+  private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository;
   private final JwtService jwtService;
   private final CookieService cookieService;
 
@@ -28,10 +29,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
   @Autowired
   public OAuth2AuthenticationSuccessHandler(
-    HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository,
+    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository,
     JwtService jwtService, CookieService cookieService) {
-    this.httpCookieOAuth2AuthorizationRequestRepository =
-      httpCookieOAuth2AuthorizationRequestRepository;
+    this.requestRepository = requestRepository;
     this.jwtService = jwtService;
     this.cookieService = cookieService;
   }
@@ -43,14 +43,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     throws IOException, OAuth2ProcessingException {
     if (response.isCommitted()) {
       throw new OAuth2ProcessingException(
-        "Response has already been committed. Unable to redirect to " + FRONTEND_REDIRECT_URI);
+        "Unable to redirect to " + FRONTEND_REDIRECT_URI);
     }
-    httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(
-      request,
-      response);
-
+    requestRepository.removeAuthorizationRequest(request, response);
     OAuth2UserAccount userAccount = getAccount(authentication);
-
     String refreshToken = jwtService.generateRefreshToken(new TokenPayloadDto(
       userAccount.getEmail(), userAccount.getAccountType()
     ));
@@ -64,7 +60,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     try {
       return (OAuth2UserAccount) authentication.getPrincipal();
     } catch (Exception e) {
-      throw new OAuth2ProcessingException("Failed to parse applicationUser from context");
+      throw new OAuth2ProcessingException("Failed to parse Application User from context");
     }
   }
 }

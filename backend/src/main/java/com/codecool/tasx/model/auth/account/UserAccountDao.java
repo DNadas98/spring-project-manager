@@ -1,6 +1,5 @@
-package com.codecool.tasx.model.user.account;
+package com.codecool.tasx.model.auth.account;
 
-import com.codecool.tasx.config.auth.AccountType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
 package com.codecool.tasx.model.user;
 
+import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.Project;
-import com.codecool.tasx.model.user.account.UserAccount;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 

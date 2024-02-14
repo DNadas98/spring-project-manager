@@ -1,8 +1,8 @@
 package com.codecool.tasx.service.auth;
 
-import com.codecool.tasx.config.auth.AccountType;
 import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.model.auth.account.AccountType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

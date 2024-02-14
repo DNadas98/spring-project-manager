@@ -1,8 +1,8 @@
 package com.codecool.tasx.service.auth;
 
 import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.user.ApplicationUser;
-import com.codecool.tasx.model.user.account.UserAccount;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

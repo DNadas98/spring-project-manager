@@ -1,4 +1,4 @@
-package com.codecool.tasx.config.auth;
+package com.codecool.tasx.model.auth;
 
 public enum PermissionType {
   COMPANY_ADMIN, COMPANY_EDITOR, COMPANY_EMPLOYEE,

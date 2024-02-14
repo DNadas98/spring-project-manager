@@ -1,6 +1,5 @@
-package com.codecool.tasx.model.user.account;
+package com.codecool.tasx.model.auth.account;
 
-import com.codecool.tasx.config.auth.AccountType;
 import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,15 +1,15 @@
 package com.codecool.tasx.service.auth;
 
-import com.codecool.tasx.config.auth.PermissionType;
 import com.codecool.tasx.config.auth.SecurityConfig;
 import com.codecool.tasx.exception.company.CompanyNotFoundException;
 import com.codecool.tasx.exception.company.project.ProjectNotFoundException;
+import com.codecool.tasx.model.auth.PermissionType;
+import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.user.ApplicationUser;
-import com.codecool.tasx.model.user.account.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +114,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         }
       }
     } catch (CompanyNotFoundException | ProjectNotFoundException e) {
-      logger.error(e.getMessage(), e);
+      logger.error(e.getMessage());
       return false;
     }
   }

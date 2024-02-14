@@ -1,13 +1,14 @@
 package com.codecool.tasx.config.auth;
 
+import com.codecool.tasx.model.auth.account.AccountType;
+import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.ProjectDao;
-import com.codecool.tasx.model.user.account.UserAccountDao;
 import com.codecool.tasx.service.auth.CustomAccessControlService;
 import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
 import com.codecool.tasx.service.auth.JwtService;
 import com.codecool.tasx.service.auth.oauth2.CookieService;
-import com.codecool.tasx.service.auth.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.codecool.tasx.service.auth.oauth2.DatabaseOAuth2AuthorizationRequestService;
 import com.codecool.tasx.service.auth.oauth2.OAuth2AuthenticationFailureHandler;
 import com.codecool.tasx.service.auth.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -34,19 +37,15 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
   private final UserAccountDao userAccountDao;
-  private final JwtService jwtService;
-  private final CookieService cookieService;
-  private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
+  private final DatabaseOAuth2AuthorizationRequestService oAuth2AuthorizationRequestService;
 
 
   @Autowired
   public SecurityConfig(
-    UserAccountDao userAccountDao, JwtService jwtService, CookieService cookieService,
-    HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository) {
+    UserAccountDao userAccountDao,
+    DatabaseOAuth2AuthorizationRequestService oAuth2AuthorizationRequestService) {
     this.userAccountDao = userAccountDao;
-    this.jwtService = jwtService;
-    this.cookieService = cookieService;
-    this.cookieAuthorizationRequestRepository = cookieAuthorizationRequestRepository;
+    this.oAuth2AuthorizationRequestService = oAuth2AuthorizationRequestService;
   }
 
   /**
@@ -83,15 +82,15 @@ public class SecurityConfig {
   // OAuth2
 
   @Bean
-  public AuthenticationSuccessHandler authenticationSuccessHandler() {
-    return new OAuth2AuthenticationSuccessHandler(
-      cookieAuthorizationRequestRepository, jwtService, cookieService);
+  public AuthenticationSuccessHandler authenticationSuccessHandler(
+    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository,
+    CookieService cookieService, JwtService jwtService) {
+    return new OAuth2AuthenticationSuccessHandler(requestRepository, jwtService, cookieService);
   }
 
   @Bean
   public AuthenticationFailureHandler authenticationFailureHandler() {
-    return new OAuth2AuthenticationFailureHandler(cookieAuthorizationRequestRepository,
-      cookieService);
+    return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestService);
   }
 
   // Method-level security

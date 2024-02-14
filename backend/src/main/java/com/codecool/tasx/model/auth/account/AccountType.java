@@ -1,9 +1,10 @@
-package com.codecool.tasx.config.auth;
+package com.codecool.tasx.model.auth.account;
 
 public enum AccountType {
   LOCAL("Local", null),
   GOOGLE("Google", "google"),
-  GITHUB("GitHub", "github");
+  GITHUB("GitHub", "github"),
+  FACEBOOK("Facebook", "facebook");
 
   private final String displayName;
   private final String providerId;

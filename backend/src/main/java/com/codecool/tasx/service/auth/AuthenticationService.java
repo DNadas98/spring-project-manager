@@ -1,17 +1,17 @@
 package com.codecool.tasx.service.auth;
 
 
-import com.codecool.tasx.config.auth.AccountType;
 import com.codecool.tasx.controller.dto.user.auth.*;
 import com.codecool.tasx.exception.auth.AccountAlreadyExistsException;
 import com.codecool.tasx.exception.auth.AccountLinkingRequiredException;
 import com.codecool.tasx.exception.auth.InvalidCredentialsException;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.model.auth.account.AccountType;
+import com.codecool.tasx.model.auth.account.LocalUserAccount;
+import com.codecool.tasx.model.auth.account.UserAccount;
+import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.model.user.ApplicationUserDao;
-import com.codecool.tasx.model.user.account.LocalUserAccount;
-import com.codecool.tasx.model.user.account.UserAccount;
-import com.codecool.tasx.model.user.account.UserAccountDao;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

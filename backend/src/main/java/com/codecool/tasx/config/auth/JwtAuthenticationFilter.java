@@ -2,8 +2,8 @@ package com.codecool.tasx.config.auth;
 
 import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
-import com.codecool.tasx.model.user.account.UserAccount;
-import com.codecool.tasx.model.user.account.UserAccountDao;
+import com.codecool.tasx.model.auth.account.UserAccount;
+import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.service.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
