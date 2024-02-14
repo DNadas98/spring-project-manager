@@ -2,7 +2,7 @@ package com.codecool.tasx.model.company;
 
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.reward.Reward;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -22,12 +22,12 @@ public class Company {
 
   @ManyToOne
   @JoinColumn(name = "company_owner_id")
-  private User companyOwner;
+  private ApplicationUser companyOwner;
 
   @ManyToMany
   @JoinTable(name = "company_employees", joinColumns = @JoinColumn(name = "company_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
-  private List<User> employees;
+  private List<ApplicationUser> employees;
 
   @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Project> projects;
@@ -39,7 +39,7 @@ public class Company {
   public Company() {
   }
 
-  public Company(String name, String description, User companyOwner) {
+  public Company(String name, String description, ApplicationUser companyOwner) {
     this.name = name;
     this.description = description;
     this.companyOwner = companyOwner;
@@ -68,16 +68,16 @@ public class Company {
     this.description = description;
   }
 
-  public User getCompanyOwner() {
+  public ApplicationUser getCompanyOwner() {
     return companyOwner;
   }
 
-  public List<User> getEmployees() {
+  public List<ApplicationUser> getEmployees() {
     return List.copyOf(employees);
   }
 
-  public void addEmployee(User user) {
-    employees.add(user);
+  public void addEmployee(ApplicationUser applicationUser) {
+    employees.add(applicationUser);
   }
 
   public List<Project> getProjects() {

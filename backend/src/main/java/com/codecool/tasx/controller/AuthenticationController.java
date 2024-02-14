@@ -20,8 +20,7 @@ public class AuthenticationController {
 
   @Autowired
   public AuthenticationController(
-    AuthenticationService authenticationService,
-    CookieService cookieService) {
+    AuthenticationService authenticationService, CookieService cookieService) {
     this.authenticationService = authenticationService;
     this.cookieService = cookieService;
   }
@@ -30,8 +29,8 @@ public class AuthenticationController {
   public ResponseEntity<?> register(
     @RequestBody RegisterRequestDto request) {
     authenticationService.register(request);
-    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-      "message", "Account created successfully"));
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      Map.of("message", "Account created successfully"));
   }
 
   @PostMapping("/login")
@@ -40,7 +39,8 @@ public class AuthenticationController {
     LoginResponseDto loginResponse = authenticationService.login(loginRequest);
 
     String refreshToken = authenticationService.getNewRefreshToken(
-      loginResponse.userInfo().email());
+      new TokenPayloadDto(loginResponse.userInfo().email(),
+        loginResponse.userInfo().accountType()));
     cookieService.addRefreshCookie(refreshToken, response);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));
   }
@@ -56,14 +56,13 @@ public class AuthenticationController {
 
   @GetMapping("/logout")
   public ResponseEntity<?> logout(
-    @CookieValue(required = false) String jwt,
-    HttpServletResponse response) {
+    @CookieValue(required = false) String jwt, HttpServletResponse response) {
     if (jwt == null) {
       return ResponseEntity.noContent().build();
     }
     cookieService.clearRefreshCookie(response);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-      "message", "Account logged out successfully"));
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", "Account logged out successfully"));
   }
 
 

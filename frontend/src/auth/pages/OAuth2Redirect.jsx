@@ -5,6 +5,7 @@ import LoadingSpinner from "../../components/LoadingSpinner.jsx";
 import useRefresh from "../hooks/useRefresh.js";
 import useLogout from "../hooks/useLogout.js";
 
+
 function OAuth2Redirect() {
   const {setAuth} = useAuth();
   const refresh = useRefresh();
@@ -14,25 +15,37 @@ function OAuth2Redirect() {
   useEffect(() => {
     async function handleOauth2Login() {
       try {
+        const searchParams = new URLSearchParams(location.search);
+        const error = searchParams.get("error");
+        if (error) {
+          throw new Error(decodeURIComponent(error));
+        }
         const responseObject = await refresh();
         if (!responseObject?.data) {
           throw new Error(responseObject?.error ?? "Failed to log in via OAuth2");
         }
-        const accessToken = responseObject.data?.accessToken;
-        const receivedUsername = responseObject.data?.userInfo?.username;
-        const receivedEmail = responseObject.data?.userInfo?.email;
-        const receivedRoles = responseObject.data?.userInfo?.roles;
-        if (accessToken && receivedUsername && receivedEmail && receivedRoles) {
-          setAuth({
-            "username": receivedUsername, "email": receivedEmail, "roles": receivedRoles, "accessToken": accessToken
-          });
-          navigate("/companies");
-        } else {
-          throw new Error("OAuth2 login failed");
-        }
+        handleAuthentication(responseObject);
+        navigate("/companies");
       } catch (e) {
-        console.error(e);
+        window.alert(e);
         await logout();
+      }
+    }
+
+    function handleAuthentication(responseObject) {
+      const accessToken = responseObject.data?.accessToken;
+      const receivedUsername = responseObject.data?.userInfo?.username;
+      const receivedEmail = responseObject.data?.userInfo?.email;
+      const receivedRoles = responseObject.data?.userInfo?.roles;
+      if (accessToken && receivedUsername && receivedEmail && receivedRoles) {
+        setAuth({
+          "username": receivedUsername,
+          "email": receivedEmail,
+          "roles": receivedRoles,
+          "accessToken": accessToken
+        });
+      } else {
+        throw new Error("Failed to log in via OAuth2");
       }
     }
 

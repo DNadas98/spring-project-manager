@@ -48,7 +48,7 @@ public class CompanyConverter {
     CompanyJoinRequest request) {
     return new CompanyJoinRequestResponseDto(request.getId(),
       getCompanyResponsePublicDto(request.getCompany()),
-      userConverter.getUserResponsePublicDto(request.getUser()), request.getStatus());
+      userConverter.getUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
   }
 
   public List<CompanyJoinRequestResponseDto> getCompanyJoinRequestResponseDtos(

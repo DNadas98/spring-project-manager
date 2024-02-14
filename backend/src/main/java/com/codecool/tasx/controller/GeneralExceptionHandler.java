@@ -24,47 +24,47 @@ public class GeneralExceptionHandler {
 
   @ExceptionHandler(UnauthorizedException.class)
   public ResponseEntity<?> handleCustomUnauthorized(UnauthorizedException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Unauthorized"));
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)
   public ResponseEntity<?> handleCustomUnauthorized(UsernameNotFoundException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Unauthorized"));
   }
 
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<?> handleCustomUnauthorized(UserNotFoundException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Unauthorized"));
   }
 
   @ExceptionHandler(CompanyNotFoundException.class)
   public ResponseEntity<?> handleCompanyNotFound(CompanyNotFoundException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
       Map.of("error", "The requested company was not found"));
   }
 
   @ExceptionHandler(UserAlreadyInCompanyException.class)
   public ResponseEntity<?> handleUserAlreadyInCompany(UserAlreadyInCompanyException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-      Map.of("error", "User is already in the requested company"));
+      Map.of("error", "ApplicationUser is already in the requested company"));
   }
 
   @ExceptionHandler(DuplicateCompanyJoinRequestException.class)
   public ResponseEntity<?> handleDuplicateCompanyJoinRequest(
     DuplicateCompanyJoinRequestException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.CONFLICT).body(
       Map.of("error", "Join request already exists with the provided details"));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<?> handleDuplicateFields(ConstraintViolationException e) {
-    logger.error(e.getMessage(), e);
+    logger.error(e.getMessage());
     if (e.getMessage().contains("unique constraint")) {
       String errorMessage = getConstraintErrorMessage(e.getMessage());
       return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", errorMessage));
