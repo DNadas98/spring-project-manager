@@ -1,7 +1,7 @@
 package com.codecool.tasx.model.requests;
 
 import com.codecool.tasx.model.company.project.Project;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +21,7 @@ public interface ProjectJoinRequestDao extends JpaRepository<ProjectJoinRequest,
 
   List<ProjectJoinRequest> findByProjectAndStatus(Project project, RequestStatus status);
 
-  Optional<ProjectJoinRequest> findOneByProjectAndUser(Project project, User user);
+  Optional<ProjectJoinRequest> findOneByProjectAndApplicationUser(Project project, ApplicationUser applicationUser);
 
-  List<ProjectJoinRequest> findByUser(User user);
+  List<ProjectJoinRequest> findByApplicationUser(ApplicationUser applicationUser);
 }

@@ -1,5 +1,8 @@
 package com.codecool.tasx.service.auth;
 
+import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
+import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.model.auth.account.AccountType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -7,7 +10,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -41,69 +43,61 @@ public class JwtService {
     refreshTokenAlgorithm = SignatureAlgorithm.HS256;
   }
 
-  public String generateAccessToken(UserDetails userDetails) {
+  public String generateAccessToken(TokenPayloadDto payloadDto) {
     return generateToken(
-      new HashMap<>(), userDetails, accessTokenExpiration, accessTokenSecret, accessTokenAlgorithm);
+      payloadDto, accessTokenExpiration, accessTokenSecret, accessTokenAlgorithm);
   }
 
-  public String generateRefreshToken(UserDetails userDetails) {
-    return generateToken(
-      new HashMap<>(), userDetails, refreshTokenExpiration, refreshTokenSecret,
+  public String generateRefreshToken(TokenPayloadDto payloadDto) {
+    return generateToken(payloadDto, refreshTokenExpiration, refreshTokenSecret,
       refreshTokenAlgorithm);
-  }
-
-  public boolean isAccessTokenValid(String accessToken, UserDetails userDetails) {
-    return isTokenValid(accessToken, userDetails, accessTokenSecret, accessTokenAlgorithm);
   }
 
   public boolean isAccessTokenExpired(String accessToken) {
     return isTokenExpired(accessToken, accessTokenSecret, accessTokenAlgorithm);
   }
 
-  public boolean isRefreshTokenValid(String refreshToken, UserDetails userDetails) {
-    return isTokenValid(refreshToken, userDetails, refreshTokenSecret, refreshTokenAlgorithm);
+  public TokenPayloadDto verifyAccessToken(String accessToken) {
+    Claims claims = extractAllClaimsFromToken(accessToken, accessTokenSecret, accessTokenAlgorithm);
+    return getPayloadDto(claims);
+  }
+
+  public TokenPayloadDto verifyRefreshToken(String refreshToken) {
+    Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
+      refreshTokenAlgorithm);
+    return getPayloadDto(claims);
   }
 
   private String generateToken(
-    Map<String, Object> extraClaims, UserDetails userDetails,
+    TokenPayloadDto payloadDto,
     Long expiration, String secret, SignatureAlgorithm algorithm) {
     Date now = new Date();
     Date expirationDate = new Date(now.getTime() + expiration);
+    Map claims = new HashMap();
+    claims.put("accountType", payloadDto.accountType().toString());
 
     return Jwts.builder()
-      .setClaims(extraClaims)
-      .setSubject(userDetails.getUsername())
+      .setClaims(claims)
+      .setSubject(payloadDto.email())
       .setIssuedAt(now)
       .setExpiration(expirationDate)
       .signWith(getSigningKey(secret), algorithm)
       .compact();
   }
 
+  private TokenPayloadDto getPayloadDto(Claims claims) {
+    try {
+      String email = claims.getSubject();
+      AccountType accountType = AccountType.valueOf(claims.get("accountType").toString());
+      return new TokenPayloadDto(email, accountType);
+    } catch (IllegalArgumentException | NullPointerException e) {
+      throw new UnauthorizedException();
+    }
+  }
+
   private Key getSigningKey(String secret) {
     byte[] keyBytes = Decoders.BASE64.decode(secret);
     return Keys.hmacShaKeyFor(keyBytes);
-  }
-
-  private boolean isTokenValid(
-    String token, UserDetails userDetails, String secret, SignatureAlgorithm algorithm) {
-    final String subject = extractSubjectFromToken(token, secret, algorithm);
-    return (subject.equals(userDetails.getUsername())) && !isTokenExpired(
-      token, secret, algorithm);
-  }
-
-  public String extractSubjectFromAccessToken(String accessToken) {
-    return extractClaimFromToken(
-      accessToken, accessTokenSecret, accessTokenAlgorithm, Claims::getSubject);
-  }
-
-  public String extractSubjectFromRefreshToken(String refreshToken) {
-    return extractClaimFromToken(
-      refreshToken, refreshTokenSecret, refreshTokenAlgorithm, Claims::getSubject);
-  }
-
-  private String extractSubjectFromToken(
-    String token, String secret, SignatureAlgorithm algorithm) {
-    return extractClaimFromToken(token, secret, algorithm, Claims::getSubject);
   }
 
   private boolean isTokenExpired(String token, String secret, SignatureAlgorithm algorithm) {

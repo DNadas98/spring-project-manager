@@ -11,14 +11,14 @@ import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.requests.ProjectJoinRequest;
 import com.codecool.tasx.model.requests.ProjectJoinRequestDao;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
-import com.codecool.tasx.service.auth.CustomAccessControlService;
+import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,47 +29,45 @@ public class ProjectRequestService {
   private final ProjectDao projectDao;
   private final ProjectJoinRequestDao requestDao;
   private final UserProvider userProvider;
-  private final CustomAccessControlService accessControlService;
   private final ProjectConverter projectConverter;
   private final Logger logger;
 
   @Autowired
   public ProjectRequestService(
     ProjectDao projectDao, ProjectJoinRequestDao requestDao, UserProvider userProvider,
-    CustomAccessControlService accessControlService, ProjectConverter projectConverter) {
+    ProjectConverter projectConverter) {
     this.projectDao = projectDao;
     this.requestDao = requestDao;
     this.userProvider = userProvider;
-    this.accessControlService = accessControlService;
     this.projectConverter = projectConverter;
     this.logger = LoggerFactory.getLogger(this.getClass());
   }
 
   @Transactional
   public ProjectJoinRequestResponseDto createJoinRequest(Long companyId, Long projectId) {
-    User user = userProvider.getAuthenticatedUser();
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    if (project.getAssignedEmployees().contains(user)) {
+    if (project.getAssignedEmployees().contains(applicationUser)) {
       throw new UserAlreadyInProjectException();
     }
-    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndUser(
+    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndApplicationUser(
       project,
-      user);
+      applicationUser);
     if (duplicateRequest.isPresent()) {
       throw new DuplicateProjectJoinRequestException();
     }
-    ProjectJoinRequest savedRequest = requestDao.save(new ProjectJoinRequest(project, user));
+    ProjectJoinRequest savedRequest = requestDao.save(new ProjectJoinRequest(project,
+      applicationUser));
     return projectConverter.getProjectJoinRequestResponseDto(savedRequest);
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
     Long companyId, Long projectId) {
-    User user = userProvider.getAuthenticatedUser();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    accessControlService.verifyProjectOwnerAccess(project, user);
     List<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(
       project,
       RequestStatus.PENDING);
@@ -78,18 +76,15 @@ public class ProjectRequestService {
 
   @Transactional
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfUser() {
-    User user = userProvider.getAuthenticatedUser();
-    List<ProjectJoinRequest> requests = requestDao.findByUser(user);
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    List<ProjectJoinRequest> requests = requestDao.findByApplicationUser(applicationUser);
     return projectConverter.getProjectJoinRequestResponseDtos(requests);
   }
 
   @Transactional(rollbackOn = Exception.class)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public void handleJoinRequest(
     Long companyId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
-    User user = userProvider.getAuthenticatedUser();
-    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
-      () -> new ProjectNotFoundException(projectId));
-    accessControlService.verifyAssignedToProjectAccess(project, user);
     ProjectJoinRequest request = requestDao.findByCompanyIdAndProjectIdAndRequestId(
       companyId, projectId, requestId).orElseThrow(
       () -> new ProjectJoinRequestNotFoundException(requestId));
@@ -100,7 +95,7 @@ public class ProjectRequestService {
     }
   }
 
-  private void addUserToProject(User user, Project project) {
-    project.assignEmployee(user);
+  private void addUserToProject(ApplicationUser applicationUser, Project project) {
+    project.assignEmployee(applicationUser);
   }
 }

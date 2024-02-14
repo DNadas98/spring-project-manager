@@ -2,7 +2,7 @@ package com.codecool.tasx.model.company.project;
 
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.task.Task;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -22,12 +22,12 @@ public class Project {
 
   @ManyToOne
   @JoinColumn(name = "project_owner_id")
-  private User projectOwner;
+  private ApplicationUser projectOwner;
 
   @ManyToMany
   @JoinTable(name = "project_assigned_employees", joinColumns = @JoinColumn(name = "project_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
-  private List<User> assignedEmployees;
+  private List<ApplicationUser> assignedEmployees;
 
   @ManyToOne
   @JoinColumn(name = "company_id")
@@ -42,7 +42,7 @@ public class Project {
 
   public Project(
     String name, String description, LocalDateTime startDate, LocalDateTime deadline,
-    User projectOwner, Company company) {
+    ApplicationUser projectOwner, Company company) {
     this.name = name;
     this.description = description;
     this.startDate = startDate;
@@ -93,15 +93,15 @@ public class Project {
     this.deadline = deadline;
   }
 
-  public User getProjectOwner() {
+  public ApplicationUser getProjectOwner() {
     return projectOwner;
   }
 
-  public void setProjectOwner(User projectOwner) {
+  public void setProjectOwner(ApplicationUser projectOwner) {
     this.projectOwner = projectOwner;
   }
 
-  public List<User> getAssignedEmployees() {
+  public List<ApplicationUser> getAssignedEmployees() {
     return List.copyOf(assignedEmployees);
   }
 
@@ -117,11 +117,11 @@ public class Project {
     return List.copyOf(tasks);
   }
 
-  public void assignEmployee(User employee) {
+  public void assignEmployee(ApplicationUser employee) {
     assignedEmployees.add(employee);
   }
 
-  public void removeEmployee(User employee) {
+  public void removeEmployee(ApplicationUser employee) {
     assignedEmployees.remove(employee);
   }
 

@@ -24,10 +24,24 @@ spring:
           google:
             client-id: ${BACKEND_OAUTH2_GOOGLE_CLIENT_ID}
             client-secret: ${BACKEND_OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: "${BACKEND_OAUTH2_GOOGLE_AUTHORIZED_REDIRECT_URI}/{registrationId}"
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
             scope:
               - email
               - profile
+          facebook:
+            client-id: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_ID}
+            client-secret: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_SECRET}
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
+            scope:
+              - email
+              - public_profile
+          github:
+            client-id: ${BACKEND_OAUTH2_GITHUB_CLIENT_ID}
+            client-secret: ${BACKEND_OAUTH2_GITHUB_CLIENT_SECRET}
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
+            scope:
+              - user:email
+              - read:user
 
 logging:
   level:

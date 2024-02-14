@@ -1,5 +1,9 @@
 package com.codecool.tasx.config.auth;
 
+import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
+import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.model.auth.account.UserAccount;
+import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.service.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,11 +27,9 @@ import java.io.IOException;
 /**
  * {@inheritDoc}
  * - Parses JWT access token from Authorization header<br/>
- * - Extracts subject (email) from token<br/>
- * - Reads {@link UserDetails} from database<br/>
- * - Verifies JWT (expiration, signature)<br/>
- * - Cross-references it's payload with {@link UserDetails}<br/>
- * - Creates internal {@link UsernamePasswordAuthenticationToken} from {@link UserDetails}
+ * - Extracts subject ({@link TokenPayloadDto}) from token<br/>
+ * - Reads {@link UserAccount} from database<br/>
+ * - Creates internal {@link UsernamePasswordAuthenticationToken} from {@link UserAccount}
  * and adds it to the {@link SecurityContextHolder}<br/>
  *
  * @Expiration: Appends <code>isAccessTokenExpired: true</code> to the response object if
@@ -37,13 +39,13 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
-  private final UserDetailsService userDetailsService;
   private final Logger logger;
+  private final UserAccountDao accountDao;
 
   @Autowired
-  public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+  public JwtAuthenticationFilter(JwtService jwtService, UserAccountDao accountDao) {
     this.jwtService = jwtService;
-    this.userDetailsService = userDetailsService;
+    this.accountDao = accountDao;
     this.logger = LoggerFactory.getLogger(this.getClass());
   }
 
@@ -52,50 +54,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
     @NonNull FilterChain filterChain) throws IOException {
     try {
-      logger.info(request.getRequestURI());
-      final String authHeader = request.getHeader("Authorization");
-      final String accessTokenString;
-      final String userEmail;
+      if (SecurityContextHolder.getContext().getAuthentication() != null) {
+        filterChain.doFilter(request, response);
+      }
 
+      String authHeader = request.getHeader("Authorization");
       if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         filterChain.doFilter(request, response);
         return;
       }
+      String accessToken = authHeader.split(" ")[1];
 
-      accessTokenString = authHeader.split(" ")[1];
-
-      if (jwtService.isAccessTokenExpired(accessTokenString)) {
+      if (jwtService.isAccessTokenExpired(accessToken)) {
         logger.error("Access Token is expired");
         setAccessTokenExpiredResponse(response);
         return;
       }
 
-      userEmail = jwtService.extractSubjectFromAccessToken(accessTokenString);
-      if (userEmail == null) {
-        logger.error("Access Token is invalid");
-        setUnauthorizedResponse(response);
-        return;
-      }
+      TokenPayloadDto payload = jwtService.verifyAccessToken(accessToken);
+      UserAccount account = accountDao.findOneByEmailAndAccountType(
+        payload.email(), payload.accountType()).orElseThrow(() -> new UnauthorizedException());
 
-      if (SecurityContextHolder.getContext().getAuthentication() == null) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+      AbstractAuthenticationToken authenticationToken =
+        getAuthenticationToken(account);
 
-        if (!jwtService.isAccessTokenValid(accessTokenString, userDetails)) {
-          logger.error("Access Token is invalid");
-          setUnauthorizedResponse(response);
-          return;
-        }
-
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-          userDetails, null, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-      }
+      SecurityContextHolder.getContext().setAuthentication(authenticationToken);
       filterChain.doFilter(request, response);
     } catch (Exception e) {
       logger.error(e.getMessage());
       setUnauthorizedResponse(response);
+    }
+  }
+
+  private AbstractAuthenticationToken getAuthenticationToken(UserAccount account) {
+    switch (account.getAccountType()) {
+      case LOCAL -> {
+        UserDetails userDetails = (UserDetails) account;
+        return new UsernamePasswordAuthenticationToken(
+          userDetails, null, userDetails.getAuthorities()
+        );
+      }
+      default -> {
+        OAuth2User oAuth2User = (OAuth2User) account;
+        return new UsernamePasswordAuthenticationToken(
+          oAuth2User, null, oAuth2User.getAuthorities()
+        );
+      }
     }
   }
 

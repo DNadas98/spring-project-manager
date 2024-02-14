@@ -2,7 +2,7 @@ package com.codecool.tasx.model.company.project;
 
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.requests.RequestStatus;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,20 +21,20 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT p FROM Project p" +
-      " WHERE :user MEMBER OF p.assignedEmployees" +
+      " WHERE :applicationUser MEMBER OF p.assignedEmployees" +
       " AND p.company = :company")
   List<Project> findAllWithEmployeeAndCompany(
-    @Param("user") User user, @Param("company") Company company);
+    @Param("applicationUser") ApplicationUser applicationUser, @Param("company") Company company);
 
   @Query(
     "SELECT p FROM Project p" +
-      " WHERE :user NOT MEMBER OF p.assignedEmployees" +
+      " WHERE :applicationUser NOT MEMBER OF p.assignedEmployees" +
       " AND p.id NOT IN " +
       "(SELECT pr.project.id FROM ProjectJoinRequest pr" +
-      " WHERE pr.user = :user" +
+      " WHERE pr.applicationUser = :applicationUser" +
       " AND pr.status IN (:statuses))" +
       " AND p.company = :company")
   List<Project> findAllWithoutEmployeeAndJoinRequestInCompany(
-    @Param("user") User user, @Param("statuses") List<RequestStatus> statuses,
+    @Param("applicationUser") ApplicationUser applicationUser, @Param("statuses") List<RequestStatus> statuses,
     @Param("company") Company company);
 }

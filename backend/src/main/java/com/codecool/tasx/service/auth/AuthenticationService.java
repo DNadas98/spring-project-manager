@@ -2,15 +2,20 @@ package com.codecool.tasx.service.auth;
 
 
 import com.codecool.tasx.controller.dto.user.auth.*;
+import com.codecool.tasx.exception.auth.AccountAlreadyExistsException;
 import com.codecool.tasx.exception.auth.AccountLinkingRequiredException;
+import com.codecool.tasx.exception.auth.InvalidCredentialsException;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
-import com.codecool.tasx.model.user.User;
-import com.codecool.tasx.model.user.UserDao;
+import com.codecool.tasx.model.auth.account.AccountType;
+import com.codecool.tasx.model.auth.account.LocalUserAccount;
+import com.codecool.tasx.model.auth.account.UserAccount;
+import com.codecool.tasx.model.auth.account.UserAccountDao;
+import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.ApplicationUserDao;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,77 +24,78 @@ import java.util.Optional;
 @Service
 public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
-  private final UserDao userDao;
+  private final UserAccountDao accountDao;
+  private final ApplicationUserDao applicationUserDao;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
   @Autowired
   public AuthenticationService(
-    PasswordEncoder passwordEncoder, UserDao userDao, JwtService jwtService,
+    PasswordEncoder passwordEncoder, UserAccountDao accountDao,
+    ApplicationUserDao applicationUserDao, JwtService jwtService,
     AuthenticationManager authenticationManager) {
     this.passwordEncoder = passwordEncoder;
-    this.userDao = userDao;
+    this.accountDao = accountDao;
+    this.applicationUserDao = applicationUserDao;
     this.jwtService = jwtService;
     this.authenticationManager = authenticationManager;
   }
 
   @Transactional(rollbackOn = Exception.class)
   public void register(RegisterRequestDto registerRequest) {
-    Optional<User> duplicateUser = userDao.findOneByEmail(registerRequest.email());
-    if (duplicateUser.isPresent() && duplicateUser.get().isOAuth2User()) {
-      throw new AccountLinkingRequiredException(
-        "OAuth2 user account already exists, account linking is required to proceed");
+    Optional<UserAccount> existingAccount = accountDao.findOneByEmail(registerRequest.email());
+    if (existingAccount.isPresent()) {
+      UserAccount account = existingAccount.get();
+      if (account.getAccountType() == AccountType.LOCAL) {
+        throw new AccountAlreadyExistsException();
+      }
+      handleAccountLinking(existingAccount.get());
     }
-    User user = new User(registerRequest.username(), registerRequest.email(),
-      passwordEncoder.encode(registerRequest.password()));
-    userDao.save(user);
+    ApplicationUser newUser = new ApplicationUser(registerRequest.username());
+    String hashedPassword = passwordEncoder.encode(registerRequest.password());
+    UserAccount newAccount = new LocalUserAccount(registerRequest.email(), hashedPassword);
+    applicationUserDao.save(newUser);
+    newAccount.setApplicationUser(newUser);
+    accountDao.save(newAccount);
   }
 
   public LoginResponseDto login(LoginRequestDto loginRequest) {
     authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
-    User user = getUserByEmail(loginRequest.email());
-    if (user.isOAuth2User()) {
-      throw new AccountLinkingRequiredException(
-        "OAuth2 user account already exists, account linking is required to proceed");
-    }
-    String accessToken = jwtService.generateAccessToken(user);
+    UserAccount account = accountDao.findOneByEmailAndAccountType(
+        loginRequest.email(), AccountType.LOCAL)
+      .orElseThrow(() -> new InvalidCredentialsException());
+    ApplicationUser user = account.getApplicationUser();
+    TokenPayloadDto payloadDto = new TokenPayloadDto(account.getEmail(), account.getAccountType());
+    String accessToken = jwtService.generateAccessToken(payloadDto);
     return new LoginResponseDto(
       accessToken,
       new UserInfoDto(
-        user.getActualUsername(),
-        user.getEmail(),
-        user.getRoles()
-      ));
+        user.getUsername(), account.getEmail(), account.getAccountType(), user.getGlobalRoles()));
   }
 
-  private User getUserByEmail(String email)
-    throws UsernameNotFoundException {
-    User user = userDao.findOneByEmail(email).orElseThrow(
-      () -> new UsernameNotFoundException("User account not found"));
-    return user;
-  }
-
-  public String getNewRefreshToken(String email) {
-    User user = getUserByEmail(email);
-    return jwtService.generateRefreshToken(user);
+  public String getNewRefreshToken(TokenPayloadDto payloadDto) {
+    return jwtService.generateRefreshToken(payloadDto);
   }
 
   public RefreshResponseDto refresh(RefreshRequestDto refreshRequest) {
     String refreshToken = refreshRequest.refreshToken();
-    String email = jwtService.extractSubjectFromRefreshToken(refreshToken);
-    User user = getUserByEmail(email);
-    if (!jwtService.isRefreshTokenValid(refreshToken, user)) {
-      throw new UnauthorizedException("Refresh token is invalid");
-    }
-    String accessToken = jwtService.generateAccessToken(user);
+    TokenPayloadDto payload = jwtService.verifyRefreshToken(refreshToken);
+    UserAccount account = accountDao.findOneByEmailAndAccountType(
+      payload.email(), payload.accountType()
+    ).orElseThrow(() -> new UnauthorizedException());
+    ApplicationUser user = account.getApplicationUser();
+    String accessToken = jwtService.generateAccessToken(payload);
     return new RefreshResponseDto(
       accessToken,
       new UserInfoDto(
-        user.getActualUsername(),
-        user.getEmail(),
-        user.getRoles()
-      ));
+        user.getUsername(), account.getEmail(), account.getAccountType(), user.getGlobalRoles()));
+  }
+
+  private void handleAccountLinking(UserAccount account) {
+    throw new AccountLinkingRequiredException(String.format(
+      "%s user account with the provided e-mail address already exists. Account linking is required to proceed",
+      account.getAccountType().getDisplayName()));
   }
 }
 

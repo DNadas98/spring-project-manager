@@ -10,6 +10,8 @@ import Container from "@mui/material/Container";
 import Collapse from "@mui/material/Collapse";
 import {styled} from "@mui/material/styles";
 import OAuth2GoogleSignInButton from "./OAuth2GoogleSignInButton.jsx";
+import OAuth2FacebookSignInButton from "./OAuth2FacebookSignInButton.jsx";
+import OAuth2GithubSignInButton from "./OAuth2GithubSignInButton.jsx";
 
 const StyledDiv = styled("div")(({theme}) => ({
   background: "linear-gradient(45deg, #516d79 30%, #11508d 90%)",
@@ -130,6 +132,8 @@ function RegisterForm({
               Sign Up
             </StyledButton>
             <OAuth2GoogleSignInButton/>
+            <OAuth2FacebookSignInButton/>
+            <OAuth2GithubSignInButton/>
           </Box>
         </Collapse>
       </StyledDiv>

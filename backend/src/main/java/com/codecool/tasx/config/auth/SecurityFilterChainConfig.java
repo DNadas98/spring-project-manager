@@ -1,6 +1,5 @@
 package com.codecool.tasx.config.auth;
 
-import com.codecool.tasx.service.auth.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +10,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -22,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityFilterChainConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final AuthenticationProvider authenticationProvider;
-  private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
+  private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository;
   private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
   private final AuthenticationSuccessHandler authenticationSuccessHandler;
   private final AuthenticationFailureHandler authenticationFailureHandler;
@@ -31,13 +32,13 @@ public class SecurityFilterChainConfig {
   public SecurityFilterChainConfig(
     JwtAuthenticationFilter jwtAuthenticationFilter,
     AuthenticationProvider authenticationProvider,
-    HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository,
+    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository,
     OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
     AuthenticationSuccessHandler authenticationSuccessHandler,
     AuthenticationFailureHandler authenticationFailureHandler) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     this.authenticationProvider = authenticationProvider;
-    this.authorizationRequestRepository = authorizationRequestRepository;
+    this.requestRepository = requestRepository;
     this.oAuth2UserService = oAuth2UserService;
     this.authenticationSuccessHandler = authenticationSuccessHandler;
     this.authenticationFailureHandler = authenticationFailureHandler;
@@ -75,7 +76,7 @@ public class SecurityFilterChainConfig {
       .oauth2Login(configurer -> configurer
         .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
           .baseUri("/oauth2/authorize")
-          .authorizationRequestRepository(authorizationRequestRepository))
+          .authorizationRequestRepository(requestRepository))
         .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
           .baseUri("/oauth2/callback/*"))
         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig

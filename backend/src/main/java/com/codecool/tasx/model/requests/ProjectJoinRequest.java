@@ -1,7 +1,7 @@
 package com.codecool.tasx.model.requests;
 
 import com.codecool.tasx.model.company.project.Project;
-import com.codecool.tasx.model.user.User;
+import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -19,7 +19,7 @@ public class ProjectJoinRequest {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private User user;
+  private ApplicationUser applicationUser;
 
   @Enumerated(EnumType.STRING)
   private RequestStatus status;
@@ -27,9 +27,9 @@ public class ProjectJoinRequest {
   public ProjectJoinRequest() {
   }
 
-  public ProjectJoinRequest(Project project, User user) {
+  public ProjectJoinRequest(Project project, ApplicationUser applicationUser) {
     this.project = project;
-    this.user = user;
+    this.applicationUser = applicationUser;
     this.status = RequestStatus.PENDING;
   }
 
@@ -41,8 +41,8 @@ public class ProjectJoinRequest {
     return project;
   }
 
-  public User getUser() {
-    return user;
+  public ApplicationUser getUser() {
+    return applicationUser;
   }
 
   public RequestStatus getStatus() {
@@ -55,7 +55,7 @@ public class ProjectJoinRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, project, user, status);
+    return Objects.hash(id, project, applicationUser, status);
   }
 
   @Override
@@ -68,12 +68,13 @@ public class ProjectJoinRequest {
     }
     ProjectJoinRequest that = (ProjectJoinRequest) object;
     return Objects.equals(id, that.id) && Objects.equals(project, that.project) && Objects.equals(
-      user, that.user) && status == that.status;
+      applicationUser, that.applicationUser) && status == that.status;
   }
 
   @Override
   public String toString() {
-    return "ProjectJoinRequest{" + "id=" + id + ", project=" + project + ", user=" + user +
+    return "ProjectJoinRequest{" + "id=" + id + ", project=" + project + ", applicationUser=" +
+      applicationUser +
       ", status=" + status + '}';
   }
 }

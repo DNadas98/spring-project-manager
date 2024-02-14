@@ -1,5 +1,5 @@
 package com.codecool.tasx.model.user;
 
-public enum Role {
+public enum GlobalRole {
   USER, EDITOR, ADMIN
 }

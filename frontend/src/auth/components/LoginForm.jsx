@@ -13,6 +13,8 @@ import {styled} from "@mui/material/styles";
 import Collapse from "@mui/material/Collapse";
 import Popover from "@mui/material/Popover";
 import OAuth2GoogleSignInButton from "./OAuth2GoogleSignInButton.jsx";
+import OAuth2FacebookSignInButton from "./OAuth2FacebookSignInButton.jsx";
+import OAuth2GithubSignInButton from "./OAuth2GithubSignInButton.jsx";
 
 const StyledDiv = styled("div")(({theme}) => ({
   background: "linear-gradient(45deg, #516d79 30%, #11508d 90%)",
@@ -117,6 +119,8 @@ function LoginForm({onSubmit, errorMessage, emailError, passwordError}) {
             </Grid>
           </Grid>
           <OAuth2GoogleSignInButton/>
+          <OAuth2FacebookSignInButton/>
+          <OAuth2GithubSignInButton/>
         </Box>
       </StyledDiv>
       <Popover
