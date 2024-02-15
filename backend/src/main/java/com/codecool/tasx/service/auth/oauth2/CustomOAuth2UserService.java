@@ -1,7 +1,5 @@
 package com.codecool.tasx.service.auth.oauth2;
 
-import com.codecool.tasx.exception.auth.AccountAlreadyExistsException;
-import com.codecool.tasx.exception.auth.AccountLinkingRequiredException;
 import com.codecool.tasx.exception.auth.OAuth2ProcessingException;
 import com.codecool.tasx.model.auth.account.*;
 import com.codecool.tasx.model.user.ApplicationUser;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,37 +43,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return loadAccount(AccountType.FACEBOOK, attributes, "email", "name");
       }
       throw new OAuth2ProcessingException("Unsupported provider: " + providerId);
-    } catch (OAuth2ProcessingException | AccountLinkingRequiredException e) {
-      logger.error(e.getMessage());
+    } catch (Exception e) {
+      String errorMessage = e.getMessage() != null
+        ? e.getMessage()
+        : "An error has occurred while processing the authorization request";
+      logger.error(errorMessage);
       throw new OAuth2AuthenticationException(
         new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR),
-        e.getMessage());
+        errorMessage);
     }
   }
 
   private OAuth2UserAccount loadAccount(
-    AccountType accountType,
-    Map<String, Object> attributes, String emailKey, String usernameKey) {
+    AccountType accountType, Map<String, Object> attributes, String emailKey, String usernameKey) {
     String email = getEmail(attributes, emailKey);
     String username = getName(attributes, usernameKey);
-    ApplicationUser applicationUser = createOrReadApplicationUser(email,
-      username, accountType);
-    OAuth2UserAccount oAuth2UserAccount = OAuth2UserAccountFactory.getAccount(email, accountType);
-    oAuth2UserAccount.setApplicationUser(applicationUser);
-    return accountDao.save(oAuth2UserAccount);
-  }
-
-  private ApplicationUser createOrReadApplicationUser(
-    String email, String username, AccountType accountType) {
-    List<UserAccount> accountsWithMatchingEmail = accountDao.findAllByEmail(email);
-    if (accountsWithMatchingEmail.isEmpty()) {
-      return applicationUserDao.save(new ApplicationUser(username));
-    } else if (accountsWithMatchingEmail.stream().anyMatch(
-      account -> account.getAccountType().equals(accountType))) {
-      throw new AccountAlreadyExistsException();
-    } else {
-      return accountsWithMatchingEmail.getFirst().getApplicationUser();
+    ApplicationUser applicationUser = createOrReadApplicationUser(email, username);
+    Optional<UserAccount> existingOauth2Account = findExistingOAuth2Account(
+      accountType, applicationUser);
+    if (existingOauth2Account.isPresent()) {
+      return (OAuth2UserAccount) existingOauth2Account.get();
     }
+    return createOAuth2UserAccount(accountType, email, applicationUser);
   }
 
   private String getEmail(
@@ -93,5 +83,29 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       throw new OAuth2ProcessingException("Account name is unavailable");
     }
     return nameAttribute.toString();
+  }
+
+  private ApplicationUser createOrReadApplicationUser(
+    String email, String username) {
+    List<UserAccount> accountsWithMatchingEmail = accountDao.findAllByEmail(email);
+    if (accountsWithMatchingEmail.isEmpty()) {
+      return applicationUserDao.save(new ApplicationUser(username));
+    }
+    return accountsWithMatchingEmail.getFirst().getApplicationUser();
+  }
+
+  private Optional<UserAccount> findExistingOAuth2Account(
+    AccountType accountType, ApplicationUser applicationUser) {
+    return applicationUser.getAccounts().stream().filter(
+      account -> account instanceof OAuth2UserAccount &&
+        account.getAccountType().equals(accountType)).findFirst();
+
+  }
+
+  private OAuth2UserAccount createOAuth2UserAccount(
+    AccountType accountType, String email, ApplicationUser applicationUser) {
+    OAuth2UserAccount newOauth2Account = OAuth2UserAccountFactory.getAccount(email, accountType);
+    newOauth2Account.setApplicationUser(applicationUser);
+    return accountDao.save(newOauth2Account);
   }
 }
