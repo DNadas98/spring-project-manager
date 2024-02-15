@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FacebookOAuth2UserAccount
   extends OAuth2UserAccount {
-  public FacebookOAuth2UserAccount(String email) {
+  protected FacebookOAuth2UserAccount(String email) {
     super(email, AccountType.FACEBOOK);
   }
 }

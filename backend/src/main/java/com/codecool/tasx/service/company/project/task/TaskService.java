@@ -41,7 +41,8 @@ public class TaskService {
 
   @Autowired
   public TaskService(
-    TaskDao taskDao, ProjectDao projectDao, ApplicationUserDao applicationUserDao, TaskConverter taskConverter,
+    TaskDao taskDao, ProjectDao projectDao, ApplicationUserDao applicationUserDao,
+    TaskConverter taskConverter,
     UserProvider userProvider) {
     this.taskDao = taskDao;
     this.projectDao = projectDao;

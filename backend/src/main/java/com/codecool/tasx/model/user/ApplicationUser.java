@@ -143,6 +143,10 @@ public class ApplicationUser {
     this.ownedProjects.remove(ownedProject);
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, username, globalRoles, score);
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -156,11 +160,6 @@ public class ApplicationUser {
       Objects.equals(
         username, applicationUser.username) && Objects.equals(
       globalRoles, applicationUser.globalRoles);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, username, globalRoles, score);
   }
 
   @Override

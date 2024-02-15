@@ -33,15 +33,15 @@ public class EmailConfig {
     mailSender.setPassword(SMTP_PASSWORD);
 
     Properties props = new Properties();
-    props.put("email.smtp.auth", true);
+    props.put("mail.smtp.auth", true);
     props.put(
-      "email.smtp.socketFactory.port",
+      "mail.smtp.socketFactory.port",
       SMTP_PORT);
     props.put(
-      "email.smtp.socketFactory.class",
+      "mail.smtp.socketFactory.class",
       javax.net.ssl.SSLSocketFactory.getDefault());
-    props.put("email.smtp.ssl.enable", true);
-    props.put("email.smtp.ssl.trust", SMTP_HOST);
+    props.put("mail.smtp.ssl.enable", true);
+    props.put("mail.smtp.ssl.trust", SMTP_HOST);
 
     mailSender.setJavaMailProperties(props);
     return mailSender;

@@ -4,11 +4,13 @@ import com.codecool.tasx.controller.dto.email.EmailRequestDto;
 import com.codecool.tasx.exception.email.EmailAddressFormatException;
 import com.codecool.tasx.exception.email.EmailContentFormatException;
 import com.codecool.tasx.exception.email.EmailSubjectFormatException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,13 +26,15 @@ public class EmailService {
   }
 
   public void sendMailToUserAddress(EmailRequestDto mailRequest) throws MailException,
-    EmailAddressFormatException, EmailSubjectFormatException, EmailContentFormatException {
+    EmailAddressFormatException, EmailSubjectFormatException, EmailContentFormatException,
+    MessagingException {
     mailRequest.validate();
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(mailRequest.to());
-    message.setFrom(systemSmtpAddress);
-    message.setSubject(mailRequest.subject());
-    message.setText(mailRequest.content());
+    MimeMessage message = javaMailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+    helper.setTo(mailRequest.to());
+    helper.setFrom(systemSmtpAddress);
+    helper.setSubject(mailRequest.subject());
+    helper.setText(mailRequest.content(), true);
     javaMailSender.send(message);
   }
 }

@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 
 public record EmailRequestDto(String to, String subject, String content) {
 
-  private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,100}$");
+  private static final Pattern EMAIL_PATTERN = Pattern.compile(
+    "^[^\\s@]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,100}$");
   private static final int SUBJECT_MIN_LENGTH = 5;
   private static final int SUBJECT_MAX_LENGTH = 100;
   private static final int CONTENT_MIN_LENGTH = 10;
