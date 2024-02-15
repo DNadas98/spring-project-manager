@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GoogleOAuth2UserAccount
   extends OAuth2UserAccount {
-  public GoogleOAuth2UserAccount(String email) {
+  protected GoogleOAuth2UserAccount(String email) {
     super(email, AccountType.GOOGLE);
   }
 }

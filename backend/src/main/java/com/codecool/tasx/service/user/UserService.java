@@ -23,7 +23,8 @@ public class UserService {
   private final Logger logger;
   private final UserProvider userProvider;
 
-  public UserService(ApplicationUserDao applicationUserDao, UserConverter userConverter, UserProvider userProvider) {
+  public UserService(
+    ApplicationUserDao applicationUserDao, UserConverter userConverter, UserProvider userProvider) {
     this.applicationUserDao = applicationUserDao;
     this.userConverter = userConverter;
     this.userProvider = userProvider;
@@ -59,13 +60,15 @@ public class UserService {
   @Transactional(rollbackOn = Exception.class)
   public UserResponsePrivateDto updateUserById(Long userId, UserUpdateRequestDto updateRequestDto)
     throws ConstraintViolationException {
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
+      () -> new UserNotFoundException(userId));
     updateUserDetails(updateRequestDto, applicationUser);
     ApplicationUser updatedApplicationUser = applicationUserDao.save(applicationUser);
     return userConverter.getUserResponsePrivateDto(updatedApplicationUser);
   }
 
-  private void updateUserDetails(UserUpdateRequestDto updateRequestDto, ApplicationUser applicationUser) {
+  private void updateUserDetails(
+    UserUpdateRequestDto updateRequestDto, ApplicationUser applicationUser) {
     applicationUser.setUsername(updateRequestDto.username());
   }
 }

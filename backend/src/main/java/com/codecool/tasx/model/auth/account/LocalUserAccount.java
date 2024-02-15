@@ -52,14 +52,6 @@ public class LocalUserAccount extends UserAccount implements UserDetails {
     this.password = password;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
-
   /**
    * Returns the username used to authenticate the user. Cannot return <code>null</code>.
    *
@@ -116,5 +108,13 @@ public class LocalUserAccount extends UserAccount implements UserDetails {
   @Override
   public boolean isEnabled() {
     return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 }

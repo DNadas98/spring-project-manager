@@ -28,8 +28,13 @@ public abstract class OAuth2UserAccount extends UserAccount implements OAuth2Use
     this.attributes = new HashMap<>();
   }
 
-  public OAuth2UserAccount() {
+  protected OAuth2UserAccount() {
     this.attributes = new HashMap<>();
+  }
+
+  @Override
+  public <T> T getAttribute(String key) {
+    return (T) this.attributes.get(key);
   }
 
   /**
@@ -43,8 +48,11 @@ public abstract class OAuth2UserAccount extends UserAccount implements OAuth2Use
   }
 
   @Override
-  public <T> T getAttribute(String key) {
-    return (T) this.attributes.get(key);
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return super.getApplicationUser().getGlobalRoles().stream().map(
+        globalRole -> new SimpleGrantedAuthority(globalRole.name()))
+      .collect(
+        Collectors.toSet());
   }
 
   public void putAttribute(String key, Object value) {
@@ -53,14 +61,6 @@ public abstract class OAuth2UserAccount extends UserAccount implements OAuth2Use
 
   public void removeAttribute(String key) {
     this.attributes.remove(key);
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return super.getApplicationUser().getGlobalRoles().stream().map(
-        globalRole -> new SimpleGrantedAuthority(globalRole.name()))
-      .collect(
-        Collectors.toSet());
   }
 
   /**

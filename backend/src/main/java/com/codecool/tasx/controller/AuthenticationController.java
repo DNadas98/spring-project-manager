@@ -1,6 +1,7 @@
 package com.codecool.tasx.controller;
 
 import com.codecool.tasx.controller.dto.user.auth.*;
+import com.codecool.tasx.controller.dto.verification.VerificationTokenDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
 import com.codecool.tasx.service.auth.AuthenticationService;
 import com.codecool.tasx.service.auth.oauth2.CookieService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,19 +29,33 @@ public class AuthenticationController {
 
   @PostMapping("/register")
   public ResponseEntity<?> register(
-    @RequestBody RegisterRequestDto request) {
-    authenticationService.register(request);
-    return ResponseEntity.status(HttpStatus.CREATED).body(
-      Map.of("message", "Account created successfully"));
+    @RequestBody RegisterRequestDto request) throws Exception {
+    authenticationService.sendRegistrationVerificationEmail(
+      request);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+      "message",
+      "Registration process started successfully, e-mail verification is required to proceed"));
+  }
+
+  @PostMapping("/verify-registration")
+  public ResponseEntity<?> verifyRegistration(
+    @RequestParam(name = "code") UUID verificationCode,
+    @RequestParam(name = "id") Long verificationTokenId) {
+    authenticationService.registerLocalAccount(
+      new VerificationTokenDto(verificationTokenId, verificationCode));
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+      "message",
+      "Local account registered successfully, sign in to proceed"));
   }
 
   @PostMapping("/login")
   public ResponseEntity<?> login(
     @RequestBody LoginRequestDto loginRequest, HttpServletResponse response) {
-    LoginResponseDto loginResponse = authenticationService.login(loginRequest);
+    LoginResponseDto loginResponse = authenticationService.loginLocalAccount(loginRequest);
 
     String refreshToken = authenticationService.getNewRefreshToken(
-      new TokenPayloadDto(loginResponse.userInfo().email(),
+      new TokenPayloadDto(
+        loginResponse.userInfo().email(),
         loginResponse.userInfo().accountType()));
     cookieService.addRefreshCookie(refreshToken, response);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));

@@ -56,7 +56,8 @@ public class SecurityConfig {
   public UserDetailsService userDetailsService() {
     return username -> (UserDetails) userAccountDao.findOneByEmailAndAccountType(
       username, AccountType.LOCAL).orElseThrow(() -> new UsernameNotFoundException(
-      String.format("%s account not found with the provided e-mail address",
+      String.format(
+        "%s account not found with the provided e-mail address",
         AccountType.LOCAL.getDisplayName())));
   }
 

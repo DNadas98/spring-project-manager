@@ -17,10 +17,15 @@ function Register() {
     try {
       event.preventDefault();
       setResultMessage("");
-      const {username, email, password, confirmPassword} = Object.fromEntries(new FormData(event.target).entries());
+      const {
+        username,
+        email,
+        password,
+        confirmPassword
+      } = Object.fromEntries(new FormData(event.target).entries());
       const validInput = validateInput(username, email, password, confirmPassword);
       if (validInput) {
-        const confirmed = window.confirm(`Create user account "${username}"?\nYou will be redirected to login`);
+        const confirmed = window.confirm(`Create user account "${username}"?`);
         if (confirmed) {
           return await handleRegister(username, email, password);
         } else {
@@ -70,9 +75,10 @@ function Register() {
       const {httpResponse, responseObject} = await publicFetch("auth/register", "POST", {
         "username": username, "email": email, "password": password
       });
-      setResultMessage(responseObject.message ?? responseObject.error);
-      if (httpResponse.status === 201) {
-        navigate("/login");
+      setResultMessage(responseObject.message ?? responseObject.error ?? "Failed to create user account");
+      if (httpResponse.status === 200 && responseObject.message) {
+        window.alert(responseObject.message);
+        navigate("/");
       }
     } catch (e) {
       setResultMessage("Failed to create user account");

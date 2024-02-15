@@ -46,7 +46,8 @@ public class Task {
 
   public Task(
     String name, String description, Importance importance, int difficulty,
-    LocalDateTime startDate, LocalDateTime deadline, TaskStatus taskStatus, ApplicationUser taskOwner,
+    LocalDateTime startDate, LocalDateTime deadline, TaskStatus taskStatus,
+    ApplicationUser taskOwner,
     Project project) {
     this.name = name;
     this.description = description;

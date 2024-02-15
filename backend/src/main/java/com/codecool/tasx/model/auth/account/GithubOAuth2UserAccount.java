@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GithubOAuth2UserAccount
   extends OAuth2UserAccount {
-  public GithubOAuth2UserAccount(String email) {
+  protected GithubOAuth2UserAccount(String email) {
     super(email, AccountType.GITHUB);
   }
 }

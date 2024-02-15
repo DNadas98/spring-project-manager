@@ -24,6 +24,7 @@ import CreateTask from "./user/pages/CreateTask.jsx";
 import UpdateTask from "./user/pages/UpdateTask.jsx";
 import TaskDetails from "./user/pages/TaskDetails.jsx";
 import CompanyBrowser from "./user/pages/CompanyBrowser.jsx";
+import RegisterVerificationRedirect from "./auth/pages/RegisterVerificationRedirect.jsx";
 
 const theme = createTheme({
   palette: {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register/>
+      },
+      {
+        path: "/redirect/registration",
+        element: <RegisterVerificationRedirect/>
       },
       {
         path: `/${oAuth2RedirectURL}`,
