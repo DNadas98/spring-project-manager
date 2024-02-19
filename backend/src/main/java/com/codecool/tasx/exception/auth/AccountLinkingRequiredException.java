@@ -5,8 +5,4 @@ public class AccountLinkingRequiredException extends RuntimeException {
     super(
       "User account with the provided credentials address already exists. Account linking is required to proceed");
   }
-
-  public AccountLinkingRequiredException(String message) {
-    super(message);
-  }
 }
