@@ -4,14 +4,14 @@ import com.codecool.tasx.model.auth.account.AccountType;
 import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.ProjectDao;
-import com.codecool.tasx.service.auth.CustomAccessControlService;
+import com.codecool.tasx.model.company.project.task.TaskDao;
+import com.codecool.tasx.service.auth.CookieService;
 import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
-import com.codecool.tasx.service.auth.JwtService;
-import com.codecool.tasx.service.auth.oauth2.CookieService;
+import com.codecool.tasx.service.auth.RefreshService;
 import com.codecool.tasx.service.auth.oauth2.DatabaseOAuth2AuthorizationRequestService;
 import com.codecool.tasx.service.auth.oauth2.OAuth2AuthenticationFailureHandler;
 import com.codecool.tasx.service.auth.oauth2.OAuth2AuthenticationSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -35,25 +35,15 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@NoArgsConstructor
 public class SecurityConfig {
-  private final UserAccountDao userAccountDao;
-  private final DatabaseOAuth2AuthorizationRequestService oAuth2AuthorizationRequestService;
-
-
-  @Autowired
-  public SecurityConfig(
-    UserAccountDao userAccountDao,
-    DatabaseOAuth2AuthorizationRequestService oAuth2AuthorizationRequestService) {
-    this.userAccountDao = userAccountDao;
-    this.oAuth2AuthorizationRequestService = oAuth2AuthorizationRequestService;
-  }
 
   /**
    * Unique field of {@link UserDetailsService} that represents the subject is always called
    * "username", in our application it is the email.
    */
   @Bean
-  public UserDetailsService userDetailsService() {
+  public UserDetailsService userDetailsService(UserAccountDao userAccountDao) {
     return username -> (UserDetails) userAccountDao.findOneByEmailAndAccountType(
       username, AccountType.LOCAL).orElseThrow(() -> new UsernameNotFoundException(
       String.format(
@@ -67,9 +57,9 @@ public class SecurityConfig {
   }
 
   @Bean
-  public AuthenticationProvider authenticationProvider() {
+  public AuthenticationProvider authenticationProvider(UserAccountDao userAccountDao) {
     DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-    daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+    daoAuthenticationProvider.setUserDetailsService(userDetailsService(userAccountDao));
     daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
     return daoAuthenticationProvider;
   }
@@ -85,13 +75,14 @@ public class SecurityConfig {
   @Bean
   public AuthenticationSuccessHandler authenticationSuccessHandler(
     AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository,
-    CookieService cookieService, JwtService jwtService) {
-    return new OAuth2AuthenticationSuccessHandler(requestRepository, jwtService, cookieService);
+    CookieService cookieService, RefreshService refreshService) {
+    return new OAuth2AuthenticationSuccessHandler(requestRepository, refreshService, cookieService);
   }
 
   @Bean
-  public AuthenticationFailureHandler authenticationFailureHandler() {
-    return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestService);
+  public AuthenticationFailureHandler authenticationFailureHandler(
+    DatabaseOAuth2AuthorizationRequestService requestService) {
+    return new OAuth2AuthenticationFailureHandler(requestService);
   }
 
   // Method-level security
@@ -101,17 +92,16 @@ public class SecurityConfig {
    * <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler">
    * Spring Security Docs</a> <br>
    *
-   * @param accessControlService {@link CustomAccessControlService}
-   * @param companyDao           {@link CompanyDao}
-   * @param projectDao           {@link ProjectDao}
+   * @param companyDao {@link CompanyDao}
+   * @param projectDao {@link ProjectDao}
    * @return
    */
   @Bean
   public MethodSecurityExpressionHandler expressionHandler(
-    CustomAccessControlService accessControlService, CompanyDao companyDao, ProjectDao projectDao) {
+    CompanyDao companyDao, ProjectDao projectDao, TaskDao taskDao) {
     var expressionHandler = new DefaultMethodSecurityExpressionHandler();
     expressionHandler.setPermissionEvaluator(
-      new CustomPermissionEvaluator(accessControlService, companyDao, projectDao));
+      new CustomPermissionEvaluator(companyDao, projectDao, taskDao));
     return expressionHandler;
   }
 }

@@ -1,7 +1,7 @@
 package com.codecool.tasx.model.company.project;
 
 import com.codecool.tasx.model.company.Company;
-import com.codecool.tasx.model.requests.RequestStatus;
+import com.codecool.tasx.model.request.RequestStatus;
 import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,6 +35,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
       " AND pr.status IN (:statuses))" +
       " AND p.company = :company")
   List<Project> findAllWithoutEmployeeAndJoinRequestInCompany(
-    @Param("applicationUser") ApplicationUser applicationUser, @Param("statuses") List<RequestStatus> statuses,
+    @Param("applicationUser") ApplicationUser applicationUser,
+    @Param("statuses") List<RequestStatus> statuses,
     @Param("company") Company company);
 }

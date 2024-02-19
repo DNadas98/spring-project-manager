@@ -1,13 +1,11 @@
 package com.codecool.tasx.controller;
 
-import com.codecool.tasx.controller.dto.company.project.ProjectCreateRequestDto;
-import com.codecool.tasx.controller.dto.company.project.ProjectResponsePrivateDTO;
-import com.codecool.tasx.controller.dto.company.project.ProjectResponsePublicDTO;
-import com.codecool.tasx.controller.dto.company.project.ProjectUpdateRequestDto;
+import com.codecool.tasx.dto.company.project.ProjectCreateRequestDto;
+import com.codecool.tasx.dto.company.project.ProjectResponsePrivateDTO;
+import com.codecool.tasx.dto.company.project.ProjectResponsePublicDTO;
+import com.codecool.tasx.dto.company.project.ProjectUpdateRequestDto;
 import com.codecool.tasx.service.company.project.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,27 +15,19 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/companies/{companyId}/projects")
+@RequiredArgsConstructor
 public class ProjectController {
   private final ProjectService projectService;
-  private final Logger logger;
 
-  @Autowired
-  public ProjectController(ProjectService projectService) {
-    this.projectService = projectService;
-    logger = LoggerFactory.getLogger(this.getClass());
-  }
-
-  @GetMapping("/withoutUser")
-  public ResponseEntity<?> getProjectsWithoutUser(
-    @PathVariable Long companyId) {
-    List<ProjectResponsePublicDTO> projects = projectService.getProjectsWithoutUser(companyId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projects));
-  }
-
-  @GetMapping("/withUser")
+  @GetMapping()
   public ResponseEntity<?> getProjectsWithUser(
-    @PathVariable Long companyId) {
-    List<ProjectResponsePublicDTO> projects = projectService.getProjectsWithUser(companyId);
+    @PathVariable Long companyId, @RequestParam(name = "withUser") Boolean withUser) {
+    List<ProjectResponsePublicDTO> projects;
+    if (withUser) {
+      projects = projectService.getProjectsWithUser(companyId);
+    } else {
+      projects = projectService.getProjectsWithoutUser(companyId);
+    }
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projects));
   }
 

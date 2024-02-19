@@ -6,6 +6,10 @@ export default defineConfig(({mode}) => {
 
   return {
     server: { /* only applies to the DEVELOPMENT vite server */
+      https: {
+        key:"../ssl/fake-ssl-key",
+        cert:"../ssl/fake-ssl-cert"
+      },
       proxy: {
         "/api": {
           target: "http://localhost:8080",
@@ -16,7 +20,7 @@ export default defineConfig(({mode}) => {
           changeOrigin: true
         }
       },
-      port: parseInt(env.VITE_PORT, 10) || 3000
+      port: 4430
     },
     plugins: [react()]
   };

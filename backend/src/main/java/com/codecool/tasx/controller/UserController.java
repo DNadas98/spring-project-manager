@@ -1,65 +1,40 @@
 package com.codecool.tasx.controller;
 
-import com.codecool.tasx.controller.dto.requests.CompanyJoinRequestResponseDto;
-import com.codecool.tasx.controller.dto.requests.ProjectJoinRequestResponseDto;
-import com.codecool.tasx.controller.dto.user.UserResponsePrivateDto;
-import com.codecool.tasx.controller.dto.user.UserUpdateRequestDto;
-import com.codecool.tasx.service.request.CompanyRequestService;
-import com.codecool.tasx.service.request.ProjectRequestService;
-import com.codecool.tasx.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codecool.tasx.dto.user.UserResponsePrivateDto;
+import com.codecool.tasx.dto.user.UserUsernameUpdateDto;
+import com.codecool.tasx.service.user.ApplicationUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
-  private final CompanyRequestService requestService;
-  private final ProjectRequestService projectRequestService;
-  private final UserService userService;
-
-  @Autowired
-  public UserController(
-    CompanyRequestService requestService, ProjectRequestService projectRequestService,
-    UserService userService) {
-    this.requestService = requestService;
-    this.projectRequestService = projectRequestService;
-    this.userService = userService;
-  }
+  private final ApplicationUserService applicationUserService;
 
   @GetMapping
-  public ResponseEntity<?> getOwnUserDetails() {
-    UserResponsePrivateDto userDetails = userService.getOwnUserDetails();
+  public ResponseEntity<?> getOwnApplicationUser() {
+    UserResponsePrivateDto userDetails = applicationUserService.getOwnUserDetails();
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
   }
 
-  @PutMapping
-  public ResponseEntity<?> updateOwnUserDetails(
-    @RequestBody UserUpdateRequestDto updateRequestDto) {
-    UserResponsePrivateDto userDetails = userService.updateOwnUserDetails(updateRequestDto);
+  @PatchMapping("/username")
+  public ResponseEntity<?> updateOwnApplicationUser(
+    @RequestBody UserUsernameUpdateDto updateDto) {
+    UserResponsePrivateDto userDetails = applicationUserService.updateOwnUsername(
+      updateDto.username());
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
   }
 
-  @GetMapping("/requests")
-  public ResponseEntity<?> getJoinRequestsOfUser() {
-    List<CompanyJoinRequestResponseDto> joinRequests = requestService.getJoinRequestsOfUser();
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", joinRequests));
+  @DeleteMapping
+  public ResponseEntity<?> deleteOwnApplicationUser() {
+    applicationUserService.deleteOwnApplicationUser();
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", "Application user deleted successfully"));
   }
-
-  @GetMapping("/project-requests")
-  public ResponseEntity<?> getProjectJoinRequestOfUser() {
-    List<ProjectJoinRequestResponseDto> projectJoinRequests =
-      projectRequestService.getJoinRequestsOfUser();
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projectJoinRequests));
-  }
-
-
 }

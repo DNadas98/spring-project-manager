@@ -2,7 +2,7 @@ package com.codecool.tasx.service.auth.oauth2;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -15,17 +15,12 @@ import java.io.IOException;
 import java.net.URLEncoder;
 
 @Component
+@RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository;
   @Value("${BACKEND_OAUTH2_FRONTEND_REDIRECT_URI}")
   private String FRONTEND_REDIRECT_URI;
-
-  @Autowired
-  public OAuth2AuthenticationFailureHandler(
-    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository) {
-    this.requestRepository = requestRepository;
-  }
 
   @Override
   public void onAuthenticationFailure(

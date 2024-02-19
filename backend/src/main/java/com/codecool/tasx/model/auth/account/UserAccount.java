@@ -2,15 +2,15 @@ package com.codecool.tasx.model.auth.account;
 
 import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public abstract class UserAccount {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

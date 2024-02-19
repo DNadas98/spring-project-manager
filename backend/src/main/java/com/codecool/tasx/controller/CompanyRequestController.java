@@ -1,11 +1,9 @@
 package com.codecool.tasx.controller;
 
-import com.codecool.tasx.controller.dto.requests.CompanyJoinRequestResponseDto;
-import com.codecool.tasx.controller.dto.requests.CompanyJoinRequestUpdateDto;
-import com.codecool.tasx.service.request.CompanyRequestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codecool.tasx.dto.requests.CompanyJoinRequestResponseDto;
+import com.codecool.tasx.dto.requests.CompanyJoinRequestUpdateDto;
+import com.codecool.tasx.service.company.CompanyRequestService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/companies/{companyId}/requests")
 public class CompanyRequestController {
   private final CompanyRequestService requestService;
-  private final Logger logger;
-
-  @Autowired
-  public CompanyRequestController(CompanyRequestService requestService) {
-    this.requestService = requestService;
-    logger = LoggerFactory.getLogger(this.getClass());
-  }
 
   @GetMapping()
   public ResponseEntity<?> readJoinRequestsOfCompany(
@@ -45,8 +37,8 @@ public class CompanyRequestController {
 
   @PutMapping("/{requestId}")
   public ResponseEntity<?> updateJoinRequestById(
-    @PathVariable Long companyId,
-    @PathVariable Long requestId, @RequestBody CompanyJoinRequestUpdateDto requestDto) {
+    @PathVariable Long companyId, @PathVariable Long requestId,
+    @RequestBody CompanyJoinRequestUpdateDto requestDto) {
 
     requestService.handleJoinRequest(companyId, requestId, requestDto);
 

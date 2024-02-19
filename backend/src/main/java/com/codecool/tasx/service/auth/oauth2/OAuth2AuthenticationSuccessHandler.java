@@ -1,13 +1,13 @@
 package com.codecool.tasx.service.auth.oauth2;
 
-import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
+import com.codecool.tasx.dto.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.OAuth2ProcessingException;
 import com.codecool.tasx.model.auth.account.OAuth2UserAccount;
-import com.codecool.tasx.service.auth.JwtService;
+import com.codecool.tasx.service.auth.CookieService;
+import com.codecool.tasx.service.auth.RefreshService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -17,24 +17,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Slf4j
 @Component
+@RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
   private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository;
-  private final JwtService jwtService;
+  private final RefreshService refreshService;
   private final CookieService cookieService;
 
   @Value("${BACKEND_OAUTH2_FRONTEND_REDIRECT_URI}")
   private String FRONTEND_REDIRECT_URI;
-
-  @Autowired
-  public OAuth2AuthenticationSuccessHandler(
-    AuthorizationRequestRepository<OAuth2AuthorizationRequest> requestRepository,
-    JwtService jwtService, CookieService cookieService) {
-    this.requestRepository = requestRepository;
-    this.jwtService = jwtService;
-    this.cookieService = cookieService;
-  }
 
 
   @Override
@@ -47,7 +38,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
     requestRepository.removeAuthorizationRequest(request, response);
     OAuth2UserAccount userAccount = getAccount(authentication);
-    String refreshToken = jwtService.generateRefreshToken(new TokenPayloadDto(
+    String refreshToken = refreshService.getNewRefreshToken(new TokenPayloadDto(
       userAccount.getEmail(), userAccount.getAccountType()
     ));
     cookieService.addRefreshCookie(refreshToken, response);

@@ -28,8 +28,7 @@
     <br />
     <a href="https://github.com/users/DNadas98/projects/4"><strong>View the Project Board »</strong></a>
     <br />
-    <!-- <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/...
--153ba7e4-663e-46da-b37c-7c6e95493b00"><strong>Read the API Documentation »</strong></a> -->
+    <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325"><strong>Read the API Documentation »</strong></a>
     <br />
     <br />
     <a href="https://github.com/DNadas98/spring-project-manager/issues">Report Bug</a>
@@ -173,13 +172,11 @@ and "ADMIN". A list of allowed roles is defined for all secured endpoints. For e
 both users with "USER" or "ADMIN" role can access their own account details, but the
 details of other accounts are only accessible with "ADMIN" role.
 
-<!--
 ### API Documentation
 
 See
-the [API Documentation](https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/...)
+the [API Documentation](https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325)
 for available endpoints and API usage guide
--->
 
 ## Roadmap
 

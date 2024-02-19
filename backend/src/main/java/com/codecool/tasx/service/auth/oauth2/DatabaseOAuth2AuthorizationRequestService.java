@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.SerializationUtils;
 
 import java.util.Base64;
@@ -71,6 +72,7 @@ public class DatabaseOAuth2AuthorizationRequestService implements
    * @since 5.1
    */
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public OAuth2AuthorizationRequest removeAuthorizationRequest(
     HttpServletRequest request, HttpServletResponse response) {
     String state = request.getParameter("state");

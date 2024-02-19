@@ -134,13 +134,13 @@ function CompanyDashboard() {
         responseObject
       } = await authFetch("GET", `companies/${companyId}/requests`);
       if (httpResponse?.status !== 200 || !responseObject?.data) {
-        throw new Error(responseObject?.error ?? "Failed to load join requests");
+        throw new Error(responseObject?.error ?? "Failed to load join request");
       }
       setJoinRequests(responseObject.data);
     } catch (e) {
       console.error(e);
       setSnackbarSeverity("error");
-      setSnackbarMessage(e.message ?? "Failed to load join requests");
+      setSnackbarMessage(e.message ?? "Failed to load join request");
       setJoinRequests([]);
     } finally {
       setLoading(false);

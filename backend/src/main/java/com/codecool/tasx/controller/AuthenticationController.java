@@ -1,12 +1,12 @@
 package com.codecool.tasx.controller;
 
-import com.codecool.tasx.controller.dto.user.auth.*;
-import com.codecool.tasx.controller.dto.verification.VerificationTokenDto;
-import com.codecool.tasx.exception.auth.UnauthorizedException;
-import com.codecool.tasx.service.auth.AuthenticationService;
-import com.codecool.tasx.service.auth.oauth2.CookieService;
+import com.codecool.tasx.dto.auth.*;
+import com.codecool.tasx.dto.verification.VerificationTokenDto;
+import com.codecool.tasx.service.auth.CookieService;
+import com.codecool.tasx.service.auth.LocalUserAccountService;
+import com.codecool.tasx.service.auth.RefreshService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,21 +16,17 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
-  private final AuthenticationService authenticationService;
+  private final LocalUserAccountService localUserAccountService;
+  private final RefreshService refreshService;
   private final CookieService cookieService;
 
-  @Autowired
-  public AuthenticationController(
-    AuthenticationService authenticationService, CookieService cookieService) {
-    this.authenticationService = authenticationService;
-    this.cookieService = cookieService;
-  }
 
   @PostMapping("/register")
   public ResponseEntity<?> register(
     @RequestBody RegisterRequestDto request) throws Exception {
-    authenticationService.sendRegistrationVerificationEmail(
+    localUserAccountService.sendRegistrationVerificationEmail(
       request);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
       "message",
@@ -41,7 +37,7 @@ public class AuthenticationController {
   public ResponseEntity<?> verifyRegistration(
     @RequestParam(name = "code") UUID verificationCode,
     @RequestParam(name = "id") Long verificationTokenId) {
-    authenticationService.registerLocalAccount(
+    localUserAccountService.registerLocalAccount(
       new VerificationTokenDto(verificationTokenId, verificationCode));
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
       "message",
@@ -51,9 +47,9 @@ public class AuthenticationController {
   @PostMapping("/login")
   public ResponseEntity<?> login(
     @RequestBody LoginRequestDto loginRequest, HttpServletResponse response) {
-    LoginResponseDto loginResponse = authenticationService.loginLocalAccount(loginRequest);
+    LoginResponseDto loginResponse = localUserAccountService.loginLocalAccount(loginRequest);
 
-    String refreshToken = authenticationService.getNewRefreshToken(
+    String refreshToken = refreshService.getNewRefreshToken(
       new TokenPayloadDto(
         loginResponse.userInfo().email(),
         loginResponse.userInfo().accountType()));
@@ -62,11 +58,8 @@ public class AuthenticationController {
   }
 
   @GetMapping("/refresh")
-  public ResponseEntity<?> refresh(@CookieValue(required = false) String jwt) {
-    if (jwt == null) {
-      throw new UnauthorizedException("Refresh token cookie not found");
-    }
-    RefreshResponseDto refreshResponse = authenticationService.refresh(new RefreshRequestDto(jwt));
+  public ResponseEntity<?> refresh(@CookieValue String jwt) {
+    RefreshResponseDto refreshResponse = refreshService.refresh(new RefreshRequestDto(jwt));
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
   }
 
@@ -80,6 +73,4 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", "Account logged out successfully"));
   }
-
-
 }

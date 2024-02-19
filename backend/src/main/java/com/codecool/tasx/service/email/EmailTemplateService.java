@@ -1,7 +1,7 @@
 package com.codecool.tasx.service.email;
 
-import com.codecool.tasx.controller.dto.email.EmailRequestDto;
-import com.codecool.tasx.controller.dto.verification.VerificationTokenDto;
+import com.codecool.tasx.dto.email.EmailRequestDto;
+import com.codecool.tasx.dto.verification.VerificationTokenDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

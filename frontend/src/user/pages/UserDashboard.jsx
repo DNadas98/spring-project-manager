@@ -52,14 +52,14 @@ function UserDashboard() {
       setLoading(true);
       const {httpResponse, responseObject} = await authFetch("GET", `user/requests`);
       if (httpResponse?.status !== 200 || !responseObject?.data) {
-        throw new Error(responseObject?.error ?? "Failed to load join requests");
+        throw new Error(responseObject?.error ?? "Failed to load join request");
       }
       setJoinRequests(responseObject.data);
     } catch (e) {
       console.error(e);
       setJoinRequests([]);
       setSnackbarSeverity("error");
-      setSnackbarMessage(e.message ?? "Failed to load join requests");
+      setSnackbarMessage(e.message ?? "Failed to load join request");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
@@ -71,14 +71,14 @@ function UserDashboard() {
       setLoading(true);
       const {httpResponse, responseObject} = await authFetch("GET", `user/project-requests`);
       if (httpResponse?.status !== 200 || !responseObject?.data) {
-        throw new Error(responseObject?.error ?? "Failed to load project join requests");
+        throw new Error(responseObject?.error ?? "Failed to load project join request");
       }
       setProjectJoinRequests(responseObject.data);
     } catch (e) {
       console.error(e);
       setProjectJoinRequests([]);
       setSnackbarSeverity("error");
-      setSnackbarMessage("Failed to load project join requests");
+      setSnackbarMessage("Failed to load project join request");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);

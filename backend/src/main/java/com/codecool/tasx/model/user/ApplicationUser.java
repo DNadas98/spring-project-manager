@@ -3,72 +3,61 @@ package com.codecool.tasx.model.user;
 import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.Project;
+import com.codecool.tasx.model.company.project.task.Task;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name = "application_user")
 public class ApplicationUser {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<UserAccount> accounts;
-
   @Column(nullable = false)
   private String username;
 
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER,
+    orphanRemoval = true, cascade = CascadeType.ALL)
+  private Set<UserAccount> accounts = new HashSet<>();
+
   @Enumerated(EnumType.STRING)
-  private Set<GlobalRole> globalRoles;
+  private Set<GlobalRole> globalRoles = new HashSet<>();
 
-  @OneToMany(mappedBy = "companyOwner", fetch = FetchType.EAGER)
-  private Set<Company> ownedCompanies;
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Company> adminCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
-  private Set<Company> companies;
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Company> editorCompanies = new HashSet<>();
 
-  @OneToMany(mappedBy = "projectOwner", fetch = FetchType.EAGER)
-  private Set<Project> ownedProjects;
+  @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Company> employeeCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER)
-  private Set<Project> projects;
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Project> adminProjects = new HashSet<>();
 
-  @Column(nullable = false)
-  private long score;
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Project> editorProjects = new HashSet<>();
+
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Project> assignedProjects = new HashSet<>();
+
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<Task> assignedTasks = new HashSet<>();
+
 
   public ApplicationUser(String username) {
     this.username = username;
-    this.ownedCompanies = new HashSet<>();
-    this.companies = new HashSet<>();
-    this.ownedProjects = new HashSet<>();
-    this.projects = new HashSet<>();
-    this.score = 0;
-    this.globalRoles = new HashSet<>();
-    this.accounts = new HashSet<>();
     globalRoles.add(GlobalRole.USER);
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
   }
 
   public Set<GlobalRole> getGlobalRoles() {
@@ -87,65 +76,9 @@ public class ApplicationUser {
     return Set.copyOf(accounts);
   }
 
-  public long getScore() {
-    return score;
-  }
-
-  public void setScore(long score) {
-    this.score = score;
-  }
-
-  public Set<Company> getOwnedCompanies() {
-    return Set.copyOf(ownedCompanies);
-  }
-
-  public void addOwnedCompany(Company company) {
-    this.ownedCompanies.add(company);
-  }
-
-  public void removeOwnedCompany(Company company) {
-    this.ownedCompanies.remove(company);
-  }
-
-  public Set<Project> getProjects() {
-    return projects;
-  }
-
-  public void addProject(Project project) {
-    this.projects.add(project);
-  }
-
-  public void removeProject(Project project) {
-    this.projects.remove(project);
-  }
-
-  public List<Company> getCompanies() {
-    return List.copyOf(companies);
-  }
-
-  public void addCompany(Company company) {
-    this.companies.add(company);
-  }
-
-  public void removeCompany(Company company) {
-    this.companies.remove(company);
-  }
-
-  public List<Project> getOwnedProjects() {
-    return List.copyOf(ownedProjects);
-  }
-
-  public void addOwnedProject(Project ownedProject) {
-    this.ownedProjects.add(ownedProject);
-  }
-
-  public void removeOwnedProject(Project ownedProject) {
-    this.ownedProjects.remove(ownedProject);
-  }
-
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, globalRoles, score);
+    return Objects.hash(id, username, globalRoles);
   }
 
   @Override
@@ -156,7 +89,7 @@ public class ApplicationUser {
     if (!(o instanceof ApplicationUser applicationUser)) {
       return false;
     }
-    return score == applicationUser.score && Objects.equals(id, applicationUser.id) &&
+    return Objects.equals(id, applicationUser.id) &&
       Objects.equals(
         username, applicationUser.username) && Objects.equals(
       globalRoles, applicationUser.globalRoles);
@@ -168,7 +101,6 @@ public class ApplicationUser {
       "id=" + id +
       ", username='" + username + '\'' +
       ", globalRoles=" + globalRoles +
-      ", score=" + score +
       '}';
   }
 }

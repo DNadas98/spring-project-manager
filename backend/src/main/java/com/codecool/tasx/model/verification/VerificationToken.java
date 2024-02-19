@@ -1,6 +1,7 @@
 package com.codecool.tasx.model.verification;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
+@EqualsAndHashCode
 public abstract class VerificationToken {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,5 +29,14 @@ public abstract class VerificationToken {
   protected VerificationToken(TokenType tokenType, String verificationCodeHash) {
     this.tokenType = tokenType;
     this.verificationCodeHash = verificationCodeHash;
+  }
+
+  @Override
+  public String toString() {
+    return "VerificationToken{" +
+      "id=" + id +
+      ", createdAt=" + createdAt +
+      ", tokenType=" + tokenType +
+      '}';
   }
 }
