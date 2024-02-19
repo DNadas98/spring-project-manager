@@ -6,9 +6,9 @@ import com.codecool.tasx.exception.auth.OnlyOneAccountFoundException;
 import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.user.ApplicationUser;
-import com.codecool.tasx.model.user.ApplicationUserDao;
 import com.codecool.tasx.service.converter.UserAccountConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +18,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserAccountService {
   private final UserAccountDao userAccountDao;
-  private final ApplicationUserDao applicationUserDao;
   private final UserAccountConverter userAccountConverter;
   private final UserProvider userProvider;
 
@@ -31,13 +30,17 @@ public class UserAccountService {
 
   @Transactional(rollbackFor = Exception.class)
   public void deleteOwnUserAccountById(Long id) {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    if (applicationUser.getAccounts().size() == 1) {
-      throw new OnlyOneAccountFoundException();
-    }
-    UserAccount userAccount = userAccountDao.findByIdAndApplicationUser(id, applicationUser)
-      .orElseThrow(() -> new AccountNotFound(id));
-    applicationUser.removeAccount(userAccount);
-    applicationUserDao.save(applicationUser);
+      ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+      if (applicationUser.getAccounts().size() == 1) {
+        throw new OnlyOneAccountFoundException();
+      }
+      UserAccount userAccountToDelete = userAccountDao.findByIdAndApplicationUser(
+          id, applicationUser)
+        .orElseThrow(() -> new AccountNotFound(id));
+      if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(
+        userAccountToDelete)) {
+        SecurityContextHolder.clearContext();
+      }
+      userAccountDao.deleteOneById(id);
   }
 }

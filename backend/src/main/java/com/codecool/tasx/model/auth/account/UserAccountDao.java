@@ -2,6 +2,8 @@ package com.codecool.tasx.model.auth.account;
 
 import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,4 +19,8 @@ public interface UserAccountDao extends JpaRepository<UserAccount, Long> {
 
 
   Optional<UserAccount> findByIdAndApplicationUser(Long id, ApplicationUser applicationUser);
+
+  @Modifying
+  @Query("DELETE FROM UserAccount u WHERE u.id = :id")
+  void deleteOneById(Long id);
 }
