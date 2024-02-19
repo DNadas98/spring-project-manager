@@ -76,6 +76,10 @@ public class ApplicationUser {
     return Set.copyOf(accounts);
   }
 
+  public void removeAccount(UserAccount account) {
+    accounts.remove(account);
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(id, username, globalRoles);

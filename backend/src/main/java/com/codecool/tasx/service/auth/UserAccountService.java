@@ -2,9 +2,11 @@ package com.codecool.tasx.service.auth;
 
 import com.codecool.tasx.dto.auth.UserAccountResponseDto;
 import com.codecool.tasx.exception.auth.AccountNotFound;
+import com.codecool.tasx.exception.auth.OnlyOneAccountFoundException;
 import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.ApplicationUserDao;
 import com.codecool.tasx.service.converter.UserAccountConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserAccountService {
   private final UserAccountDao userAccountDao;
+  private final ApplicationUserDao applicationUserDao;
   private final UserAccountConverter userAccountConverter;
   private final UserProvider userProvider;
 
+  @Transactional(readOnly = true)
   public Set<UserAccountResponseDto> findAllOfApplicationUser() {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     Set<UserAccount> userAccounts = userAccountDao.findAllByApplicationUser(applicationUser);
@@ -28,10 +32,12 @@ public class UserAccountService {
   @Transactional(rollbackFor = Exception.class)
   public void deleteOwnUserAccountById(Long id) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    if (applicationUser.getAccounts().size() == 1) {
+      throw new OnlyOneAccountFoundException();
+    }
     UserAccount userAccount = userAccountDao.findByIdAndApplicationUser(id, applicationUser)
-      .orElseThrow(
-        () -> new AccountNotFound(id)
-      );
-    userAccountDao.delete(userAccount);
+      .orElseThrow(() -> new AccountNotFound(id));
+    applicationUser.removeAccount(userAccount);
+    applicationUserDao.save(applicationUser);
   }
 }
