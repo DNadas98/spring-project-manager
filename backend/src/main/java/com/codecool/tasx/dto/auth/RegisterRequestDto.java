@@ -1,4 +1,11 @@
 package com.codecool.tasx.dto.auth;
 
-public record RegisterRequestDto(String username, String email, String password) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
+
+public record RegisterRequestDto(
+  @NotNull @Length(min = 1, max = 50) String username,
+  @NotNull @Email String email,
+  @NotNull @Length(min = 1, max = 50) String password) {
 }

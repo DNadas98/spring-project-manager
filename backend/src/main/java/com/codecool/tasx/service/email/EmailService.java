@@ -24,7 +24,6 @@ public class EmailService {
   public void sendMailToUserAddress(EmailRequestDto mailRequest) throws MailException,
     EmailAddressFormatException, EmailSubjectFormatException, EmailContentFormatException,
     MessagingException {
-    mailRequest.validate();
     MimeMessage message = javaMailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
     helper.setTo(mailRequest.to());

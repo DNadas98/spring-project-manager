@@ -3,6 +3,7 @@ package com.codecool.tasx.controller;
 import com.codecool.tasx.dto.user.UserResponsePrivateDto;
 import com.codecool.tasx.dto.user.UserResponsePublicDto;
 import com.codecool.tasx.service.user.ApplicationUserService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,13 @@ public class GlobalAdminUserController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> getApplicationUserById(@PathVariable Long id) {
+  public ResponseEntity<?> getApplicationUserById(@PathVariable @Min(1) Long id) {
     UserResponsePrivateDto user = applicationUserService.getApplicationUserById(id);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", user));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteApplicationUserById(@PathVariable Long id) {
+  public ResponseEntity<?> deleteApplicationUserById(@PathVariable @Min(1) Long id) {
     applicationUserService.deleteApplicationUserById(id);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", "Application user with ID " + id + " deleted successfully"));

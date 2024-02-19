@@ -1,6 +1,7 @@
 package com.codecool.tasx.controller;
 
 import com.codecool.tasx.service.company.project.task.expense.ExpenseService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class ProjectExpenseController {
 
   @GetMapping("/sum")
   public ResponseEntity<?> sumExpensesOfTask(
-    @PathVariable Long companyId, @PathVariable Long projectId,
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
     @RequestParam(name = "paid", required = false) Boolean paid) {
     Double sum;
     if (paid == null) {

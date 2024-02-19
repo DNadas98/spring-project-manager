@@ -2,6 +2,7 @@ package com.codecool.tasx.controller;
 
 import com.codecool.tasx.dto.company.CompanyResponsePublicDTO;
 import com.codecool.tasx.service.company.CompanyService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class GlobalAdminCompanyController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteCompanyById(@PathVariable Long id) {
+  public ResponseEntity<?> deleteCompanyById(@PathVariable @Min(1) Long id) {
     companyService.deleteCompany(id);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", "Company with ID " + id + " deleted successfully"));

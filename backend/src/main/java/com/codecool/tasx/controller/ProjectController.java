@@ -5,6 +5,8 @@ import com.codecool.tasx.dto.company.project.ProjectResponsePrivateDTO;
 import com.codecool.tasx.dto.company.project.ProjectResponsePublicDTO;
 import com.codecool.tasx.dto.company.project.ProjectUpdateRequestDto;
 import com.codecool.tasx.service.company.project.ProjectService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class ProjectController {
 
   @GetMapping()
   public ResponseEntity<?> getProjectsWithUser(
-    @PathVariable Long companyId, @RequestParam(name = "withUser") Boolean withUser) {
+    @PathVariable @Min(1) Long companyId, @RequestParam(name = "withUser") Boolean withUser) {
     List<ProjectResponsePublicDTO> projects;
     if (withUser) {
       projects = projectService.getProjectsWithUser(companyId);
@@ -33,14 +35,15 @@ public class ProjectController {
 
   @GetMapping("/{projectId}")
   public ResponseEntity<?> getProjectById(
-    @PathVariable Long companyId, @PathVariable Long projectId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId) {
     ProjectResponsePrivateDTO project = projectService.getProjectById(companyId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", project));
   }
 
   @PostMapping
   public ResponseEntity<?> createProject(
-    @PathVariable Long companyId, @RequestBody ProjectCreateRequestDto projectDetails) {
+    @PathVariable @Min(1) Long companyId,
+    @RequestBody @Valid ProjectCreateRequestDto projectDetails) {
     ProjectResponsePrivateDTO projectResponseDetails = projectService.createProject(
       projectDetails, companyId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -49,8 +52,8 @@ public class ProjectController {
 
   @PutMapping("/{projectId}")
   public ResponseEntity<?> updateProject(
-    @PathVariable Long companyId, @PathVariable Long projectId,
-    @RequestBody ProjectUpdateRequestDto projectDetails) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @RequestBody @Valid ProjectUpdateRequestDto projectDetails) {
     ProjectResponsePrivateDTO projectResponseDetails = projectService.updateProject(
       projectDetails, companyId, projectId);
 
@@ -61,7 +64,7 @@ public class ProjectController {
 
   @DeleteMapping("/{projectId}")
   public ResponseEntity<?> deleteProject(
-    @PathVariable Long companyId, @PathVariable Long projectId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId) {
     projectService.deleteProject(companyId, projectId);
 
     return ResponseEntity.status(HttpStatus.OK).body(

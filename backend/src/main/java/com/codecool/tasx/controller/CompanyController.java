@@ -5,6 +5,8 @@ import com.codecool.tasx.dto.company.CompanyResponsePrivateDTO;
 import com.codecool.tasx.dto.company.CompanyResponsePublicDTO;
 import com.codecool.tasx.dto.company.CompanyUpdateRequestDto;
 import com.codecool.tasx.service.company.CompanyService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class CompanyController {
   @GetMapping()
   public ResponseEntity<?> getAllCompanies(
     @RequestParam(name = "withUser") Boolean withUser) {
-    List<CompanyResponsePublicDTO> companies;
+    List<@Valid CompanyResponsePublicDTO> companies;
     if (withUser) {
       companies = companyService.getCompaniesWithUser();
     } else {
@@ -32,13 +34,14 @@ public class CompanyController {
   }
 
   @GetMapping("/{companyId}")
-  public ResponseEntity<?> getCompanyById(@PathVariable Long companyId) {
+  public ResponseEntity<?> getCompanyById(@PathVariable @Min(1) Long companyId) {
     CompanyResponsePrivateDTO company = companyService.getCompanyById(companyId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", company));
   }
 
   @PostMapping
-  public ResponseEntity<?> createCompany(@RequestBody CompanyCreateRequestDto createRequestDto) {
+  public ResponseEntity<?> createCompany(
+    @RequestBody @Valid CompanyCreateRequestDto createRequestDto) {
     CompanyResponsePrivateDTO companyResponseDetails = companyService.createCompany(
       createRequestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -47,7 +50,8 @@ public class CompanyController {
 
   @PutMapping("/{companyId}")
   public ResponseEntity<?> updateCompany(
-    @PathVariable Long companyId, @RequestBody CompanyUpdateRequestDto updateRequestDto) {
+    @PathVariable @Min(1) Long companyId,
+    @RequestBody @Valid CompanyUpdateRequestDto updateRequestDto) {
     CompanyResponsePrivateDTO companyResponseDetails = companyService.updateCompany(
       updateRequestDto, companyId);
 
@@ -57,7 +61,7 @@ public class CompanyController {
   }
 
   @DeleteMapping("/{companyId}")
-  public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) {
+  public ResponseEntity<?> deleteCompany(@PathVariable @Min(1) Long companyId) {
     companyService.deleteCompany(companyId);
 
     return ResponseEntity.status(HttpStatus.OK).body(

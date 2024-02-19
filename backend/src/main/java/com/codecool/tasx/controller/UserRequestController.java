@@ -4,6 +4,7 @@ import com.codecool.tasx.dto.requests.CompanyJoinRequestResponseDto;
 import com.codecool.tasx.dto.requests.ProjectJoinRequestResponseDto;
 import com.codecool.tasx.service.company.CompanyRequestService;
 import com.codecool.tasx.service.company.project.ProjectRequestService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class UserRequestController {
   }
 
   @DeleteMapping("/company-requests/{requestId}")
-  public ResponseEntity<?> deleteOwnJoinRequest(@PathVariable Long requestId) {
+  public ResponseEntity<?> deleteOwnJoinRequest(@PathVariable @Min(1) Long requestId) {
     companyRequestService.deleteOwnJoinRequestById(requestId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
       Map.of("message", "Request deleted successfully"));
@@ -44,7 +45,7 @@ public class UserRequestController {
   }
 
   @DeleteMapping("/project-requests/{requestId}")
-  public ResponseEntity<?> deleteOwnProjectJoinRequest(@PathVariable Long requestId) {
+  public ResponseEntity<?> deleteOwnProjectJoinRequest(@PathVariable @Min(1) Long requestId) {
     projectRequestService.deleteOwnJoinRequestById(requestId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
       Map.of("message", "Request deleted successfully"));

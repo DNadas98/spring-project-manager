@@ -1,6 +1,9 @@
 package com.codecool.tasx.dto.requests;
 
 import com.codecool.tasx.model.request.RequestStatus;
+import jakarta.validation.constraints.NotNull;
 
-public record ProjectJoinRequestUpdateDto(RequestStatus status) {
+public record ProjectJoinRequestUpdateDto(
+  @NotNull RequestStatus status
+) {
 }

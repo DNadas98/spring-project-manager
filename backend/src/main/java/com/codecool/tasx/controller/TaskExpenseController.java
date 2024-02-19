@@ -4,6 +4,8 @@ import com.codecool.tasx.dto.company.project.task.expense.ExpenseCreateRequestDt
 import com.codecool.tasx.dto.company.project.task.expense.ExpenseResponseDto;
 import com.codecool.tasx.dto.company.project.task.expense.ExpenseUpdateRequestDto;
 import com.codecool.tasx.service.company.project.task.expense.ExpenseService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,16 @@ public class TaskExpenseController {
 
   @GetMapping
   public ResponseEntity<?> getAllExpensesOfTask(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId) {
     List<ExpenseResponseDto> expenses = expenseService.getAllExpenses(companyId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", expenses));
   }
 
   @GetMapping("/sum")
   public ResponseEntity<?> sumExpensesOfTask(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId,
     @RequestParam(name = "paid", required = false) Boolean paid) {
     Double sum;
     if (paid == null) {
@@ -42,16 +46,17 @@ public class TaskExpenseController {
 
   @GetMapping("/{expenseId}")
   public ResponseEntity<?> getExpenseById(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
-    @PathVariable Long expenseId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, @PathVariable @Min(1) Long expenseId) {
     ExpenseResponseDto expense = expenseService.getExpense(companyId, projectId, taskId, expenseId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", expense));
   }
 
   @PostMapping
   public ResponseEntity<?> createExpense(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
-    @RequestBody ExpenseCreateRequestDto createRequestDto) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId,
+    @RequestBody @Valid ExpenseCreateRequestDto createRequestDto) {
     ExpenseResponseDto expense = expenseService.createExpense(createRequestDto, companyId,
       projectId, taskId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -60,8 +65,9 @@ public class TaskExpenseController {
 
   @PutMapping("/{expenseId}")
   public ResponseEntity<?> updateExpense(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
-    @PathVariable Long expenseId, @RequestBody ExpenseUpdateRequestDto updateRequestDto) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, @PathVariable @Min(1) Long expenseId,
+    @RequestBody @Valid ExpenseUpdateRequestDto updateRequestDto) {
     ExpenseResponseDto expense = expenseService.updateExpense(updateRequestDto, companyId,
       projectId, taskId, expenseId);
 
@@ -71,8 +77,8 @@ public class TaskExpenseController {
 
   @DeleteMapping("/{expenseId}")
   public ResponseEntity<?> deleteExpense(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
-    @PathVariable Long expenseId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, @PathVariable @Min(1) Long expenseId) {
     expenseService.deleteExpense(companyId, projectId, taskId, expenseId);
 
     return ResponseEntity.status(HttpStatus.OK).body(

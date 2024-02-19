@@ -2,6 +2,7 @@ package com.codecool.tasx.controller;
 
 import com.codecool.tasx.dto.auth.UserAccountResponseDto;
 import com.codecool.tasx.service.auth.UserAccountService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UserAccountController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteOwnUserAccount(@PathVariable Long id) {
+  public ResponseEntity<?> deleteOwnUserAccount(@PathVariable @Min(1) Long id) {
     accountService.deleteOwnUserAccountById(id);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
       "message",

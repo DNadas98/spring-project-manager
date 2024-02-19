@@ -3,6 +3,8 @@ package com.codecool.tasx.controller;
 import com.codecool.tasx.dto.requests.CompanyJoinRequestResponseDto;
 import com.codecool.tasx.dto.requests.CompanyJoinRequestUpdateDto;
 import com.codecool.tasx.service.company.CompanyRequestService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ public class CompanyRequestController {
 
   @GetMapping()
   public ResponseEntity<?> readJoinRequestsOfCompany(
-    @PathVariable Long companyId) {
+    @PathVariable @Min(1) Long companyId) {
 
     List<CompanyJoinRequestResponseDto> requests = requestService.getJoinRequestsOfCompany(
       companyId);
@@ -28,7 +30,7 @@ public class CompanyRequestController {
   }
 
   @PostMapping()
-  public ResponseEntity<?> joinCompany(@PathVariable Long companyId) {
+  public ResponseEntity<?> joinCompany(@PathVariable @Min(1) Long companyId) {
     CompanyJoinRequestResponseDto createdRequest = requestService.createJoinRequest(companyId);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -37,8 +39,8 @@ public class CompanyRequestController {
 
   @PutMapping("/{requestId}")
   public ResponseEntity<?> updateJoinRequestById(
-    @PathVariable Long companyId, @PathVariable Long requestId,
-    @RequestBody CompanyJoinRequestUpdateDto requestDto) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long requestId,
+    @RequestBody @Valid CompanyJoinRequestUpdateDto requestDto) {
 
     requestService.handleJoinRequest(companyId, requestId, requestDto);
 

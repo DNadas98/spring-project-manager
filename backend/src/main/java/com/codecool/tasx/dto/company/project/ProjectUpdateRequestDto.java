@@ -1,8 +1,13 @@
 package com.codecool.tasx.dto.company.project;
 
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
+
 import java.time.LocalDateTime;
 
-public record ProjectUpdateRequestDto(String name,
-                                      String description,
-                                      LocalDateTime startDate, LocalDateTime deadline) {
+public record ProjectUpdateRequestDto(
+  @NotNull @Length(min = 1, max = 50) String name,
+  @NotNull @Length(min = 1, max = 500) String description,
+  @NotNull LocalDateTime startDate,
+  @NotNull LocalDateTime deadline) {
 }

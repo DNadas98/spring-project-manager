@@ -4,7 +4,7 @@ public class CompanyNotFoundException extends RuntimeException {
   private final Long id;
 
   public CompanyNotFoundException(Long id) {
-    super();
+    super("Company with ID " + id + " was not found");
     this.id = id;
   }
 

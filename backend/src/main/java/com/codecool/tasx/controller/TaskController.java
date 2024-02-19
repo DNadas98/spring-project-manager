@@ -5,6 +5,8 @@ import com.codecool.tasx.dto.company.project.task.TaskResponsePublicDto;
 import com.codecool.tasx.dto.company.project.task.TaskUpdateRequestDto;
 import com.codecool.tasx.model.company.project.task.TaskStatus;
 import com.codecool.tasx.service.company.project.task.TaskService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class TaskController {
 
   @GetMapping
   public ResponseEntity<?> getAllTasks(
-    @PathVariable Long companyId, @PathVariable Long projectId,
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
     @RequestParam(name = "taskStatus", required = false) TaskStatus taskStatus) {
     List<TaskResponsePublicDto> tasks;
     if (taskStatus != null) {
@@ -35,15 +37,16 @@ public class TaskController {
 
   @GetMapping("/{taskId}")
   public ResponseEntity<?> getTaskById(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId) {
     TaskResponsePublicDto task = taskService.getTaskById(companyId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", task));
   }
 
   @PostMapping
   public ResponseEntity<?> createTask(
-    @PathVariable Long companyId, @PathVariable Long projectId,
-    @RequestBody TaskCreateRequestDto taskDetails) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @RequestBody @Valid TaskCreateRequestDto taskDetails) {
     TaskResponsePublicDto taskResponseDetails = taskService.createTask(taskDetails, companyId,
       projectId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -52,8 +55,8 @@ public class TaskController {
 
   @PutMapping("/{taskId}")
   public ResponseEntity<?> updateTask(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId,
-    @RequestBody TaskUpdateRequestDto taskDetails) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, @RequestBody @Valid TaskUpdateRequestDto taskDetails) {
     TaskResponsePublicDto taskResponseDetails = taskService.updateTask(taskDetails, companyId,
       projectId, taskId);
 
@@ -64,7 +67,8 @@ public class TaskController {
 
   @DeleteMapping("/{taskId}")
   public ResponseEntity<?> deleteTask(
-    @PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long taskId) {
+    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId) {
     taskService.deleteTask(companyId, projectId, taskId);
 
     return ResponseEntity.status(HttpStatus.OK).body(

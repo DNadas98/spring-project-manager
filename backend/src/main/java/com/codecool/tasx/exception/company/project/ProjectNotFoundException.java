@@ -4,7 +4,7 @@ public class ProjectNotFoundException extends RuntimeException {
   private final Long id;
 
   public ProjectNotFoundException(Long id) {
-    super();
+    super("Project was not found");
     this.id = id;
   }
 

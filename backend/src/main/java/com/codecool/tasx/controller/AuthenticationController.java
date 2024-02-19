@@ -6,7 +6,10 @@ import com.codecool.tasx.service.auth.CookieService;
 import com.codecool.tasx.service.auth.LocalUserAccountService;
 import com.codecool.tasx.service.auth.RefreshService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +28,7 @@ public class AuthenticationController {
 
   @PostMapping("/register")
   public ResponseEntity<?> register(
-    @RequestBody RegisterRequestDto request) throws Exception {
+    @RequestBody @Valid RegisterRequestDto request) throws Exception {
     localUserAccountService.sendRegistrationVerificationEmail(
       request);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
@@ -36,9 +39,9 @@ public class AuthenticationController {
   @PostMapping("/verify-registration")
   public ResponseEntity<?> verifyRegistration(
     @RequestParam(name = "code") UUID verificationCode,
-    @RequestParam(name = "id") Long verificationTokenId) {
+    @RequestParam(name = "id") @Min(1) Long verificationTokenId) {
     localUserAccountService.registerLocalAccount(
-      new VerificationTokenDto(verificationTokenId, verificationCode));
+      new @Valid VerificationTokenDto(verificationTokenId, verificationCode));
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
       "message",
       "Local account registered successfully, sign in to proceed"));
@@ -46,7 +49,7 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   public ResponseEntity<?> login(
-    @RequestBody LoginRequestDto loginRequest, HttpServletResponse response) {
+    @RequestBody @Valid LoginRequestDto loginRequest, HttpServletResponse response) {
     LoginResponseDto loginResponse = localUserAccountService.loginLocalAccount(loginRequest);
 
     String refreshToken = refreshService.getNewRefreshToken(
@@ -58,7 +61,7 @@ public class AuthenticationController {
   }
 
   @GetMapping("/refresh")
-  public ResponseEntity<?> refresh(@CookieValue String jwt) {
+  public ResponseEntity<?> refresh(@CookieValue @Length(min = 1) String jwt) {
     RefreshResponseDto refreshResponse = refreshService.refresh(new RefreshRequestDto(jwt));
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
   }

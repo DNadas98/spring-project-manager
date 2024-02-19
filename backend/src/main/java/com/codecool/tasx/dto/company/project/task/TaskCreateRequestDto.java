@@ -2,11 +2,20 @@ package com.codecool.tasx.dto.company.project.task;
 
 import com.codecool.tasx.model.company.project.task.Importance;
 import com.codecool.tasx.model.company.project.task.TaskStatus;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
-public record TaskCreateRequestDto(String name, String description,
-                                   Importance importance, Integer difficulty,
-                                   LocalDateTime startDate,
-                                   LocalDateTime deadline, TaskStatus taskStatus) {
+public record TaskCreateRequestDto(
+  @NotNull @Length(min = 1, max = 50) String name,
+  @NotNull @Length(min = 1, max = 500) String description,
+  @NotNull Importance importance,
+  @NotNull @Min(1) @Max(5) Integer difficulty,
+  @NotNull @FutureOrPresent LocalDateTime startDate,
+  @NotNull @FutureOrPresent LocalDateTime deadline,
+  @NotNull TaskStatus taskStatus) {
 }
