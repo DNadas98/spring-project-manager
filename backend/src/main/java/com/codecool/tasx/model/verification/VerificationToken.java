@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -18,7 +18,7 @@ public abstract class VerificationToken {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private Instant createdAt;
   private String verificationCodeHash;
   @Column(nullable = false)
   private TokenType tokenType;

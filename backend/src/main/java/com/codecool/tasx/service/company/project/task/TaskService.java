@@ -14,12 +14,14 @@ import com.codecool.tasx.model.company.project.task.TaskStatus;
 import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.TaskConverter;
+import com.codecool.tasx.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -29,6 +31,7 @@ public class TaskService {
   private final ProjectDao projectDao;
   private final TaskConverter taskConverter;
   private final UserProvider userProvider;
+  private final DateTimeService dateTimeService;
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
@@ -58,10 +61,17 @@ public class TaskService {
     throws ConstraintViolationException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
+
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+
+    Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
+    Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
+    dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
+      project.getDeadline());
+
     Task task = new Task(createRequestDto.name(), createRequestDto.description(),
-      createRequestDto.importance(), createRequestDto.difficulty(), createRequestDto.startDate(),
-      createRequestDto.deadline(), createRequestDto.taskStatus(), project, applicationUser);
+      createRequestDto.importance(), createRequestDto.difficulty(), taskStartDate, taskDeadline,
+      createRequestDto.taskStatus(), project, applicationUser);
     taskDao.save(task);
     return taskConverter.getTaskResponsePublicDto(task);
   }
@@ -82,18 +92,26 @@ public class TaskService {
     throws ConstraintViolationException {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
-    updateTaskDetails(updateRequestDto, task);
+
+    Instant taskStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
+    Instant taskDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
+    Project project = task.getProject();
+    dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
+      project.getDeadline());
+
+    updateTaskDetails(updateRequestDto, task, taskStartDate, taskDeadline);
     Task savedTask = taskDao.save(task);
     return taskConverter.getTaskResponsePublicDto(savedTask);
   }
 
-  private void updateTaskDetails(TaskUpdateRequestDto updateRequestDto, Task task) {
+  private void updateTaskDetails(
+    TaskUpdateRequestDto updateRequestDto, Task task, Instant taskStartDate, Instant taskDeadline) {
     task.setName(updateRequestDto.name());
     task.setDescription(updateRequestDto.description());
     task.setImportance(updateRequestDto.importance());
     task.setDifficulty(updateRequestDto.difficulty());
-    task.setStartDate(updateRequestDto.startDate());
-    task.setDeadline(updateRequestDto.deadline());
+    task.setStartDate(taskStartDate);
+    task.setDeadline(taskDeadline);
     task.setTaskStatus(updateRequestDto.taskStatus());
   }
 

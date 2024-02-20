@@ -6,7 +6,7 @@ import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +22,8 @@ public class Project {
   private Long id;
   private String name;
   private String description;
-  private LocalDateTime startDate;
-  private LocalDateTime deadline;
+  private Instant startDate;
+  private Instant deadline;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "company_id")
@@ -56,7 +56,7 @@ public class Project {
   private Set<ApplicationUser> assignedEmployees = new HashSet<>();
 
   public Project(
-    String name, String description, LocalDateTime startDate, LocalDateTime deadline,
+    String name, String description, Instant startDate, Instant deadline,
     ApplicationUser projectCreator, Company company) {
     this.name = name;
     this.description = description;

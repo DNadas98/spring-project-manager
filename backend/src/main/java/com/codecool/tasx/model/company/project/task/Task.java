@@ -6,7 +6,7 @@ import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +24,8 @@ public class Task {
   private String description;
   private Importance importance;
   private Integer difficulty;
-  private LocalDateTime startDate;
-  private LocalDateTime deadline;
+  private Instant startDate;
+  private Instant deadline;
   private TaskStatus taskStatus;
 
   @ManyToOne(fetch = FetchType.EAGER)
@@ -47,7 +47,7 @@ public class Task {
 
   public Task(
     String name, String description, Importance importance, Integer difficulty,
-    LocalDateTime startDate, LocalDateTime deadline, TaskStatus taskStatus, Project project,
+    Instant startDate, Instant deadline, TaskStatus taskStatus, Project project,
     ApplicationUser taskCreator) {
     this.name = name;
     this.description = description;

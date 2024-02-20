@@ -8,13 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class VerificationTokenCleanupService {
-  private static final long TOKEN_CLEANUP_SCHEDULE_RATE_MS = 1000 * 60 * 60;
-  private static final long TOKEN_EXPIRATION_HOURS = 1;
+  private static final long TOKEN_CLEANUP_SCHEDULE_RATE_MS = 1000 * 60 * 60; // 1h
+  private static final long TOKEN_EXPIRATION_MS = 1000 * 60 * 60; // 1h
   private final VerificationTokenRepository tokenRepository;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -22,11 +23,11 @@ public class VerificationTokenCleanupService {
   @Transactional(rollbackOn = Exception.class)
   public void cleanExpiredTokens() {
     try {
-      tokenRepository.deleteAllExpired(LocalDateTime.now().minusHours(TOKEN_EXPIRATION_HOURS));
+      tokenRepository.deleteAllExpired(Instant.now().minusMillis(TOKEN_EXPIRATION_MS));
 
       logger.info(String.format(
         "Scheduled job to clear expired verification tokens finished successfully, next execution at %s",
-        LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS)));
+        LocalDateTime.now().plusHours(TOKEN_EXPIRATION_MS)));
     } catch (Exception e) {
       logger.error(
         String.format(

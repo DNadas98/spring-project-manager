@@ -5,20 +5,19 @@ import com.codecool.tasx.dto.company.project.ProjectResponsePublicDTO;
 import com.codecool.tasx.dto.requests.ProjectJoinRequestResponseDto;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.request.ProjectJoinRequest;
+import com.codecool.tasx.service.datetime.DateTimeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectConverter {
   private final UserConverter userConverter;
   private final TaskConverter taskConverter;
-
-  public ProjectConverter(UserConverter userConverter, TaskConverter taskConverter) {
-    this.userConverter = userConverter;
-    this.taskConverter = taskConverter;
-  }
+  private final DateTimeService dateTimeService;
 
   public ProjectResponsePublicDTO getProjectResponsePublicDto(Project project) {
     return new ProjectResponsePublicDTO(project.getCompany().getId(), project.getId(),
@@ -27,8 +26,9 @@ public class ProjectConverter {
 
   public ProjectResponsePrivateDTO getProjectResponsePrivateDto(Project project) {
     return new ProjectResponsePrivateDTO(project.getCompany().getId(), project.getId(),
-      project.getName(),
-      project.getDescription(), project.getStartDate(), project.getDeadline(),
+      project.getName(), project.getDescription(),
+      dateTimeService.toDisplayedDate(project.getStartDate()),
+      dateTimeService.toDisplayedDate(project.getDeadline()),
       taskConverter.getTaskResponsePublicDtos(project.getTasks().stream().toList()));
   }
 

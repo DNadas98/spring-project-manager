@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -59,6 +60,13 @@ public class GeneralExceptionHandler {
 
   @ExceptionHandler(InvalidCredentialsException.class)
   public ResponseEntity<?> handleInvalidCredentialsException(InvalidCredentialsException e) {
+    logger.error(e.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+      Map.of("error", "The provided credentials are invalid"));
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
       Map.of("error", "The provided credentials are invalid"));

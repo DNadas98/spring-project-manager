@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Long> {
   @Modifying
   @Transactional
   @Query("DELETE FROM VerificationToken v WHERE v.createdAt <= :expirationDate")
-  void deleteAllExpired(LocalDateTime expirationDate);
+  void deleteAllExpired(Instant expirationDate);
 }
