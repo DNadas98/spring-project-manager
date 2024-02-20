@@ -3,7 +3,7 @@ import {Outlet} from "react-router-dom";
 import NavButton from "../../components/NavButton.jsx";
 import useAuth from "../../auth/hooks/useAuth.js";
 import {ThemeProvider} from "@mui/material/styles";
-import theme from "../../index.jsx";
+import theme from "../../index.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import {Button, Container, Grid, Typography} from "@mui/material";
 import {styled} from "@mui/system";

@@ -1,6 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Button, Collapse, Container, Grid, List, ListItem, ListItemIcon, ListItemText, Typography} from '@mui/material';
+import {
+  Button,
+  Collapse,
+  Container,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography
+} from '@mui/material';
 import {styled} from '@mui/system';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FollowTheSignsIcon from '@mui/icons-material/FollowTheSigns';
@@ -22,7 +32,6 @@ const StyledTypographySub = styled(Typography)(({theme}) => ({
 
 const StyledTypographySteps = styled(Typography)(({theme}) => ({
   fontSize: '1.5rem',
-  marginTop: theme.spacing(3),
   marginBottom: theme.spacing(3),
 }));
 
@@ -52,14 +61,12 @@ const Home = () => {
         <Grid item xs={12}>
           <StyledDiv>
             <StyledTypographyMain variant="h1">
-              TASX
+              Project Manager
             </StyledTypographyMain>
-            <StyledTypographySub variant="h1">
-              Project management gamified
-            </StyledTypographySub>
             <StyledTypographySub variant="h3">
               <HardwareIcon/> Got something to work ON?
-              <br/>
+            </StyledTypographySub>
+            <StyledTypographySub variant="h3">
               <FollowTheSignsIcon/> Get something to work FOR!
             </StyledTypographySub>
             <Collapse in={checked} {...(checked ? {timeout: 1000} : {})}>
@@ -70,7 +77,7 @@ const Home = () => {
                       <ArrowForwardIosIcon color={"secondary"}/>
                     </ListItemIcon>
                     <ListItemText>
-                      Step 1: Register your company and create projects easily.
+                      Step 1: Create an account or sign in with Google, Facebook or GitHub
                     </ListItemText>
                   </ListItem>
                   <ListItem>
@@ -78,8 +85,7 @@ const Home = () => {
                       <ArrowForwardIosIcon color={"secondary"}/>
                     </ListItemIcon>
                     <ListItemText>
-                      Step 2: Give your employees and team members a chance to earn achievements with our rewards
-                      system.
+                      Step 2: Add your company or request to join an existing one.
                     </ListItemText>
                   </ListItem>
                   <ListItem>
@@ -87,35 +93,26 @@ const Home = () => {
                       <ArrowForwardIosIcon color={"secondary"}/>
                     </ListItemIcon>
                     <ListItemText>
-                      Step 3: PROFIT! (Through improved morale, raised productivity, and fun!)
+                      Step 3: Create and manage the projects and tasks of the company
                     </ListItemText>
                   </ListItem>
                 </List>
               </StyledTypographySteps>
             </Collapse>
             <StyledTypographySub variant="body1">
-              It's so easy!
-            </StyledTypographySub>
-            <ul>
-              <li>Head over to our sign-up page</li>
-              <li>Fill in some details about your company</li>
-              <li>Add owners and admins</li>
-              <li>Have your employees join</li>
-              <li>Create rewards</li>
-              <li>Reap the benefits: easily create and manage projects, set deadlines, calculate costs, assemble teams
-                etc...
-              </li>
-            </ul>
-            <StyledTypographySub variant="body1">
               Already a member?{' '}
-              <StyledButton variant="contained" color="primary" component={Link} to="/login" autoComplete="off">
+              <Link to="/login">
+                <StyledButton variant="contained" color="primary">
                 Sign in here!
-              </StyledButton>
+                </StyledButton>
+              </Link>
               <br/>
-              Still no account?{' '}
-              <StyledButton variant="contained" color="primary" component={Link} to="/register" autoComplete="off">
-                Let's get you started!
+              Don't have an account?{" "}
+              <Link to="/register">
+                <StyledButton variant="contained" color="primary">
+                  Sign up to get started!
               </StyledButton>
+              </Link>
             </StyledTypographySub>
           </StyledDiv>
         </Grid>

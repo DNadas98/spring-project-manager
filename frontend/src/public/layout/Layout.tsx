@@ -1,9 +1,5 @@
-import * as React from "react";
 import {Link as RouterLink, Outlet} from "react-router-dom";
-import CssBaseline from "@mui/material/CssBaseline";
-import {ThemeProvider} from "@mui/material/styles";
 import {AppBar, Button, Container, Grid, Toolbar, Typography} from "@mui/material";
-import theme from "../../index";
 import {styled} from "@mui/system";
 
 const StyledContainer = styled(Container)(({theme}) => ({
@@ -12,13 +8,11 @@ const StyledContainer = styled(Container)(({theme}) => ({
 }));
 
 function Layout() {
-  const applicationName = "Tasx"
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline/>
+    <>
       <AppBar position="static">
         <Toolbar sx={{flexGrow: 1}}>
-          <Typography variant={"h5"} sx={{marginRight:3}}>{applicationName}</Typography>
+          <Typography variant={"h5"} sx={{marginRight: 3}}>Project Manager</Typography>
           <Button component={RouterLink} to="/" color="inherit">
             Home
           </Button>
@@ -33,12 +27,11 @@ function Layout() {
       <StyledContainer>
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} md={12} lg={12}>
-            <Outlet className="Outlet"/>
+            <Outlet/>
           </Grid>
         </Grid>
       </StyledContainer>
-    </ThemeProvider>
-  );
+    </>);
 }
 
 export default Layout;
