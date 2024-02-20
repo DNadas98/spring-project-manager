@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "1e1610fc-717c-41b5-a3f8-d830165f4325",
 		"name": "spring-project-manager",
-		"description": "## 🔖 **How to use this collection**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these request types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT and PATCH requests.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a variable called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more scripts in \"Tests\" to verify if the API works as expected and execute flows.\n    \n\n## ℹ️ Resources\n\n[Building requests](https://learning.postman.com/docs/sending-requests/requests/)  \n[Authorizing requests](https://learning.postman.com/docs/sending-requests/authorization/)  \n[Using variables](https://learning.postman.com/docs/sending-requests/variables/)  \n[Managing environments](https://learning.postman.com/docs/sending-requests/managing-environments/)  \n[Writing scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)",
+		"description": "### See the [GitHub repository](https://github.com/DNadas98/spring-project-manager) for further project details, source code and updates.\n\n## About The Project\n\nThe application allows users to create local accounts or sign in via Google, Facebook or GitHub accounts. (OAuth 2.0)\n\nAuthenticated users can join companies, create, and manage projects. Projects include tasks with start dates, deadlines,  \nexpenses, and varying levels of importance and difficulty. Employees request to be assigned to  \nprojects and receive rewards for completed tasks, incorporating a gamification aspect with a scoring  \nsystem.\n\n### Authentication, authorization\n\n\nThe application supports OAuth2 for login, allowing users to sign in with external accounts like\nGoogle, GitHub, and Facebook. This method simplifies login procedures by using existing social media\nprofiles, enhancing user convenience and security.\n\nFor local sign-ups, the application requires email verification. Users must verify their email\nthrough a sent link to activate their accounts, ensuring authenticity and reducing unauthorized\naccess.\n\nAdditionally, the application employs a flexible user management system where a single\nApplicationUser can have multiple UserAccounts, accommodating both local and OAuth2-linked accounts.\nThis design allows users to link multiple external identities to their application profile,\nfacilitating easy switching between different login methods while maintaining a unified profile.\nThis model streamlines account management and strengthens security and user experience.\n\nThe API uses JWTs (JSON Web Tokens) for authentication. After a successful login at the\nLogin endpoint, the user receives a Bearer Token in the response body, and a Refresh Token\nas a cookie named `jwt`. This cookie is HTTPOnly, SameSite = \"strict\", Secure)<br>\nSecured endpoints can be accessed by supplying the Bearer Token in the Authorization\nheader as \"Bearer \".\nIf the access token has expired, a new access token can be requested using the Refresh\nendpoint, as long as the Refresh Token is still valid and available as a cookie.<br>\nThe Spring API's security has advanced from a basic RBAC system to a more complex model, integrating\nglobal Spring Security roles and specific permission types with custom security at the method level.\nThis approach enables detailed access control based on the application's unique needs.\n\nSecurity for endpoints is managed by global roles, such as \"USER\" and \"ADMIN\". For example, only\nusers with the ADMIN role can access /api/v1/admin endpoints,\nwhile /api/v1/user and similar paths are open to users with the USER role, safeguarding\nadministrative functions.\n\nA custom permission evaluation system has also been developed, utilizing PermissionType to\ndynamically determine access rights based on the request's context, targeted objects, and user\npermissions. This system allows setting specific access rules for actions on entities like\ncompanies, projects, and tasks, based on the authenticated user's permissions.\n\nFor instance, access to or modification of a company, project, or task depends not only on a user's\nglobal role but also on permissions such as COMPANY_ADMIN, PROJECT_EDITOR, or\nTASK_ASSIGNED_EMPLOYEE, reflecting the user's specific relationship with the entity.\n\nThis enhanced security model improves the API's flexibility and security, enabling the definition of\ncomplex access control policies to meet the application's varied requirements, forming a strong\nbasis for authentication and authorization management.\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30693601",
 		"_collection_link": "https://www.postman.com/cc-tasx/workspace/dnadas98-public/collection/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325?action=share&source=collection_link&creator=30693601"
@@ -1346,7 +1346,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQ4NDAsImV4cCI6MTcwODI5NTQ0MH0.fCk-LAbwRwOZ2Wd_fAE4PrH8EF5KxF_jwHvq0XBTv7k",
+													"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDg0MzAwMDUsImV4cCI6MTcwODQzMDYwNX0.YOqKA30m3FvTKIbD4gqOcVZSmVTZyLpM-QMNE8DcAzU",
 													"type": "string"
 												}
 											]
@@ -1355,7 +1355,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"name\": \"Task 2\",\n    \"description\": \"Task 2 description\",\n    \"importance\": \"NICE_TO_HAVE\",\n    \"difficulty\": 4,\n    \"startDate\": \"2024-03-18T20:11:33.666Z\",\n    \"deadline\": \"2025-01-18T20:11:33.666Z\",\n        \"taskStatus\": \"BACKLOG\"\n}",
+											"raw": "{\n    \"name\": \"Task 1\",\n    \"description\": \"Task 1 description\",\n    \"importance\": \"NICE_TO_HAVE\",\n    \"difficulty\": 4,\n    \"startDate\": \"2023-03-18T20:11:33.666Z\",\n    \"deadline\": \"2025-01-18T20:11:33.666Z\",\n        \"taskStatus\": \"BACKLOG\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1483,7 +1483,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQxNTUsImV4cCI6MTcwODI5NDc1NX0.CAXYtHC0ho0d3BvCrUzkIfrlWxiuF8jioIRIJqaPYgI",
+													"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDg0MzAwMDUsImV4cCI6MTcwODQzMDYwNX0.YOqKA30m3FvTKIbD4gqOcVZSmVTZyLpM-QMNE8DcAzU",
 													"type": "string"
 												}
 											]
@@ -1492,7 +1492,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "\n        {\n            \"projectId\": 1,\n            \"taskId\": 1,\n            \"name\": \"Task 1\",\n            \"description\": \"Task 1 description\",\n            \"importance\": \"NICE_TO_HAVE\",\n            \"difficulty\": 4,\n            \"startDate\": \"2024-03-18T20:11:33.666\",\n            \"deadline\": \"2025-01-18T20:11:33.666\",\n            \"taskStatus\": \"IN_PROGRESS\"\n        }",
+											"raw": "\n        {\n            \"projectId\": 1,\n            \"taskId\": 1,\n            \"name\": \"Task 1\",\n            \"description\": \"Task 1 description\",\n            \"importance\": \"NICE_TO_HAVE\",\n            \"difficulty\": 4,\n            \"startDate\": \"2024-05-18T20:11:33.666\",\n            \"deadline\": \"2025-01-01T01:11:33.666\",\n            \"taskStatus\": \"IN_PROGRESS\"\n        }",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1500,17 +1500,17 @@
 											}
 										},
 										"url": {
-											"raw": "{{base_url}}/companies/{{company_id}}/projects/{{project_id}}/tasks/{{task_id}}",
+											"raw": "{{base_url}}/companies/1/projects/1/tasks/1",
 											"host": [
 												"{{base_url}}"
 											],
 											"path": [
 												"companies",
-												"{{company_id}}",
+												"1",
 												"projects",
-												"{{project_id}}",
+												"1",
 												"tasks",
-												"{{task_id}}"
+												"1"
 											]
 										},
 										"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -3600,7 +3600,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQxNTUsImV4cCI6MTcwODI5NDc1NX0.CAXYtHC0ho0d3BvCrUzkIfrlWxiuF8jioIRIJqaPYgI",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgzNzc5NjEsImV4cCI6MTcwODM3ODU2MX0.OGiG7JTxZtwY9fpHIr3O2UikMcczfaDN1Yx1KC3fYvk",
 											"type": "string"
 										}
 									]
@@ -3824,7 +3824,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQxNTUsImV4cCI6MTcwODI5NDc1NX0.CAXYtHC0ho0d3BvCrUzkIfrlWxiuF8jioIRIJqaPYgI",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgzNzk5MDIsImV4cCI6MTcwODM4MDUwMn0.0cPGbj6dDTW6cLJ3RQzzYnoWh5MI9eZugBiru9YNPKc",
 											"type": "string"
 										}
 									]
@@ -4255,7 +4255,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQ4NDAsImV4cCI6MTcwODI5NTQ0MH0.fCk-LAbwRwOZ2Wd_fAE4PrH8EF5KxF_jwHvq0XBTv7k",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDg0MzAwMDUsImV4cCI6MTcwODQzMDYwNX0.YOqKA30m3FvTKIbD4gqOcVZSmVTZyLpM-QMNE8DcAzU",
 											"type": "string"
 										}
 									]
@@ -4264,7 +4264,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Project 2\",\n    \"description\": \"Project details to be seen only by assigned employees\",\n    \"startDate\": \"2024-03-18T20:11:33.666Z\",\n    \"deadline\": \"2025-05-18T20:11:33.666Z\"\n}",
+									"raw": "{\n    \"name\": \"Project 2\",\n    \"description\": \"Project details to be seen only by assigned employees\",\n    \"startDate\": \"2024-01-18T20:11:33.666Z\",\n    \"deadline\": \"2025-05-18T20:11:33.666Z\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4366,6 +4366,88 @@
 									],
 									"cookie": [],
 									"body": "{\n    \"data\": {\n        \"companyId\": 1,\n        \"projectId\": 1,\n        \"name\": \"Project 1\",\n        \"description\": \"Project details to be seen only by assigned employees\",\n        \"startDate\": \"2024-02-18T20:11:33.666\",\n        \"deadline\": \"2025-02-18T20:11:33.666\",\n        \"tasks\": []\n    },\n    \"message\": \"Project created successfully\"\n}"
+								},
+								{
+									"name": "invalid start date",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Project 2\",\n    \"description\": \"Project details to be seen only by assigned employees\",\n    \"startDate\": \"2024-01-18T20:11:33.666Z\",\n    \"deadline\": \"2025-05-18T20:11:33.666Z\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/companies/1/projects",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"companies",
+												"1",
+												"projects"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "vary",
+											"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+										},
+										{
+											"key": "x-content-type-options",
+											"value": "nosniff"
+										},
+										{
+											"key": "x-xss-protection",
+											"value": "0"
+										},
+										{
+											"key": "cache-control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "expires",
+											"value": "0"
+										},
+										{
+											"key": "x-frame-options",
+											"value": "DENY"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json"
+										},
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "date",
+											"value": "Mon, 19 Feb 2024 22:03:49 GMT"
+										},
+										{
+											"key": "connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"error\": \"Field 'startDate' must be a date in the present or in the future\"\n}"
 								}
 							]
 						},
@@ -4404,7 +4486,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgyOTQxNTUsImV4cCI6MTcwODI5NDc1NX0.CAXYtHC0ho0d3BvCrUzkIfrlWxiuF8jioIRIJqaPYgI",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgzNzk5MDIsImV4cCI6MTcwODM4MDUwMn0.0cPGbj6dDTW6cLJ3RQzzYnoWh5MI9eZugBiru9YNPKc",
 											"type": "string"
 										}
 									]
@@ -4413,7 +4495,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Project 2 - updated\",\n    \"description\": \"Project details to be seen only by assigned employees\",\n    \"startDate\":\"2024-02-18T20:11:33.666Z\",\n    \"deadline\":\"2025-02-18T20:11:33.666Z\"\n}",
+									"raw": "{\n    \"name\": \"Project 1 - updated\",\n    \"description\": \"Project details to be seen only by assigned employees\",\n    \"startDate\":\"2024-02-18T20:11:33.666Z\",\n    \"deadline\":\"2025-02-18T20:11:33.666Z\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4421,7 +4503,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/companies/1/projects/2",
+									"raw": "{{base_url}}/companies/1/projects/1",
 									"host": [
 										"{{base_url}}"
 									],
@@ -4429,7 +4511,7 @@
 										"companies",
 										"1",
 										"projects",
-										"2"
+										"1"
 									]
 								},
 								"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -6617,7 +6699,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaUB3ZWItZGV2LXRlc3QuaHUiLCJpYXQiOjE3MDgzMDEwNzgsImV4cCI6MTcwODMwMTY3OH0.4eFhmejIcIH5pHin0bbHJBXNvij9ibJPVWrD2D2Dedo",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDg0MzAwMDUsImV4cCI6MTcwODQzMDYwNX0.YOqKA30m3FvTKIbD4gqOcVZSmVTZyLpM-QMNE8DcAzU",
 									"type": "string"
 								}
 							]
@@ -6626,7 +6708,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Company3\",\n    \"description\": \"Company details of company 3\"\n}",
+							"raw": "{\n    \"name\": \"Company1\",\n    \"description\": \"Company details of company 1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -7858,7 +7940,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"dani@web-dev-test.hu\",\n    \"password\":\"testpw\"\n}",
+							"raw": "{\n    \"email\":\"daniel.nadas.123@gmail.com\",\n    \"password\":\"testpw\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -8236,7 +8318,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgyOTgxNTUsImV4cCI6MTcwODI5ODc1NX0.VQ11UmPtEpqfPA1PwGpc6kO48jrFUkaPRf7mKBeEyBU",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaWVsLm5hZGFzLjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDgzMzI0NTYsImV4cCI6MTcwODMzMzA1Nn0.NRtxzNIWm2T29cnBipfnuJcZN-rKs9QHWYdyPcp8gwA",
 											"type": "string"
 										}
 									]
@@ -8590,7 +8672,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgyOTg4NDcsImV4cCI6MTcwODI5OTQ0N30.p01n-rKQMbyGT-wrePc1l59YJqDwioIHAO-jLtFD_5c",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoidGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE3MDgzNzA0ODgsImV4cCI6MTcwODM3MTA4OH0.GaWr8g1Ovi-i5HAohMrEnwyU6-NmJQZ5s1sa4ucy_k4",
 											"type": "string"
 										}
 									]
@@ -9260,6 +9342,215 @@
 		{
 			"name": "user",
 			"item": [
+				{
+					"name": "accounts",
+					"item": [
+						{
+							"name": "/",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaWVsLm5hZGFzLjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDgzMzU0MzcsImV4cCI6MTcwODMzNjAzN30.R_JKXLO-rnB_lMlVd9pEbBkv1pJ_E0Tv0oM6LEPqXYM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/accounts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"accounts"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/user/accounts",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"user",
+												"accounts"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "vary",
+											"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+										},
+										{
+											"key": "x-content-type-options",
+											"value": "nosniff"
+										},
+										{
+											"key": "x-xss-protection",
+											"value": "0"
+										},
+										{
+											"key": "cache-control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "expires",
+											"value": "0"
+										},
+										{
+											"key": "x-frame-options",
+											"value": "DENY"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json"
+										},
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "date",
+											"value": "Mon, 19 Feb 2024 00:54:27 GMT"
+										},
+										{
+											"key": "connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 152,\n            \"email\": \"daniel.nadas.123@gmail.com\",\n            \"accountType\": \"GOOGLE\"\n        },\n        {\n            \"id\": 154,\n            \"email\": \"daniel.nadas.123@gmail.com\",\n            \"accountType\": \"LOCAL\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "/id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50VHlwZSI6IkxPQ0FMIiwic3ViIjoiZGFuaWVsLm5hZGFzLjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MDgzMzU0MzcsImV4cCI6MTcwODMzNjAzN30.R_JKXLO-rnB_lMlVd9pEbBkv1pJ_E0Tv0oM6LEPqXYM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/user/accounts/154",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"accounts",
+										"154"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/user/accounts/152",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"user",
+												"accounts",
+												"152"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "vary",
+											"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+										},
+										{
+											"key": "x-content-type-options",
+											"value": "nosniff"
+										},
+										{
+											"key": "x-xss-protection",
+											"value": "0"
+										},
+										{
+											"key": "cache-control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "expires",
+											"value": "0"
+										},
+										{
+											"key": "x-frame-options",
+											"value": "DENY"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json"
+										},
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "date",
+											"value": "Mon, 19 Feb 2024 00:55:46 GMT"
+										},
+										{
+											"key": "connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"User account deleted successfully\"\n}"
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "/",
 					"request": {
