@@ -1,6 +1,6 @@
 package com.codecool.tasx.service.auth;
 
-import com.codecool.tasx.controller.dto.user.auth.TokenPayloadDto;
+import com.codecool.tasx.dto.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
 import com.codecool.tasx.model.auth.account.AccountType;
 import io.jsonwebtoken.Claims;

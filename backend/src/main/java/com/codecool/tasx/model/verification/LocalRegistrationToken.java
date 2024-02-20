@@ -2,6 +2,7 @@ package com.codecool.tasx.model.verification;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class LocalRegistrationToken extends VerificationToken {
 
   @Column(nullable = false, unique = true)
@@ -25,5 +27,13 @@ public class LocalRegistrationToken extends VerificationToken {
     this.email = email;
     this.username = username;
     this.password = hashedPassword;
+  }
+
+  @Override
+  public String toString() {
+    return "LocalRegistrationToken{" +
+      "email='" + email + '\'' +
+      ", username='" + username + '\'' +
+      '}';
   }
 }

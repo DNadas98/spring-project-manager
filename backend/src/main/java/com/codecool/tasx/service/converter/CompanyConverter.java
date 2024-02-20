@@ -1,11 +1,11 @@
 package com.codecool.tasx.service.converter;
 
-import com.codecool.tasx.controller.dto.company.CompanyResponsePrivateDTO;
-import com.codecool.tasx.controller.dto.company.CompanyResponsePublicDTO;
-import com.codecool.tasx.controller.dto.requests.CompanyJoinRequestResponseDto;
+import com.codecool.tasx.dto.company.CompanyResponsePrivateDTO;
+import com.codecool.tasx.dto.company.CompanyResponsePublicDTO;
+import com.codecool.tasx.dto.requests.CompanyJoinRequestResponseDto;
 import com.codecool.tasx.model.company.Company;
-import com.codecool.tasx.model.requests.CompanyJoinRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codecool.tasx.model.request.CompanyJoinRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,19 +13,9 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class CompanyConverter {
   private final UserConverter userConverter;
-  private final ProjectConverter projectConverter;
-  private final RewardConverter rewardConverter;
-
-  @Autowired
-  public CompanyConverter(
-    UserConverter userConverter, ProjectConverter projectConverter,
-    RewardConverter rewardConverter) {
-    this.userConverter = userConverter;
-    this.projectConverter = projectConverter;
-    this.rewardConverter = rewardConverter;
-  }
 
   public List<CompanyResponsePublicDTO> getCompanyResponsePublicDtos(List<Company> companies) {
     return companies.stream().map(
@@ -34,9 +24,7 @@ public class CompanyConverter {
 
   public CompanyResponsePrivateDTO getCompanyResponsePrivateDto(Company company) {
     return new CompanyResponsePrivateDTO(company.getId(), company.getName(),
-      company.getDescription(), userConverter.getUserResponsePublicDto(company.getCompanyOwner()),
-      userConverter.getUserResponsePublicDtos(company.getEmployees()),
-      rewardConverter.getRewardResponseDtos(company.getRewards()));
+      company.getDescription());
   }
 
   public CompanyResponsePublicDTO getCompanyResponsePublicDto(Company company) {

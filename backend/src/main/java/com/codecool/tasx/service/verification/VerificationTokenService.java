@@ -1,12 +1,12 @@
 package com.codecool.tasx.service.verification;
 
-import com.codecool.tasx.controller.dto.user.auth.RegisterRequestDto;
-import com.codecool.tasx.controller.dto.verification.VerificationTokenDto;
+import com.codecool.tasx.dto.auth.RegisterRequestDto;
+import com.codecool.tasx.dto.verification.VerificationTokenDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
 import com.codecool.tasx.exception.verification.VerificationTokenAlreadyExistsException;
 import com.codecool.tasx.model.verification.LocalRegistrationToken;
 import com.codecool.tasx.model.verification.LocalRegistrationTokenDao;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +14,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class VerificationTokenService {
   private final LocalRegistrationTokenDao localRegistrationTokenDao;
   private final PasswordEncoder tokenCodeEncoder;
-
-  @Autowired
-  public VerificationTokenService(
-    LocalRegistrationTokenDao localRegistrationTokenDao, PasswordEncoder tokenCodeEncoder) {
-    this.localRegistrationTokenDao = localRegistrationTokenDao;
-    this.tokenCodeEncoder = tokenCodeEncoder;
-  }
 
   public LocalRegistrationToken getLocalRegistrationToken(
     VerificationTokenDto verificationTokenDto) {

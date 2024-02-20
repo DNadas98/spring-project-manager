@@ -28,8 +28,7 @@
     <br />
     <a href="https://github.com/users/DNadas98/projects/4"><strong>View the Project Board »</strong></a>
     <br />
-    <!-- <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/...
--153ba7e4-663e-46da-b37c-7c6e95493b00"><strong>Read the API Documentation »</strong></a> -->
+    <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325"><strong>Read the API Documentation »</strong></a>
     <br />
     <br />
     <a href="https://github.com/DNadas98/spring-project-manager/issues">Report Bug</a>
@@ -142,12 +141,18 @@ The project uses Nginx as reverse-proxy and static file server.
   - Replace `ssl/fake-ssl-cert` and `ssl/fake-ssl-key` with real certificates
   - Modify SSL copy lines in `nginx/Dockerfile`
   - Modify SSL configuration in `nginx/nginx.conf`
-- Run `docker compose up -d` in the project root to start the project with Docker Compose
-  <br><br>
+    <br><br>
+- Run `docker compose up -d` in the project root to start the project with Docker Compose,
+- OR for easier, faster development
+  - Run the development database in the `docker-compose.dev.yml`
+  - Start the spring boot application in "dev" profile (the default Spring profile)
+  - From the frontend folder, start the javascript application using `npm run dev`
+    <br><br>
 - Access the application at [`https://localhost:4430`](https://localhost:4430) (by default)
   <br><br>
-- Run `docker compose logs -f` in the project root to view the logs (Logging is overly verbose for
-  production, it's set up for development)
+- Run `docker compose logs -f` in the project root to view the logs
+  - The backend API has different logging level for "dev" and "prod" profiles.  
+    A more verbose setting is useful during development.
 - See `backend/Dockerfile` and `nginx/Dockerfile` for build details
 
 ## Usage
@@ -161,6 +166,20 @@ The project uses Nginx as reverse-proxy and static file server.
 
 ### Authentication, authorization
 
+The application supports OAuth2 for login, allowing users to sign in with external accounts like
+Google, GitHub, and Facebook. This method simplifies login procedures by using existing social media
+profiles, enhancing user convenience and security.
+
+For local sign-ups, the application requires email verification. Users must verify their email
+through a sent link to activate their accounts, ensuring authenticity and reducing unauthorized
+access.
+
+Additionally, the application employs a flexible user management system where a single
+ApplicationUser can have multiple UserAccounts, accommodating both local and OAuth2-linked accounts.
+This design allows users to link multiple external identities to their application profile,
+facilitating easy switching between different login methods while maintaining a unified profile.
+This model streamlines account management and strengthens security and user experience.
+
 The API uses JWTs (JSON Web Tokens) for authentication. After a successful login at the
 Login endpoint, the user receives a Bearer Token in the response body, and a Refresh Token
 as a cookie named `jwt`. This cookie is HTTPOnly, SameSite = "strict", Secure)<br><br>
@@ -168,18 +187,33 @@ Secured endpoints can be accessed by supplying the Bearer Token in the Authoriza
 header as "Bearer ".
 If the access token has expired, a new access token can be requested using the Refresh
 endpoint, as long as the Refresh Token is still valid and available as a cookie.<br><br>
-The API uses a simple form of Role Based Access Control, current valid roles are "USER"
-and "ADMIN". A list of allowed roles is defined for all secured endpoints. For example,
-both users with "USER" or "ADMIN" role can access their own account details, but the
-details of other accounts are only accessible with "ADMIN" role.
+The Spring API's security has advanced from a basic RBAC system to a more complex model, integrating
+global Spring Security roles and specific permission types with custom security at the method level.
+This approach enables detailed access control based on the application's unique needs.
 
-<!--
+Security for endpoints is managed by global roles, such as "USER" and "ADMIN". For example, only
+users with the ADMIN role can access /api/v1/admin endpoints,
+while /api/v1/user and similar paths are open to users with the USER role, safeguarding
+administrative functions.
+
+A custom permission evaluation system has also been developed, utilizing PermissionType to
+dynamically determine access rights based on the request's context, targeted objects, and user
+permissions. This system allows setting specific access rules for actions on entities like
+companies, projects, and tasks, based on the authenticated user's permissions.
+
+For instance, access to or modification of a company, project, or task depends not only on a user's
+global role but also on permissions such as COMPANY_ADMIN, PROJECT_EDITOR, or
+TASK_ASSIGNED_EMPLOYEE, reflecting the user's specific relationship with the entity.
+
+This enhanced security model improves the API's flexibility and security, enabling the definition of
+complex access control policies to meet the application's varied requirements, forming a strong
+basis for authentication and authorization management.
+
 ### API Documentation
 
 See
-the [API Documentation](https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/...)
+the [API Documentation](https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325)
 for available endpoints and API usage guide
--->
 
 ## Roadmap
 

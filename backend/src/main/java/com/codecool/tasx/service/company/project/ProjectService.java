@@ -1,9 +1,9 @@
 package com.codecool.tasx.service.company.project;
 
-import com.codecool.tasx.controller.dto.company.project.ProjectCreateRequestDto;
-import com.codecool.tasx.controller.dto.company.project.ProjectResponsePrivateDTO;
-import com.codecool.tasx.controller.dto.company.project.ProjectResponsePublicDTO;
-import com.codecool.tasx.controller.dto.company.project.ProjectUpdateRequestDto;
+import com.codecool.tasx.dto.company.project.ProjectCreateRequestDto;
+import com.codecool.tasx.dto.company.project.ProjectResponsePrivateDTO;
+import com.codecool.tasx.dto.company.project.ProjectResponsePublicDTO;
+import com.codecool.tasx.dto.company.project.ProjectUpdateRequestDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
 import com.codecool.tasx.exception.company.CompanyNotFoundException;
 import com.codecool.tasx.exception.company.project.ProjectNotFoundException;
@@ -11,40 +11,32 @@ import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.ProjectDao;
-import com.codecool.tasx.model.requests.RequestStatus;
+import com.codecool.tasx.model.company.project.task.Task;
+import com.codecool.tasx.model.request.RequestStatus;
 import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
-import jakarta.transaction.Transactional;
+import com.codecool.tasx.service.datetime.DateTimeService;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
   private final ProjectDao projectDao;
   private final CompanyDao companyDao;
   private final ProjectConverter projectConverter;
   private final UserProvider userProvider;
-  private final Logger logger;
+  private final DateTimeService dateTimeService;
 
-  @Autowired
-  public ProjectService(
-    ProjectDao projectDao, CompanyDao companyDao, ProjectConverter projectConverter,
-    UserProvider userProvider) {
-    this.projectDao = projectDao;
-    this.companyDao = companyDao;
-    this.projectConverter = projectConverter;
-    this.userProvider = userProvider;
-    this.logger = LoggerFactory.getLogger(this.getClass());
-  }
-
-  @Transactional
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithoutUser(Long companyId)
     throws UnauthorizedException {
@@ -56,7 +48,7 @@ public class ProjectService {
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithUser(Long companyId)
     throws UnauthorizedException {
@@ -67,7 +59,7 @@ public class ProjectService {
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public ProjectResponsePrivateDTO getProjectById(Long companyId, Long projectId)
     throws UnauthorizedException {
@@ -76,41 +68,58 @@ public class ProjectService {
     return projectConverter.getProjectResponsePrivateDto(project);
   }
 
-  @Transactional(rollbackOn = Exception.class)
+  @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public ProjectResponsePrivateDTO createProject(
     ProjectCreateRequestDto createRequestDto, Long companyId) throws ConstraintViolationException {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
+
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+
+    Instant projectStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
+    Instant projectDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
+    dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
+
     Project project = new Project(createRequestDto.name(), createRequestDto.description(),
-      createRequestDto.startDate(), createRequestDto.deadline(), applicationUser, company);
-    project.assignEmployee(applicationUser);
+      projectStartDate, projectDeadline, applicationUser, company);
     projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(project);
   }
 
-  @Transactional(rollbackOn = Exception.class)
+  @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public ProjectResponsePrivateDTO updateProject(
     ProjectUpdateRequestDto updateRequestDto, Long companyId, Long projectId)
     throws ConstraintViolationException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
+
+    Instant projectStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
+    Instant projectDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
+    Set<Task> tasks = project.getTasks();
+    if (tasks.isEmpty()) {
+      dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
+    } else {
+      Instant earliestTaskStartDate = dateTimeService.getEarliestTaskStartDate(tasks);
+      Instant latestTaskDeadline = dateTimeService.getLatestTaskDeadline(tasks);
+      dateTimeService.validateProjectDates(projectStartDate, projectDeadline, earliestTaskStartDate,
+        latestTaskDeadline);
+    }
+
     project.setName(updateRequestDto.name());
     project.setDescription(updateRequestDto.description());
-    project.setStartDate(updateRequestDto.startDate());
-    project.setDeadline(updateRequestDto.deadline());
+    project.setStartDate(projectStartDate);
+    project.setDeadline(projectDeadline);
     Project savedProject = projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(savedProject);
   }
 
-  @Transactional(rollbackOn = Exception.class)
+  @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public void deleteProject(Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     projectDao.delete(project);
   }
-
 }

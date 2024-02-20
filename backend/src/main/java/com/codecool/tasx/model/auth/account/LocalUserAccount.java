@@ -2,7 +2,10 @@ package com.codecool.tasx.model.auth.account;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,9 @@ import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public class LocalUserAccount extends UserAccount implements UserDetails {
   @Column(nullable = false)
   private String password;
@@ -46,10 +52,6 @@ public class LocalUserAccount extends UserAccount implements UserDetails {
   @Override
   public String getPassword() {
     return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   /**
@@ -108,13 +110,5 @@ public class LocalUserAccount extends UserAccount implements UserDetails {
   @Override
   public boolean isEnabled() {
     return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
   }
 }
