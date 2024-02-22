@@ -1,7 +1,14 @@
-import {Container, Grid, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import MUIExampleForm from "./MUIExampleForm.tsx";
 import MUIExampleCard from "./MUIExampleCard.tsx";
 import MUIExampleDialog from "./MUIExampleDialog.tsx";
+import MUIExampleNotification from "./MUIExampleNotification.tsx";
 
 export default function MUIExample() {
   const theme = useTheme();
@@ -9,6 +16,7 @@ export default function MUIExample() {
 
   return (
     <Container>
+      <MUIExampleNotification/>
       <Grid container justifyContent="center" spacing={2} mb={4}>
         {Array.from({length: 3}, (_, i) => {
           return (
@@ -43,7 +51,7 @@ export default function MUIExample() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid container justifyContent="center" spacing={2} mb={2}>
+      <Grid container justifyContent="center" spacing={2} mb={4}>
         <Grid item xs={10} sm={8} md={6} lg={4}
               sx={{backgroundColor: `${theme.palette.background.paper}`}} padding={2}>
           <MUIExampleForm/>

@@ -6,6 +6,7 @@ import {ComponentPreviews, useInitial} from "./react_buddy_dev";
 import {ThemePaletteModeProvider} from "./theme/context/ThemePaletteModeProvider.tsx";
 import appRouter from "./config/routing/appRouter.tsx";
 import {RouterProvider} from "react-router-dom";
+import {NotificationProvider} from "./common/context/NotificationProvider.tsx";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement as HTMLElement);
@@ -15,9 +16,11 @@ root.render(
   <DevSupport ComponentPreviews={ComponentPreviews} useInitialHook={useInitial}>
     <ThemePaletteModeProvider>
       <AppThemeProvider>
-        <AuthProvider>
-          <RouterProvider router={router}/>
-        </AuthProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <RouterProvider router={router}/>
+          </AuthProvider>
+        </NotificationProvider>
       </AppThemeProvider>
     </ThemePaletteModeProvider>
   </DevSupport>

@@ -23,6 +23,20 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
             backgroundSize: "cover"
           }
         }
+      },
+      MuiButton: {
+        defaultProps: {
+          color: "inherit"
+        }
+      },
+      MuiAlert: {
+        styleOverrides: {
+          standardInfo: {color: "secondary"},
+          standardSuccess: {color: "success"},
+          standardWarning: {color: "warning"},
+          standardError: {color: "error"}
+        },
+        defaultProps: {variant: "standard"}
       }
     }
   });
