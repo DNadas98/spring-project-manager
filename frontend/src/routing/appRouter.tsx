@@ -1,9 +1,9 @@
 import {createBrowserRouter} from "react-router-dom";
-import Layout from "../../public/layout/Layout.tsx";
-import ErrorPage from "../../public/pages/ErrorPage.tsx";
-import {publicMenuRoutes} from "./publicMenuRoutes.tsx";
-import NotFound from "../../public/pages/NotFound.tsx";
-import LoadingSpinner from "../../common/components/LoadingSpinner.tsx";
+import Layout from "../public/layout/Layout.tsx";
+import ErrorPage from "../public/pages/ErrorPage.tsx";
+import {publicMenuRoutes} from "../config/menus/publicMenuRoutes.tsx";
+import NotFound from "../public/pages/NotFound.tsx";
+import LoadingSpinner from "../common/components/LoadingSpinner.tsx";
 
 const oauthRedirectPath = import.meta.env.VITE_OAUTH2_REDIRECT_URL;
 const registrationRedirectPath = import.meta.env.VITE_REGISTRATION_REDIRECT_URL;

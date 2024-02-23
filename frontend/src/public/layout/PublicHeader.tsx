@@ -5,8 +5,8 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import {IMenuRoutes} from "../../config/routing/IMenuRoutes.ts";
-import {publicMenuRoutes} from "../../config/routing/publicMenuRoutes.tsx";
+import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
+import {publicMenuRoutes} from "../../config/menus/publicMenuRoutes.tsx";
 import ThemePaletteModeSwitch from "../../theme/components/ThemePaletteModeSwitch.tsx";
 import SmallMenu from "../../common/components/menu/SmallMenu.tsx";
 import LargeMenu from "../../common/components/menu/LargeMenu.tsx";

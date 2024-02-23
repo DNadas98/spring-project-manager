@@ -1,7 +1,7 @@
 import {AppBar, Link, Toolbar, Typography} from "@mui/material";
 import SmallMenu from "../../common/components/menu/SmallMenu.tsx";
-import {publicMenuRoutes} from "../../config/routing/publicMenuRoutes.tsx";
-import {IMenuRoutes} from "../../config/routing/IMenuRoutes.ts";
+import {publicMenuRoutes} from "../../config/menus/publicMenuRoutes.tsx";
+import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
 import {GitHub} from "@mui/icons-material";
 import siteConfig from "../../config/siteConfig.ts";
 

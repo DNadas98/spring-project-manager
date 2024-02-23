@@ -2,7 +2,7 @@ import {IconButton, Menu, MenuItem} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {Link as RouterLink} from "react-router-dom";
 import {useState} from "react";
-import {IMenuRoutes} from "../../../config/routing/IMenuRoutes.ts";
+import {IMenuRoutes} from "../../../routing/IMenuRoutes.ts";
 
 interface SmallMenuProps {
   menu: IMenuRoutes;

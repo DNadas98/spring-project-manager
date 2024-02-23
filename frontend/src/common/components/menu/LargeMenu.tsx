@@ -1,6 +1,6 @@
 import {Button, Stack} from "@mui/material";
 import {Link as RouterLink} from "react-router-dom";
-import {IMenuRoutes} from "../../../config/routing/IMenuRoutes.ts";
+import {IMenuRoutes} from "../../../routing/IMenuRoutes.ts";
 
 interface LargeMenuProps {
   menu: IMenuRoutes;

@@ -1,70 +1,48 @@
 import {createContext, ReactNode, useContext, useState} from "react";
+import {AuthenticationDto} from "../dto/AuthenticationDto.ts";
+import {IAuthenticationContext} from "./IAuthenticationContext.ts";
 
 interface AuthenticationProviderProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
-export enum GlobalRole {
-  USER, ADMIN
-}
-
-export interface UserInfo {
-  username: string;
-  email: string;
-  roles: Set<GlobalRole>;
-}
-
-export interface IAuthentication {
-  userInfo?: UserInfo,
-  accessToken?: string
-}
-
-export interface AuthenticationContextType {
-  login: (authentication: IAuthentication) => void;
-  logout: () => void;
-  getUsername: () => string | undefined;
-  getEmail: () => string | undefined;
-  getRoles: () => Set<GlobalRole> | undefined;
-  getAccessToken: () => string | undefined;
-}
-
-export const AuthenticationContext = createContext<AuthenticationContextType | undefined>(undefined);
+export const AuthenticationContext = createContext<IAuthenticationContext | undefined>(undefined);
 
 export function AuthenticationProvider({children}: AuthenticationProviderProps) {
-  const [authentication, setAuthentication] = useState<IAuthentication>({});
+    const [authentication, setAuthentication] = useState<AuthenticationDto>({});
 
-  const login = (authentication: IAuthentication) => {
-    setAuthentication(authentication);
-  };
+    const login = (authentication: AuthenticationDto) => {
+        setAuthentication(authentication);
+    };
 
-  const logout = () => {
-    setAuthentication({});
-  };
+    const logout = () => {
+        setAuthentication({});
+    };
 
-  const getUsername = () => {
-    return authentication.userInfo?.username;
-  };
+    const getUsername = () => {
+        return authentication.userInfo?.username;
+    };
 
-  const getEmail = () => {
-    return authentication.userInfo?.email;
-  };
+    const getEmail = () => {
+        return authentication.userInfo?.email;
+    };
 
-  const getRoles = () => {
-    return authentication.userInfo?.roles;
-  };
+    const getRoles = () => {
+        return authentication.userInfo?.roles;
+    };
 
-  const getAccessToken = () => {
-    return authentication.accessToken;
-  };
+    const getAccessToken = () => {
+        return authentication.accessToken;
+    };
 
-  return (
-    <AuthenticationContext.Provider
-      value={{login, logout, getUsername, getEmail, getRoles, getAccessToken}}>
-      {children}
-    </AuthenticationContext.Provider>
-  );
+    return (
+        <AuthenticationContext.Provider
+            value={{login, logout, getUsername, getEmail, getRoles, getAccessToken}}>
+            {children}
+        </AuthenticationContext.Provider>
+    );
 }
 
-export function useAuthentication() {
-  return useContext(AuthenticationContext);
+export function useAuthentication(): IAuthenticationContext | undefined {
+    return useContext(AuthenticationContext);
 }

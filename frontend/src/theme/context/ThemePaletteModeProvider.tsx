@@ -1,13 +1,9 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {PaletteMode} from "@mui/material";
+import {IThemePaletteModeContext} from "./IThemePaletteModeContext.ts";
 
 interface AppThemePaletteProviderProps {
   children: ReactNode;
-}
-
-export interface IThemePaletteModeContext {
-  paletteMode: PaletteMode;
-  togglePaletteMode: () => void;
 }
 
 const ThemePaletteModeContext = createContext<IThemePaletteModeContext>({
