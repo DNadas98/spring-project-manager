@@ -1,6 +1,6 @@
 import {createRoot} from "react-dom/client";
 import {AppThemeProvider} from "./theme/context/AppThemeProvider.tsx";
-import {AuthProvider} from "./auth/context/AuthProvider.tsx";
+import {AuthenticationProvider} from "./authentication/context/AuthenticationProvider.tsx";
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./react_buddy_dev";
 import {ThemePaletteModeProvider} from "./theme/context/ThemePaletteModeProvider.tsx";
@@ -17,9 +17,9 @@ root.render(
     <ThemePaletteModeProvider>
       <AppThemeProvider>
         <NotificationProvider>
-          <AuthProvider>
+          <AuthenticationProvider>
             <RouterProvider router={router}/>
-          </AuthProvider>
+          </AuthenticationProvider>
         </NotificationProvider>
       </AppThemeProvider>
     </ThemePaletteModeProvider>
