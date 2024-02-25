@@ -1,3 +1,4 @@
 export enum GlobalRole {
-  USER, ADMIN
+    USER = "USER",
+    ADMIN = "ADMIN"
 }

@@ -1,16 +1,10 @@
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  useMediaQuery,
-  useTheme
-} from "@mui/material";
-import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import {publicMenuRoutes} from "../../config/menus/publicMenuRoutes.tsx";
-import ThemePaletteModeSwitch from "../../theme/components/ThemePaletteModeSwitch.tsx";
-import SmallMenu from "../../common/components/menu/SmallMenu.tsx";
-import LargeMenu from "../../common/components/menu/LargeMenu.tsx";
-import siteConfig from "../../config/siteConfig.ts";
+import {AppBar, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {IMenuRoutes} from "../../common/routing/IMenuRoutes.ts";
+import {publicMenuRoutes} from "../../common/config/menu/publicMenuRoutes.tsx";
+import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
+import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
+import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
+import siteConfig from "../../common/config/siteConfig.ts";
 
 export default function PublicHeader() {
   const theme = useTheme();
@@ -24,8 +18,8 @@ export default function PublicHeader() {
       <Toolbar>
         <Typography variant={"h6"} flexGrow={1}>{siteName}</Typography>
         {isSmallScreen
-          ? <SmallMenu menu={menu}/>
-          : <LargeMenu menu={menu}/>
+            ? <MenuSmall menu={menu}/>
+            : <MenuLarge menu={menu}/>
         }
         <ThemePaletteModeSwitch/>
       </Toolbar>

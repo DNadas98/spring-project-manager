@@ -3,10 +3,7 @@ package com.codecool.tasx.service.auth;
 import com.codecool.tasx.dto.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
 import com.codecool.tasx.model.auth.account.AccountType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,18 +51,30 @@ public class JwtService {
   }
 
   public boolean isAccessTokenExpired(String accessToken) {
+    try {
     return isTokenExpired(accessToken, accessTokenSecret, accessTokenAlgorithm);
+    } catch (JwtException e) {
+      throw new UnauthorizedException();
+    }
   }
 
   public TokenPayloadDto verifyAccessToken(String accessToken) {
+    try {
     Claims claims = extractAllClaimsFromToken(accessToken, accessTokenSecret, accessTokenAlgorithm);
     return getPayloadDto(claims);
+    } catch (JwtException e) {
+      throw new UnauthorizedException();
+    }
   }
 
   public TokenPayloadDto verifyRefreshToken(String refreshToken) {
-    Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
+    try {
+      Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
       refreshTokenAlgorithm);
     return getPayloadDto(claims);
+    } catch (JwtException e) {
+      throw new UnauthorizedException();
+    }
   }
 
   private String generateToken(
