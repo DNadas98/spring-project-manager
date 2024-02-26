@@ -6,14 +6,7 @@ import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from "@mui/material";
+import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
 
 export default function RegisterVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +38,6 @@ export default function RegisterVerificationRedirect() {
     const handleVerification = async () => {
       const code = searchParams.get("code");
       const id = searchParams.get("id");
-      console.log(code, id)
       if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
         return handleError("The received verification code is missing or invalid");
       }
@@ -78,22 +70,10 @@ export default function RegisterVerificationRedirect() {
     loading
       ? <LoadingSpinner/>
       : error
-        ? <Dialog open={true} onClose={handleDialog}>
-          <DialogTitle>
-            Error: {error}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Return to the homepage or try again later.
-              If the issue persists, please contact our support team.
-            </DialogContentText>
-            <DialogActions>
-              <Button onClick={handleDialog}>
-                Home
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
+        ? <DialogAlert title={`Error: ${error}`} text={
+          "Return to the Home page or try again later.\n"
+          + "If the issue persists, please contact our support team."
+        } buttonText={"Home"} onClose={handleDialog}/>
         : <></>
   );
 }

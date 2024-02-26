@@ -1,44 +1,55 @@
-import {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import useRefresh from "../../hooks/useRefresh.ts";
-import useLogout from "../../hooks/useLogout.ts";
-import {useAuthentication} from "../../hooks/useAuthentication.ts";
+import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
 
 export default function OAuth2Redirect() {
-    const navigate = useNavigate();
-    const notification = useNotification();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<null | string>(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const refresh = useRefresh();
-  const logout = useLogout();
-    const authentication = useAuthentication();
+
+  const handleError = (error: string | undefined = undefined) => {
+    const message = error ??
+      "An error has occurred during the sign in process";
+    setError(message);
+  };
+
+  const handleSuccess = async () => {
+    await refresh();
+    return navigate("/user");
+  };
 
   useEffect(() => {
     async function handleOauth2Login() {
-        const searchParams = new URLSearchParams(location.search);
-        const errorMessage = searchParams.get("error");
-        if (errorMessage) {
-            notification.openNotification({
-                type: "error", message: errorMessage, vertical: "top", horizontal: "center"
-            });
-            return await logout();
-        }
-        return await refresh();
+      const errorMessage = searchParams.get("error");
+      if (errorMessage) {
+        return handleError(errorMessage);
+      }
+      await handleSuccess();
     }
 
-      if (!authentication?.getAccessToken?.length) {
-          handleOauth2Login().then(() => {
-              return navigate("/user");
-          }).catch(() => {
-              notification.openNotification({
-                  type: "error", message: "Failed to log in via OAuth2", vertical: "top", horizontal: "center"
-              });
-              logout().then();
-          });
-      } else {
-          throw new Error();
-      }
+    handleOauth2Login().catch(() => {
+      handleError();
+    }).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  return <LoadingSpinner/>;
+  const handleDialog = () => {
+    navigate("/login", {replace: true});
+  };
+
+  return (
+    loading
+      ? <LoadingSpinner/>
+      : error
+        ? <DialogAlert title={`Error: ${error}`} text={
+          "You will be navigated back to the Login page.\n"
+          + "If the issue persists, please contact our support team."
+        } buttonText={"Back"} onClose={handleDialog}/>
+        : <></>
+  );
 }
