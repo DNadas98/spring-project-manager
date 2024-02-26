@@ -15,7 +15,7 @@ import {
   DialogTitle
 } from "@mui/material";
 
-export default function RegisterVerification() {
+export default function RegisterVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<null | string>(null);
   const notification = useNotification();

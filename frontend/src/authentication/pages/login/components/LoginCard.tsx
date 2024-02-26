@@ -10,16 +10,15 @@ import {
 } from "@mui/material";
 import {Lock} from "@mui/icons-material";
 import OAuth2Stack from "../../../components/oauth2/OAuth2Stack.tsx";
-import UsernameInput from "../../../components/inputs/UsernameInput.tsx";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
 
-interface RegisterCardProps {
+interface LoginCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
-export default function RegisterCard({onSubmit}: RegisterCardProps) {
+export default function LoginCard({onSubmit}: LoginCardProps) {
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>
@@ -37,7 +36,7 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
               <Lock/>
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              Sign Up
+              Sign In
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
@@ -51,10 +50,8 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
                     sx={{borderColor: "secondary.main"}}>
                 <form onSubmit={onSubmit}>
                   <Stack spacing={2}>
-                    <UsernameInput/>
                     <EmailInput/>
                     <PasswordInput/>
-                    <PasswordInput confirm={true}/>
                     <Button type={"submit"}
                             variant={"contained"}>
                       Sign Up

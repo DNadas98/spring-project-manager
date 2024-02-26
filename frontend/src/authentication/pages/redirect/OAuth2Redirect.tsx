@@ -1,10 +1,10 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import LoadingSpinner from "../../common/utils/components/LoadingSpinner.tsx";
-import {useNotification} from "../../common/notification/context/NotificationProvider.tsx";
-import useRefresh from "../hooks/useRefresh.ts";
-import useLogout from "../hooks/useLogout.ts";
-import {useAuthentication} from "../hooks/useAuthentication.ts";
+import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
+import useRefresh from "../../hooks/useRefresh.ts";
+import useLogout from "../../hooks/useLogout.ts";
+import {useAuthentication} from "../../hooks/useAuthentication.ts";
 
 export default function OAuth2Redirect() {
     const navigate = useNavigate();

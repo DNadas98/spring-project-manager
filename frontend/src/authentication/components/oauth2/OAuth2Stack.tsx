@@ -7,7 +7,7 @@ export default function OAuth2Stack() {
   return (
     <Stack spacing={2}>
       <Typography sx={{marginBottom: 2}}>
-        Sign In with Your socials:
+        Sign In with Your Socials:
       </Typography>
       <OAuth2GoogleSignInButton/>
       <OAuth2FacebookSignInButton/>

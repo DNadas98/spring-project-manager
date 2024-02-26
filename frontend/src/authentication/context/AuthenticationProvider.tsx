@@ -22,7 +22,6 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
     const [authentication, setAuthentication] = useState<AuthenticationDto>({});
 
     const authenticate = (authentication: AuthenticationDto) => {
-        console.log("authenticate called with ", authentication);
         if (!authentication.accessToken || !authentication.userInfo
             || !authentication.userInfo.email?.length
             || !authentication.userInfo.username?.length
