@@ -5,11 +5,9 @@ import {
 import {FormEvent} from "react";
 import {RegisterRequestDto} from "../../dto/RegisterRequestDto.ts";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
-import {useNavigate} from "react-router-dom";
 
 export default function Register() {
   const notification = useNotification();
-  const navigate = useNavigate();
   const validatePassword = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       notification.openNotification({
@@ -40,7 +38,6 @@ export default function Register() {
     notification.openNotification({
       type: "success", vertical: "top", horizontal: "center", message: message
     });
-    navigate("/login");
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
