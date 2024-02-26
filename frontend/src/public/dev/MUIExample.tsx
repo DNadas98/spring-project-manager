@@ -1,8 +1,8 @@
 import {Container, Grid, Typography, useMediaQuery, useTheme} from "@mui/material";
-import MUIExampleForm from "./MUIExampleForm.tsx";
-import MUIExampleCard from "./MUIExampleCard.tsx";
-import MUIExampleDialog from "./MUIExampleDialog.tsx";
-import MUIExampleNotification from "./MUIExampleNotification.tsx";
+import MUIExampleForm from "./components/MUIExampleForm.tsx";
+import MUIExampleCard from "./components/MUIExampleCard.tsx";
+import MUIExampleDialog from "./components/MUIExampleDialog.tsx";
+import MUIExampleNotification from "./components/MUIExampleNotification.tsx";
 
 export default function MUIExample() {
   const theme = useTheme();

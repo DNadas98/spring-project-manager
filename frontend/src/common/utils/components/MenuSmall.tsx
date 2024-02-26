@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {Link as RouterLink} from "react-router-dom";
 import {MouseEventHandler, useState} from "react";
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
+import getMenuRoutePath from "../../routing/getMenuRoutePath.ts";
 
 interface MenuSmallProps {
     menu: IMenuRoutes;
@@ -43,8 +44,12 @@ export default function MenuSmall({menu}: MenuSmallProps) {
             open={open}
             onClose={handleClose}
         >{menu.elements.length ? menu.elements.map(el => {
-            return <MenuItem key={el.path} onClick={handleClose} component={RouterLink}
-                             to={el.path}>{el.name}</MenuItem>;
+          return <MenuItem key={el.path} onClick={handleClose}
+                           component={RouterLink}
+                           to={getMenuRoutePath(menu, el.path)}
+          >
+            {el.name}
+          </MenuItem>;
         }) : <></>}
         </Menu>
     </>);

@@ -8,7 +8,6 @@ function OAuth2GithubSignInButton() {
             href={githubAuthorizationUrl}
             fullWidth
             variant="contained"
-            sx={{mt: 3, mb: 2}}
         >
             Sign In with GitHub
         </Button>

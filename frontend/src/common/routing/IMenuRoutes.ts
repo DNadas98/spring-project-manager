@@ -7,5 +7,6 @@ interface IMenuRouteElement {
 }
 
 export interface IMenuRoutes {
+  routePrefix: string,
   elements: IMenuRouteElement[]
 }

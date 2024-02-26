@@ -1,5 +1,7 @@
 import {Button, ButtonGroup, Grid, Typography} from "@mui/material";
-import {useNotification} from "../../common/notification/context/NotificationProvider.tsx";
+import {
+  useNotification
+} from "../../../common/notification/context/NotificationProvider.tsx";
 
 export default function MUIExampleNotification() {
   const notification = useNotification();

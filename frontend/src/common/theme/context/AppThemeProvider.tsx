@@ -18,9 +18,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            backgroundImage: "url(background.svg)",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover"
+            minWidth: "286px"
           }
         }
       },

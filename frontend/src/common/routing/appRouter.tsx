@@ -5,9 +5,11 @@ import {publicMenuRoutes} from "../config/menu/publicMenuRoutes.tsx";
 import NotFound from "../../public/errorPages/NotFound.tsx";
 import LoadingSpinner from "../utils/components/LoadingSpinner.tsx";
 import OAuth2Redirect from "../../authentication/pages/OAuth2Redirect.tsx";
-import RequireAuthentication from "../../authentication/components/RequireAuthentication.tsx";
+import RequireAuthentication
+  from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
-import Home from "../../public/home/Home.tsx";
+import UserLayout from "../../user/layout/UserLayout.tsx";
+import {userMenuRoutes} from "../config/menu/userMenuRoutes.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -41,17 +43,14 @@ const appRouter = createBrowserRouter([
   },
   /* user */
     {
-    path: "/user",
+      path: "/user/",
         element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
-          element: <Layout/>,
+        element: <UserLayout/>,
         children: [
-          {
-            path: "",
-              element: <Home/>
-          },
+          ...userMenuRoutes.elements,
           {
             path: "*",
             element: <NotFound/>

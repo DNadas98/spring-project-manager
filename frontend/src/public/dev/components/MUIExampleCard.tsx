@@ -1,4 +1,11 @@
-import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography
+} from "@mui/material";
 
 export default function MUIExampleCard() {
     return (
