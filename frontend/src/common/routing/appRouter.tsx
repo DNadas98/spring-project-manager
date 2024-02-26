@@ -3,13 +3,14 @@ import Layout from "../../public/layout/Layout.tsx";
 import ErrorPage from "../../public/errorPages/ErrorPage.tsx";
 import {publicMenuRoutes} from "../config/menu/publicMenuRoutes.tsx";
 import NotFound from "../../public/errorPages/NotFound.tsx";
-import LoadingSpinner from "../utils/components/LoadingSpinner.tsx";
 import OAuth2Redirect from "../../authentication/pages/OAuth2Redirect.tsx";
 import RequireAuthentication
   from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
 import UserLayout from "../../user/layout/UserLayout.tsx";
 import {userMenuRoutes} from "../config/menu/userMenuRoutes.tsx";
+import RegisterVerification
+  from "../../authentication/pages/register/RegisterVerification.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -37,7 +38,7 @@ const appRouter = createBrowserRouter([
       },
       {
           path: "registration",
-        element: <LoadingSpinner/>
+        element: <RegisterVerification/>
       }
     ]
   },

@@ -2,7 +2,7 @@ import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
 import Home from "../../../public/home/Home.tsx";
 import MUIExample from "../../../public/dev/MUIExample.tsx";
 import Login from "../../../authentication/pages/Login.tsx";
-import Register from "../../../authentication/pages/Register.tsx";
+import Register from "../../../authentication/pages/register/Register.tsx";
 
 export const publicMenuRoutes: IMenuRoutes = {
   routePrefix: "/",
