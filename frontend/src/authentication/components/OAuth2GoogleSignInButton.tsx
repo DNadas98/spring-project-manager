@@ -8,8 +8,19 @@ function OAuth2GoogleSignInButton() {
             href={googleAuthorizationUrl}
             fullWidth
             variant="contained"
+            sx={{
+              backgroundColor: "#ffffff",
+              '&:hover': {
+                backgroundColor: "#d1d1d1",
+              },
+              color: "#00010D",
+              display: "flex",
+              justifyContent: "space-between",
+              textTransform: "none"
+            }}
         >
-            Sign In with Google
+          <img src="/googleIcon.svg" height={"22px"} alt={"Google"}/>
+          Sign In with Google
         </Button>
     );
 }
