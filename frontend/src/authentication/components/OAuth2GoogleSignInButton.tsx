@@ -7,7 +7,7 @@ function OAuth2GoogleSignInButton() {
             type="button"
             href={googleAuthorizationUrl}
             fullWidth
-            variant="contained"
+            variant="outlined"
             sx={{
               backgroundColor: "#ffffff",
               '&:hover': {
