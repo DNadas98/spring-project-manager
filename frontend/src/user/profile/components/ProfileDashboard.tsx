@@ -1,17 +1,19 @@
 import {Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
-import {UserAccountDto} from "../../dto/UserAccountDto.ts";
 import ProfileAccountDelete from "./ProfileAccountDelete.tsx";
+import {
+  UserAccountResponseDto
+} from "../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
 
 interface ProfileDashboardProps {
   username: string;
   email: string;
   roles: GlobalRole[];
-  accounts: UserAccountDto[];
-  onAccountDelete: (id: number) => Promise<void>;
+  accounts: UserAccountResponseDto[];
+  onAccountDelete: (id: number) => unknown;
   accountDeleteLoading: boolean;
-  onApplicationUserDelete: () => Promise<void>;
+  onApplicationUserDelete: () => unknown;
   applicationUserDeleteLoading: boolean;
 }
 

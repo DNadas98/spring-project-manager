@@ -1,3 +1,3 @@
 export enum AccountType {
-    LOCAL, GOOGLE, GITHUB, FACEBOOK
+  LOCAL = "LOCAL", GOOGLE = "GOOGLE", GITHUB = "GITHUB", FACEBOOK = "FACEBOOK"
 }
