@@ -1,9 +1,11 @@
 import {Avatar, IconButton, Stack, Typography} from "@mui/material";
 import {ClearOutlined} from "@mui/icons-material";
-import {UserAccountDto} from "../../dto/UserAccountDto.ts";
+import {
+  UserAccountResponseDto
+} from "../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
 
 interface ProfileAccountDeleteProps {
-  account: UserAccountDto;
+  account: UserAccountResponseDto;
   onAccountDelete: (id: number) => void;
   accountDeleteLoading: boolean;
 }
