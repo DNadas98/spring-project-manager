@@ -3,6 +3,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import useRefresh from "../../hooks/useRefresh.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
+import useLogout from "../../hooks/useLogout.ts";
 
 export default function OAuth2Redirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -10,6 +11,7 @@ export default function OAuth2Redirect() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const refresh = useRefresh();
+  const logout = useLogout();
 
   const handleError = (error: string | undefined = undefined) => {
     const message = error ??
@@ -38,8 +40,8 @@ export default function OAuth2Redirect() {
     });
   }, []);
 
-  const handleDialog = () => {
-    navigate("/login", {replace: true});
+  const handleDialog = async () => {
+    await logout();
   };
 
   return (
@@ -47,7 +49,7 @@ export default function OAuth2Redirect() {
       ? <LoadingSpinner/>
       : error
         ? <DialogAlert title={`Error: ${error}`} text={
-          "You will be navigated back to the Login page.\n"
+          "You will be redirected to the Login page.\n"
           + "If the issue persists, please contact our support team."
         } buttonText={"Back"} onClose={handleDialog}/>
         : <></>
