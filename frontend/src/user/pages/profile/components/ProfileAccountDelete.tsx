@@ -1,8 +1,8 @@
-import {Avatar, IconButton, Stack, Typography} from "@mui/material";
-import {ClearOutlined} from "@mui/icons-material";
+import {IconButton, Stack, Typography} from "@mui/material";
 import {
   UserAccountResponseDto
 } from "../../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
+import DeleteIcon from "../../../../common/utils/components/DeleteIcon.tsx";
 
 interface ProfileAccountDeleteProps {
   account: UserAccountResponseDto;
@@ -22,13 +22,7 @@ export default function ProfileAccountDelete(props: ProfileAccountDeleteProps) {
       <IconButton disabled={props.accountDeleteLoading} onClick={() => {
         props.onAccountDelete(props.account.id);
       }}>
-        <Avatar variant={"rounded"} sx={{
-          backgroundColor: "error.main",
-          height: "1.25rem",
-          width: "1.25rem"
-        }}>
-          <ClearOutlined/>
-        </Avatar>
+        <DeleteIcon/>
       </IconButton>
     </Stack>
   )

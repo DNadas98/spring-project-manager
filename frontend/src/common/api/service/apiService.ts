@@ -98,7 +98,7 @@ function verifyHttpResponse(httpResponse: Response): void {
   if (!httpResponse?.status) {
     throw new Error("Invalid response received from the server");
   }
-  if (httpResponse?.headers?.get("Content-Type") !== "application/json") {
+  if (httpResponse?.status !== 401 && httpResponse?.headers?.get("Content-Type") !== "application/json") {
     throw new Error("Server response received in invalid format");
   }
 }
