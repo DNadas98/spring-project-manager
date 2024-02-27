@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  Card,
   Typography
 } from "@mui/material";
 import {CompanyResponsePublicDto} from "../../../dto/CompanyResponsePublicDto.ts";
@@ -18,27 +19,30 @@ interface CompanyListItemProps {
 export default function CompanyListItem(props: CompanyListItemProps) {
   const navigate = useNavigate();
   return (
-    <Accordion defaultExpanded={false}
-               variant={"outlined"}>
-      <AccordionSummary expandIcon={<ExpandIcon/>}>
-        <Typography variant={"h6"}>{props.company.name}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Typography variant={"body2"}>
-          {props.company.description}
-        </Typography>
-      </AccordionDetails>
-      <AccordionActions>
-        {props.userIsMember
-          ? <Button sx={{textTransform: "none"}}
-                    onClick={() => {
-                      navigate(`/companies/${props.company.companyId}`);
-                    }}>
-            View Dashboard
-          </Button>
-          : <Button>Request to join</Button>
-        }
-      </AccordionActions>
-    </Accordion>
+    <Card>
+      <Accordion defaultExpanded={false}
+                 variant={"elevation"}
+                 sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
+        <AccordionSummary expandIcon={<ExpandIcon/>}>
+          <Typography variant={"h6"}>{props.company.name}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant={"body2"}>
+            {props.company.description}
+          </Typography>
+        </AccordionDetails>
+        <AccordionActions>
+          {props.userIsMember
+            ? <Button sx={{textTransform: "none"}}
+                      onClick={() => {
+                        navigate(`/companies/${props.company.companyId}`);
+                      }}>
+              View Dashboard
+            </Button>
+            : <Button>Request to join</Button>
+          }
+        </AccordionActions>
+      </Accordion>
+    </Card>
   )
 }

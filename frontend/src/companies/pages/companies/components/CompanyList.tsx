@@ -1,5 +1,5 @@
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
-import {Card, CardContent, Stack, Typography} from "@mui/material";
+import {Card, CardContent, Typography} from "@mui/material";
 import {CompanyResponsePublicDto} from "../../../dto/CompanyResponsePublicDto.ts";
 import CompanyListItem from "./CompanyListItem.tsx";
 
@@ -13,21 +13,18 @@ interface CompanyListProps {
 export default function CompanyList(props: CompanyListProps) {
   return props.loading
     ? <LoadingSpinner/>
-    : props.companies?.length > 1
+    : props.companies?.length > 0
       ? props.companies.map((company) => {
         return <CompanyListItem key={company.companyId} company={company}
                                 userIsMember={props.userIsMember}/>
       })
-      :
-      <Stack spacing={2}>
-        <Card>
-          <CardContent>
-            <Typography>
-              {props.notFoundText}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Stack>
+      : <Card>
+        <CardContent>
+          <Typography>
+            {props.notFoundText}
+          </Typography>
+        </CardContent>
+      </Card>
 
 
 }

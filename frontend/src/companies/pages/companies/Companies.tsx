@@ -1,5 +1,5 @@
 import CompanyBrowser from "./components/CompanyBrowser.tsx";
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useMemo, useState} from "react";
 import {CompanyResponsePublicDto} from "../../dto/CompanyResponsePublicDto.ts";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {
@@ -55,10 +55,41 @@ export default function Companies() {
       setCompaniesWithoutUserLoading(false);
     });
   }, []);
+
+  const [companiesWithUserFilterValue, setCompaniesWithUserFilterValue] = useState<string>("");
+  const [companiesWithoutUserFilterValue, setCompaniesWithoutUserFilterValue] = useState<string>("");
+
+  const companiesWithUserFiltered = useMemo(() => {
+    return companiesWithUser.filter(company => {
+        return company.name.toLowerCase().includes(companiesWithUserFilterValue)
+      }
+    );
+  }, [companiesWithUser, companiesWithUserFilterValue]);
+
+  const companiesWithoutUserFiltered = useMemo(() => {
+    return companiesWithoutUser.filter(company => {
+        return company.name.toLowerCase().includes(companiesWithoutUserFilterValue)
+      }
+    );
+  }, [companiesWithoutUser, companiesWithoutUserFilterValue]);
+
+  const handleCompaniesWithUserSearch = (event: FormEvent<HTMLInputElement>) => {
+    // @ts-ignore
+    setCompaniesWithUserFilterValue(event.target.value.toLowerCase().trim());
+  };
+
+  const handleCompaniesWithoutUserSearch = (event: FormEvent<HTMLInputElement>) => {
+    // @ts-ignore
+    setCompaniesWithoutUserFilterValue(event.target.value.toLowerCase().trim());
+  };
+
   return (
-    <CompanyBrowser companiesWithUser={companiesWithUser}
+    <CompanyBrowser companiesWithUser={companiesWithUserFiltered}
                     companiesWithUserLoading={companiesWithUserLoading}
-                    companiesWithoutUser={companiesWithoutUser}
-                    companiesWithoutUserLoading={companiesWithoutUserLoading}/>
+                    companiesWithoutUser={companiesWithoutUserFiltered}
+                    companiesWithoutUserLoading={companiesWithoutUserLoading}
+                    handleCompaniesWithUserSearch={handleCompaniesWithUserSearch}
+                    handleCompaniesWithoutUserSearch={handleCompaniesWithoutUserSearch}
+    />
   )
 }
