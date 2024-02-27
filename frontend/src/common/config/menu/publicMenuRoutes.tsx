@@ -1,6 +1,6 @@
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import Home from "../../../public/home/Home.tsx";
-import MUIExample from "../../../public/dev/MUIExample.tsx";
+import Home from "../../../public/pages/home/Home.tsx";
+import MUIExample from "../../../public/pages/dev/MUIExample.tsx";
 import Login from "../../../authentication/pages/login/Login.tsx";
 import Register from "../../../authentication/pages/register/Register.tsx";
 

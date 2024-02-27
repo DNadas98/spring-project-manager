@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 import {AccountBoxRounded} from "@mui/icons-material";
-import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 
 interface ProfileMainCardProps {
   username: string;

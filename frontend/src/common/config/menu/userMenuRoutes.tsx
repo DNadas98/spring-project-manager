@@ -1,5 +1,5 @@
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import Profile from "../../../user/profile/Profile.tsx";
+import Profile from "../../../user/pages/profile/Profile.tsx";
 import Logout from "../../../authentication/pages/Logout.tsx";
 
 export const userMenuRoutes: IMenuRoutes = {

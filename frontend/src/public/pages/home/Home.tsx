@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme
 } from "@mui/material";
-import siteConfig from "../../common/config/siteConfig.ts";
+import siteConfig from "../../../common/config/siteConfig.ts";
 import {
   AccountBoxOutlined,
   AddchartOutlined,

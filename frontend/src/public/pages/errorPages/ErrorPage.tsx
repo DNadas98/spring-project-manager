@@ -1,6 +1,6 @@
 import {Button, Grid, Typography} from "@mui/material";
 import {useRouteError} from "react-router-dom";
-import BackButton from "../../common/utils/components/BackButton.tsx";
+import BackButton from "../../../common/utils/components/BackButton.tsx";
 
 function ErrorPage() {
     const error: any = useRouteError();

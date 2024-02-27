@@ -1,10 +1,10 @@
 import {Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
-import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
 import ProfileAccountDelete from "./ProfileAccountDelete.tsx";
 import {
   UserAccountResponseDto
-} from "../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
+} from "../../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
 
 interface ProfileDashboardProps {
   username: string;

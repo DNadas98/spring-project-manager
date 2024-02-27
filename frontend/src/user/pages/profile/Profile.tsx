@@ -1,17 +1,17 @@
-import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts";
+import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 import ProfileDashboard from "./components/ProfileDashboard.tsx";
 import {useEffect, useState} from "react";
-import LoadingSpinner from "../../common/utils/components/LoadingSpinner.tsx";
-import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
+import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {
   useNotification
-} from "../../common/notification/context/NotificationProvider.tsx";
-import {ApiResponseDto} from "../../common/api/dto/ApiResponseDto.ts";
-import useLogout from "../../authentication/hooks/useLogout.ts";
-import {useDialog} from "../../common/dialog/context/DialogProvider.tsx";
+} from "../../../common/notification/context/NotificationProvider.tsx";
+import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
+import useLogout from "../../../authentication/hooks/useLogout.ts";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {
   UserAccountResponseDto
-} from "../../authentication/dto/userAccount/UserAccountResponseDto.ts";
+} from "../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
 
 export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);

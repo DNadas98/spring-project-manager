@@ -1,4 +1,4 @@
-import BackButton from "../../common/utils/components/BackButton.tsx";
+import BackButton from "../../../common/utils/components/BackButton.tsx";
 import {Grid, Typography} from "@mui/material";
 
 function NotFound() {
