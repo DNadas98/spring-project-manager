@@ -1,11 +1,11 @@
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import Profile from "../../../user/pages/profile/Profile.tsx";
-import Logout from "../../../authentication/pages/Logout.tsx";
+import Home from "../../../public/pages/home/Home.tsx";
+import Companies from "../../../companies/pages/companies/Companies.tsx";
 
 export const userMenuRoutes: IMenuRoutes = {
-  routePrefix: "/user/",
+  routePrefix: "",
   elements: [
-    {path: "", name: "Profile", element: <Profile/>},
-    {path: "logout", name: "Sign out", element: <Logout/>}
+    {path: "", name: "Home", element: <Home/>},
+    {path: "companies", name: "Companies", element: <Companies/>}
   ]
 }

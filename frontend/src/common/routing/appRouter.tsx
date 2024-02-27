@@ -8,9 +8,11 @@ import RequireAuthentication
   from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
 import UserLayout from "../../user/layout/UserLayout.tsx";
-import {userMenuRoutes} from "../config/menu/userMenuRoutes.tsx";
+import {userMenuProfileRoutes} from "../config/menu/userMenuProfileRoutes.tsx";
 import RegisterVerificationRedirect
   from "../../authentication/pages/redirect/RegisterVerificationRedirect.tsx";
+import {companyMenuRoutes} from "../config/menu/companyMenuRoutes.tsx";
+import CompanyDashboard from "../../companies/pages/dashboard/CompanyDashboard.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -43,15 +45,15 @@ const appRouter = createBrowserRouter([
     ]
   },
   /* user */
-    {
-      path: "/user/",
-        element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
+  {
+    path: "/user/",
+    element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
         element: <UserLayout/>,
         children: [
-          ...userMenuRoutes.elements,
+          ...userMenuProfileRoutes.elements,
           {
             path: "*",
             element: <NotFound/>
@@ -59,52 +61,17 @@ const appRouter = createBrowserRouter([
         ]
       }
     ]
-    }
+  },
   /* companies */
-  /*{
-    path: "/companies",
-    element: <RequireAuth allowedRoles={["USER"]}/>,
+  {
+    path: "/companies/",
+    element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
         element: <UserLayout/>,
         children: [
-          {
-            path: "",
-            element: <CompanyBrowser/>
-          },
-          {
-            path: "create",
-            element: <CreateCompany/>
-          },
-          {
-            path: "update/:companyId",
-            element: <UpdateCompany/>
-          },
-          {
-            path: ":companyId/projects/create",
-            element: <CreateProject/>
-          },
-          {
-            path: ":companyId/projects/update/:projectId",
-            element: <UpdateProject/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/create",
-            element: <CreateTask/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/update/:taskId",
-            element: <UpdateTask/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/:taskId",
-            element: <TaskDetails/>
-          },
-          {
-            path: ":companyId/projects/:projectId",
-            element: <ProjectDashboard/>
-          },
+          ...companyMenuRoutes.elements,
           {
             path: ":companyId",
             element: <CompanyDashboard/>
@@ -116,7 +83,7 @@ const appRouter = createBrowserRouter([
         ]
       }
     ]
-  }*/
+  }
 ]);
 
 export default appRouter;

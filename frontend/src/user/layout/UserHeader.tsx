@@ -2,16 +2,16 @@ import {AppBar, Toolbar, useMediaQuery, useTheme} from "@mui/material";
 import {IMenuRoutes} from "../../common/routing/IMenuRoutes.ts";
 import ThemePaletteModeSwitch
   from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
-import {userMenuRoutes} from "../../common/config/menu/userMenuRoutes.tsx";
+import {userMenuProfileRoutes} from "../../common/config/menu/userMenuProfileRoutes.tsx";
 import MenuUserSmall from "../../common/utils/components/MenuUserSmall.tsx";
-import {userMenuPublicRoutes} from "../../common/config/menu/userMenuPublicRoutes.tsx";
+import {userMenuRoutes} from "../../common/config/menu/userMenuRoutes.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
 
 export default function UserHeader() {
-  const menu: IMenuRoutes = userMenuRoutes;
-  const publicMenu: IMenuRoutes = userMenuPublicRoutes;
+  const menu: IMenuRoutes = userMenuProfileRoutes;
+  const publicMenu: IMenuRoutes = userMenuRoutes;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

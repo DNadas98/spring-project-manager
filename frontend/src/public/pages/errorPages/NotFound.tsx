@@ -1,12 +1,16 @@
 import BackButton from "../../../common/utils/components/BackButton.tsx";
 import {Grid, Typography} from "@mui/material";
 
-function NotFound() {
+interface NotFoundProps {
+  text?: string;
+}
+
+function NotFound(props: NotFoundProps) {
   return (
     <Grid container justifyContent="center">
       <Grid item justifyContent="center">
         <Typography variant="h6">
-          The page you are looking for does not exist.
+          {props.text ?? "The page you are looking for does not exist."}
         </Typography>
         <Grid container spacing={1} mt={1} textAlign={"left"}>
           <Grid item>
