@@ -9,7 +9,9 @@ export default function ThemePaletteModeSwitch() {
                 edge="start"
                 color={"inherit"}
                 onClick={togglePaletteMode}>
-      {paletteMode === "light" ? <LightMode/> : <DarkMode/>}
+      {paletteMode === "light"
+        ? <LightMode/>
+        : <DarkMode/>}
     </IconButton>
   );
 }

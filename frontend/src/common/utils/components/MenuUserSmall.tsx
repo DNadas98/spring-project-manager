@@ -2,7 +2,7 @@ import {Divider, IconButton, Menu, MenuItem, Typography} from "@mui/material";
 import {Link as RouterLink} from "react-router-dom";
 import {MouseEventHandler, useState} from "react";
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import {AccountCircle} from "@mui/icons-material";
+import {AccountBoxRounded} from "@mui/icons-material";
 import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 import getMenuRoutePath from "../../routing/getMenuRoutePath.ts";
 
@@ -29,7 +29,7 @@ export default function MenuUserSmall({menu}: MenuUserSmallProps) {
       color="inherit"
       onClick={handleMenu}
     >
-      <AccountCircle/>
+      <AccountBoxRounded/>
     </IconButton>
     <Menu
       id="menu-appbar"

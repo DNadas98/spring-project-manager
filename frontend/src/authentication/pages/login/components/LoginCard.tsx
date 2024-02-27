@@ -13,6 +13,7 @@ import OAuth2Stack from "../../../components/oauth2/OAuth2Stack.tsx";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
+import {Link as RouterLink} from "react-router-dom";
 
 interface LoginCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -54,7 +55,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                     <PasswordInput/>
                     <Button type={"submit"}
                             variant={"contained"}>
-                      Sign Up
+                      Sign In
                     </Button>
                   </Stack>
                 </form>
@@ -64,6 +65,17 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                   marginBottom: 2
                 }}/>
                 <OAuth2Stack/>
+              </Grid>
+              <Grid item xs={10} sm={9} md={7} lg={6}>
+                <Divider sx={{
+                  marginBottom: 2
+                }}/>
+                <Button variant={"text"}
+                        component={RouterLink}
+                        to={"/register"}
+                        sx={{textTransform: "none"}}>
+                  Don't have an account? Sign Up!
+                </Button>
               </Grid>
             </Grid>
           </CardContent>

@@ -1,25 +1,26 @@
 import {useEffect, useState} from "react";
 //import {Link} from "react-router-dom";
 import {
+  Avatar,
   Button,
   Card,
   CardActions,
   CardContent,
-  CardMedia,
   Collapse,
   Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Stack,
   Typography,
   useTheme
 } from "@mui/material";
 import siteConfig from "../../common/config/siteConfig.ts";
 import {
-  AccountCircleOutlined,
+  AccountBoxOutlined,
   AddchartOutlined,
-  DomainAddOutlined
+  DomainAddOutlined,
 } from "@mui/icons-material";
 import {Link as RouterLink} from "react-router-dom";
 
@@ -36,21 +37,20 @@ const Home = () => {
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>
         <Card sx={{paddingTop: 4}}>
-          <CardMedia
-            component="img"
-            alt="Image"
-            height="140"
-            image="/logo.png"
-            sx={{
+          <Stack
+            spacing={2}
+            alignItems={"center"}
+            justifyContent={"center"}>
+            <Avatar variant={"rounded"} src={"/logo.png"} sx={{
+              height: 140, width: 140,
               objectFit: "contain",
-              filter:
-                `drop-shadow(0 0 0.3em ${theme?.palette?.primary?.main})`
-            }}
-          />
-          <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
+              filter: `drop-shadow(0 0 0.3em ${theme?.palette?.primary?.main})`
+            }}/>
             <Typography variant="h4" gutterBottom>
               {siteName}
             </Typography>
+          </Stack>
+          <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
             <Typography variant="h5">
               Got something to work on?
             </Typography>
@@ -63,7 +63,7 @@ const Home = () => {
                   <List>
                     <ListItem>
                       <ListItemIcon>
-                        <AccountCircleOutlined color={"secondary"}/>
+                        <AccountBoxOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
                         Create an account, or sign in with Google, Facebook or GitHub
