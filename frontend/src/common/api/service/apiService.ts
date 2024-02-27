@@ -64,7 +64,7 @@ export function useAuthJsonFetch() {
       }
 
       // If Unauthorized or Forbidden:
-      if (httpResponse.status === 401 || httpResponse.status === 403) {
+      if (httpResponse.status === 401) {
         return await notifyAndLogout(httpResponse, responseObject?.error);
       }
 

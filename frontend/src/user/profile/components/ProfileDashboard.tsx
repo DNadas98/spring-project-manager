@@ -1,0 +1,56 @@
+import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
+import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import ProfileMainCard from "./ProfileMainCard.tsx";
+import {UserAccountDto} from "../../dto/UserAccountDto.ts";
+import ProfileAccountDelete from "./ProfileAccountDelete.tsx";
+
+interface ProfileDashboardProps {
+  username: string;
+  email: string;
+  roles: GlobalRole[];
+  accounts: UserAccountDto[];
+  onAccountDelete: (id: number) => Promise<void>;
+  accountDeleteLoading: boolean;
+  onApplicationUserDelete: () => Promise<void>;
+  applicationUserDeleteLoading: boolean;
+}
+
+export default function ProfileDashboard(props: ProfileDashboardProps) {
+  return (
+    <Stack spacing={2}>
+      <ProfileMainCard username={props.username}
+                       email={props.email}
+                       roles={props.roles}/>
+      <Card>
+        <CardContent>
+          <Typography variant={"body1"} gutterBottom>
+            {`Available account${props.accounts.length > 1 ? "s" : ""}:`}
+          </Typography>
+          {props.accounts?.length > 1
+            ? props.accounts.map((account) => (
+              <ProfileAccountDelete key={account.id}
+                                    account={account}
+                                    onAccountDelete={props.onAccountDelete}
+                                    accountDeleteLoading={props.accountDeleteLoading}/>
+            ))
+            : props.accounts?.length
+              ? <Typography pt={2}>{props.accounts[0].accountType}</Typography>
+              : <></>
+          }
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent>
+          <Typography variant={"body1"} mb={2}>
+            Manage user data
+          </Typography>
+          <Button disabled={props.applicationUserDeleteLoading}
+                  onClick={props.onApplicationUserDelete}
+                  variant={"contained"} color={"error"}>
+            Remove all user data
+          </Button>
+        </CardContent>
+      </Card>
+    </Stack>
+  )
+}
