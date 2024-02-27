@@ -14,6 +14,7 @@ import {
   NotificationProvider
 } from "./common/notification/context/NotificationProvider.tsx";
 import "./index.css"
+import {DialogProvider} from "./common/dialog/context/DialogProvider.tsx";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement as HTMLElement);
@@ -24,9 +25,11 @@ root.render(
     <ThemePaletteModeProvider>
       <AppThemeProvider>
         <NotificationProvider>
-          <AuthenticationProvider>
-            <RouterProvider router={router}/>
-          </AuthenticationProvider>
+          <DialogProvider>
+            <AuthenticationProvider>
+              <RouterProvider router={router}/>
+            </AuthenticationProvider>
+          </DialogProvider>
         </NotificationProvider>
       </AppThemeProvider>
     </ThemePaletteModeProvider>
