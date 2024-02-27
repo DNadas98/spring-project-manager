@@ -1,4 +1,4 @@
-import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
+import {Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
 import {UserAccountDto} from "../../dto/UserAccountDto.ts";
@@ -17,7 +17,9 @@ interface ProfileDashboardProps {
 
 export default function ProfileDashboard(props: ProfileDashboardProps) {
   return (
-    <Stack spacing={2}>
+    <Grid container justifyContent={"center"}>
+      <Grid item xs={10} sm={5} mb={4} lg={3}>
+        <Stack spacing={2}>
       <ProfileMainCard username={props.username}
                        email={props.email}
                        roles={props.roles}/>
@@ -51,6 +53,6 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
           </Button>
         </CardContent>
       </Card>
-    </Stack>
+        </Stack></Grid></Grid>
   )
 }
