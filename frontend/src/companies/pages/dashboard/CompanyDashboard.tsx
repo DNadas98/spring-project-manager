@@ -1,35 +1,83 @@
-import {Grid} from "@mui/material";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import NotFound from "../../../public/pages/errorPages/NotFound.tsx";
 import {useEffect, useState} from "react";
+import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
+import {CompanyResponsePrivateDto} from "../../dto/CompanyResponsePrivateDto.ts";
+import {
+  useNotification
+} from "../../../common/notification/context/NotificationProvider.tsx";
+import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import {
+  PermissionType
+} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 
-interface CompanyDashboardProps {
+export default function CompanyDashboard() {
+  const companyId = useParams()?.companyId;
+  const [loading, setLoading] = useState(true);
+  const [company, setCompany] = useState<CompanyResponsePrivateDto | undefined>(undefined);
+  const [permissions, setPermissions] = useState<PermissionType[]>([]);
+  const authJsonFetch = useAuthJsonFetch();
+  const notification = useNotification();
+  const navigate = useNavigate();
 
-}
-
-export default function CompanyDashboard(props: CompanyDashboardProps) {
-  const params = useParams();
-  const [companyId, setCompanyId] = useState<string | undefined>(params?.companyId);
+  function handleErrorNotification(message?: string) {
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: `${message ?? `Failed to load company with ID ${companyId}`}`
+    });
+  }
 
   useEffect(() => {
-    const id = params?.companyId;
-    if (!id || isNaN(parseInt(id)) || parseInt(id) < 1) {
-      setCompanyId(undefined);
-    } else {
-      setCompanyId(params.companyId);
+    async function loadCompany() {
+      const response = await authJsonFetch({
+        path: `companies/${companyId}`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        return handleErrorNotification(response?.error);
+      }
+      setCompany(response.data as CompanyResponsePrivateDto);
     }
-  }, [params]);
 
-  //
+    async function loadCompanyPermissions() {
+      const response = await authJsonFetch({
+        path: `user/permissions/companies/${companyId}`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        return handleErrorNotification();
+      }
+      if (!response?.data?.length) {
+        handleErrorNotification(response?.error ?? "Access Denied");
+        return navigate(-1);
+      }
 
-  if (!companyId) {
-    return (<NotFound text={"The requested company was not found."}/>)
+      setPermissions(response.data as PermissionType[]);
+    }
+
+    if (!companyId || isNaN(parseInt(companyId)) || parseInt(companyId) < 1) {
+      setLoading(false);
+    } else {
+      loadCompanyPermissions().then(() => {
+        loadCompany().finally(()=>{
+          setLoading(false);
+        });
+      }).catch(() => {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: "An unknown error has occurred. Please try again later."
+        })
+      });
+    }
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner/>;
+  } else if (!company) {
+    return <NotFound text={"The requested company was not found."}/>;
+  } else if (permissions?.includes(PermissionType.COMPANY_ADMIN)) {
+    return <>Admin</>
+  } else if (permissions?.includes(PermissionType.COMPANY_EDITOR)) {
+    return <>Editor</>
+  } else {
+    return <>Employee</>
   }
-  return (
-    <Grid container justifyContent={"center"} alignItems={"center"}>
-      <Grid item xs={10}>
-        Company Dashboard, ID: {companyId}
-      </Grid>
-    </Grid>
-  )
 }
