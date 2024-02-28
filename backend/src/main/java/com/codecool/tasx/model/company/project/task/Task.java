@@ -21,6 +21,8 @@ public class Task {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
+
+  @Column(length = 500)
   private String description;
   private Importance importance;
   private Integer difficulty;

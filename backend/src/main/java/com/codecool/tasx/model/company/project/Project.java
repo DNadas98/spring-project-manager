@@ -21,6 +21,8 @@ public class Project {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
+
+  @Column(length = 500)
   private String description;
   private Instant startDate;
   private Instant deadline;

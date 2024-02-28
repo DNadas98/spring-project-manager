@@ -22,6 +22,7 @@ public class Company {
   @Column(unique = true)
   private String name;
 
+  @Column(length = 500)
   private String description;
 
   @OneToMany(mappedBy = "company", orphanRemoval = true)
