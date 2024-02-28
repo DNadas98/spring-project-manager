@@ -24,7 +24,12 @@ export default function CompanyListItem(props: CompanyListItemProps) {
                  variant={"elevation"}
                  sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
         <AccordionSummary expandIcon={<ExpandIcon/>}>
-          <Typography variant={"h6"}>{props.company.name}</Typography>
+          <Typography variant={"h6"} sx={{
+            wordBreak: "break-word",
+            paddingRight: 1
+          }}>
+            {props.company.name}
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant={"body2"}>
