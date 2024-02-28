@@ -12,6 +12,7 @@ import {
 import CompanyList from "./CompanyList.tsx";
 import {AddOutlined} from "@mui/icons-material";
 import {FormEvent} from "react";
+import {useNavigate} from "react-router-dom";
 
 interface CompanyBrowserProps {
   companiesWithUserLoading: boolean;
@@ -23,7 +24,7 @@ interface CompanyBrowserProps {
 }
 
 export default function CompanyBrowser(props: CompanyBrowserProps) {
-
+  const navigate = useNavigate();
 
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
@@ -33,10 +34,15 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
             <CardHeader title={"Your companies"} sx={{textAlign: "center"}}/>
             <CardContent>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
-                <IconButton>
+                <IconButton onClick={() => {
+                  navigate("/companies/create")
+                }}>
                   <Avatar variant={"rounded"}
-                          sx={{bgcolor: "primary.main"}}>
-                    <AddOutlined/>
+                          sx={{
+                            bgcolor: "secondary.main",
+                            color: "background.paper"
+                          }}>
+                    <AddOutlined color={"inherit"}/>
                   </Avatar>
                 </IconButton>
                 <TextField variant={"standard"} type={"search"}

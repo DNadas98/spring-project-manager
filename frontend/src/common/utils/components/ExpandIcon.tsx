@@ -5,11 +5,12 @@ import {ExpandMore} from "@mui/icons-material";
 export default function ExpandIcon() {
   return (
     <Avatar variant={"rounded"} sx={{
-      backgroundColor: "primary.main",
+      backgroundColor: "secondary.main",
+      color: "background.paper",
       height: "1.25rem",
       width: "1.25rem"
     }}>
-      <ExpandMore/>
+      <ExpandMore color={"inherit"}/>
     </Avatar>
   )
 }
