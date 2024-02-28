@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import NotFound from "../../../public/pages/errorPages/NotFound.tsx";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
@@ -10,15 +10,15 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {
   PermissionType
 } from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import usePermission from "../../../authentication/hooks/usePermission.ts";
 
 export default function CompanyDashboard() {
   const companyId = useParams()?.companyId;
   const [loading, setLoading] = useState(true);
   const [company, setCompany] = useState<CompanyResponsePrivateDto | undefined>(undefined);
-  const [permissions, setPermissions] = useState<PermissionType[]>([]);
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
-  const navigate = useNavigate();
+  const permission = usePermission();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -35,36 +35,17 @@ export default function CompanyDashboard() {
       if (!response?.status || response.status > 399 || !response?.data) {
         return handleErrorNotification(response?.error);
       }
+      console.log(company);
       setCompany(response.data as CompanyResponsePrivateDto);
-    }
-
-    async function loadCompanyPermissions() {
-      const response = await authJsonFetch({
-        path: `user/permissions/companies/${companyId}`
-      });
-      if (!response?.status || response.status > 399 || !response?.data) {
-        return handleErrorNotification();
-      }
-      if (!response?.data?.length) {
-        handleErrorNotification(response?.error ?? "Access Denied");
-        return navigate(-1);
-      }
-
-      setPermissions(response.data as PermissionType[]);
     }
 
     if (!companyId || isNaN(parseInt(companyId)) || parseInt(companyId) < 1) {
       setLoading(false);
     } else {
-      loadCompanyPermissions().then(() => {
-        loadCompany().finally(()=>{
-          setLoading(false);
-        });
-      }).catch(() => {
-        notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: "An unknown error has occurred. Please try again later."
-        })
+      loadCompany().catch(() => {
+        handleErrorNotification();
+      }).finally(() => {
+        setLoading(false);
       });
     }
   }, []);
@@ -73,11 +54,11 @@ export default function CompanyDashboard() {
     return <LoadingSpinner/>;
   } else if (!company) {
     return <NotFound text={"The requested company was not found."}/>;
-  } else if (permissions?.includes(PermissionType.COMPANY_ADMIN)) {
+  } else if (permission.companyPermissions?.includes(PermissionType.COMPANY_ADMIN)) {
     return <>Admin</>
-  } else if (permissions?.includes(PermissionType.COMPANY_EDITOR)) {
+  } else if (permission.companyPermissions.includes(PermissionType.COMPANY_EDITOR)) {
     return <>Editor</>
-  } else {
+  } else if (permission.companyPermissions.includes(PermissionType.COMPANY_EMPLOYEE)) {
     return <>Employee</>
   }
 }
