@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -73,6 +74,13 @@ public class GeneralExceptionHandler {
   }
 
   // 403
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
+    logger.error(e.getMessage());
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+      Map.of("error", "Access Denied: Insufficient permissions"));
+  }
 
   @ExceptionHandler(AccountLinkingRequiredException.class)
   public ResponseEntity<?> handleAccountLinkingRequired(AccountLinkingRequiredException e) {

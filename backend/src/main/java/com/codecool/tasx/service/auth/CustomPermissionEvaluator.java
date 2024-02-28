@@ -159,38 +159,38 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
   }
 
-  private boolean hasCompanyAdminAccess(ApplicationUser applicationUser, Company company) {
+  public boolean hasCompanyAdminAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getAdminCompanies().contains(company);
   }
 
-  private boolean hasCompanyEditorAccess(ApplicationUser applicationUser, Company company) {
+  public boolean hasCompanyEditorAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getEditorCompanies().contains(company);
   }
 
-  private boolean hasCompanyEmployeeAccess(ApplicationUser applicationUser, Company company) {
+  public boolean hasCompanyEmployeeAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getEmployeeCompanies().contains(company) || hasCompanyEditorAccess(
       applicationUser, company) || hasCompanyAdminAccess(applicationUser, company);
   }
 
-  private boolean hasProjectAdminAccess(ApplicationUser applicationUser, Project project) {
+  public boolean hasProjectAdminAccess(ApplicationUser applicationUser, Project project) {
     return project.getAdmins().contains(applicationUser) || hasCompanyAdminAccess(
       applicationUser,
       project.getCompany());
   }
 
-  private boolean hasProjectEditorAccess(ApplicationUser applicationUser, Project project) {
+  public boolean hasProjectEditorAccess(ApplicationUser applicationUser, Project project) {
     return project.getEditors().contains(applicationUser) || hasCompanyEditorAccess(
       applicationUser,
       project.getCompany());
   }
 
-  private boolean hasProjectAssignedEmployeeAccess(
+  public boolean hasProjectAssignedEmployeeAccess(
     ApplicationUser applicationUser, Project project) {
     return project.getAssignedEmployees().contains(applicationUser) || hasProjectEditorAccess(
       applicationUser, project) || hasProjectAdminAccess(applicationUser, project);
   }
 
-  private boolean hasTaskAssignedEmployeeAccess(ApplicationUser applicationUser, Task task) {
+  public boolean hasTaskAssignedEmployeeAccess(ApplicationUser applicationUser, Task task) {
     return task.getAssignedEmployees().contains(applicationUser) ||
       hasProjectAssignedEmployeeAccess(applicationUser, task.getProject());
   }

@@ -3,17 +3,23 @@ package com.codecool.tasx.service.company;
 import com.codecool.tasx.dto.user.UserResponsePublicDto;
 import com.codecool.tasx.exception.company.CompanyNotFoundException;
 import com.codecool.tasx.exception.user.UserNotFoundException;
+import com.codecool.tasx.model.auth.PermissionType;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.model.user.ApplicationUserDao;
+import com.codecool.tasx.model.user.GlobalRole;
+import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
+import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.UserConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +27,31 @@ public class CompanyRoleService {
   private final CompanyDao companyDao;
   private final ApplicationUserDao applicationUserDao;
   private final UserConverter userConverter;
+  private final UserProvider userProvider;
+  private final CustomPermissionEvaluator permissionEvaluator;
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
+  public Set<PermissionType> getUserPermissionsForCompany(Long companyId) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Company company = companyDao.findById(companyId).orElseThrow(
+      () -> new CompanyNotFoundException(companyId));
+
+    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
+      return Set.of(PermissionType.COMPANY_EMPLOYEE, PermissionType.COMPANY_EDITOR,
+        PermissionType.COMPANY_ADMIN);
+    }
+
+    Set<PermissionType> permissions = new HashSet<>();
+    permissions.add(PermissionType.COMPANY_EMPLOYEE);
+    if (permissionEvaluator.hasCompanyEditorAccess(user, company)) {
+      permissions.add(PermissionType.COMPANY_EDITOR);
+    }
+    if (permissionEvaluator.hasCompanyAdminAccess(user, company)) {
+      permissions.add(PermissionType.COMPANY_ADMIN);
+    }
+    return permissions;
+  }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_ADMIN')")
