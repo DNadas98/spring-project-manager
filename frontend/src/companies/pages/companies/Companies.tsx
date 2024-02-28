@@ -17,8 +17,8 @@ export default function Companies() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function loadCompaniesWithUser() {
+  async function loadCompaniesWithUser() {
+    try {
       const response = await authJsonFetch({
         path: `companies?withUser=true`
       });
@@ -30,9 +30,15 @@ export default function Companies() {
         return;
       }
       setCompaniesWithUser(response.data as CompanyResponsePublicDto[]);
+    } catch (e) {
+      setCompaniesWithUser([]);
+    } finally {
+      setCompaniesWithUserLoading(false);
     }
+  }
 
-    async function loadCompaniesWithoutUser() {
+  async function loadCompaniesWithoutUser() {
+    try {
       const response = await authJsonFetch({
         path: `companies?withUser=false`
       });
@@ -44,18 +50,16 @@ export default function Companies() {
         return;
       }
       setCompaniesWithoutUser(response.data as CompanyResponsePublicDto[]);
-    }
-
-    loadCompaniesWithUser().catch(() => {
-      setCompaniesWithUser([]);
-    }).finally(() => {
-      setCompaniesWithUserLoading(false);
-    });
-    loadCompaniesWithoutUser().catch(() => {
+    } catch (e) {
       setCompaniesWithoutUser([]);
-    }).finally(() => {
+    } finally {
       setCompaniesWithoutUserLoading(false);
-    });
+    }
+  }
+
+  useEffect(() => {
+    loadCompaniesWithUser().then();
+    loadCompaniesWithoutUser().then();
   }, []);
 
   const [companiesWithUserFilterValue, setCompaniesWithUserFilterValue] = useState<string>("");
@@ -86,20 +90,28 @@ export default function Companies() {
   };
 
   async function sendCompanyJoinRequest(companyId: number) {
-    const response = await authJsonFetch({
-      path: `companies/${companyId}/requests`, method: "POST"
-    });
-    if (!response?.status || response.status > 399 || !response?.data) {
+    try {
+      const response = await authJsonFetch({
+        path: `companies/${companyId}/requests`, method: "POST"
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to send join request"}`
+        })
+        return;
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center",
+        message: "Your request to join the selected company was sent successfully"
+      });
+      await loadCompaniesWithoutUser();
+    } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
-        message: `${response?.error ?? "Failed to send join request"}`
+        message: `Failed to send join request`
       })
-      return;
     }
-    notification.openNotification({
-      type: "success", vertical: "top", horizontal: "center",
-      message: "Your request to join the selected company was sent successfully"
-    })
   }
 
   const loadCompanyDashboard = (companyId: number) => navigate(`/companies/${companyId}`);
