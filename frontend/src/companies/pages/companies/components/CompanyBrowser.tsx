@@ -15,12 +15,14 @@ import {FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 interface CompanyBrowserProps {
-  companiesWithUserLoading: boolean;
-  companiesWithUser: CompanyResponsePublicDto[];
-  companiesWithoutUserLoading: boolean;
-  companiesWithoutUser: CompanyResponsePublicDto[];
-  handleCompaniesWithUserSearch: (event: FormEvent<HTMLInputElement>) => void;
-  handleCompaniesWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void;
+  companiesWithUserLoading: boolean,
+  companiesWithUser: CompanyResponsePublicDto[],
+  companiesWithoutUserLoading: boolean,
+  companiesWithoutUser: CompanyResponsePublicDto[],
+  handleCompaniesWithUserSearch: (event: FormEvent<HTMLInputElement>) => void,
+  handleCompaniesWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void,
+  handleViewDashboardClick: (companyId: number) => unknown,
+  handleJoinRequestClick: (companyId: number) => Promise<void>
 }
 
 export default function CompanyBrowser(props: CompanyBrowserProps) {
@@ -56,6 +58,7 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
           <CompanyList loading={props.companiesWithUserLoading}
                        companies={props.companiesWithUser}
                        notFoundText={"We haven't found any companies."}
+                       onActionButtonClick={props.handleViewDashboardClick}
                        userIsMember={true}/>
         </Stack>
       </Grid>
@@ -74,6 +77,7 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
           <CompanyList loading={props.companiesWithoutUserLoading}
                        companies={props.companiesWithoutUser}
                        notFoundText={"We haven't found any companies to join."}
+                       onActionButtonClick={props.handleJoinRequestClick}
                        userIsMember={false}/>
         </Stack>
       </Grid>

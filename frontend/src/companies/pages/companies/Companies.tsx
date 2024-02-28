@@ -5,6 +5,7 @@ import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {
   useNotification
 } from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNavigate} from "react-router-dom";
 
 export default function Companies() {
   const [companiesWithUserLoading, setCompaniesWithUserLoading] = useState<boolean>(true);
@@ -14,6 +15,7 @@ export default function Companies() {
 
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadCompaniesWithUser() {
@@ -83,6 +85,25 @@ export default function Companies() {
     setCompaniesWithoutUserFilterValue(event.target.value.toLowerCase().trim());
   };
 
+  async function sendCompanyJoinRequest(companyId: number) {
+    const response = await authJsonFetch({
+      path: `companies/${companyId}/requests`, method: "POST"
+    });
+    if (!response?.status || response.status > 399 || !response?.data) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: `${response?.error ?? "Failed to send join request"}`
+      })
+      return;
+    }
+    notification.openNotification({
+      type: "success", vertical: "top", horizontal: "center",
+      message: "Your request to join the selected company was sent successfully"
+    })
+  }
+
+  const loadCompanyDashboard = (companyId: number) => navigate(`/companies/${companyId}`);
+
   return (
     <CompanyBrowser companiesWithUser={companiesWithUserFiltered}
                     companiesWithUserLoading={companiesWithUserLoading}
@@ -90,6 +111,8 @@ export default function Companies() {
                     companiesWithoutUserLoading={companiesWithoutUserLoading}
                     handleCompaniesWithUserSearch={handleCompaniesWithUserSearch}
                     handleCompaniesWithoutUserSearch={handleCompaniesWithoutUserSearch}
+                    handleViewDashboardClick={loadCompanyDashboard}
+                    handleJoinRequestClick={sendCompanyJoinRequest}
     />
   )
 }
