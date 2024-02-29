@@ -14,7 +14,6 @@ import RegisterVerificationRedirect
 import {companyMenuRoutes} from "../config/menu/companyMenuRoutes.tsx";
 import CompanyDashboard from "../../companies/pages/dashboard/CompanyDashboard.tsx";
 import CompanyLayout from "../../companies/layout/CompanyLayout.tsx";
-import {PermissionProvider} from "../../authentication/context/PermissionProvider.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -71,21 +70,16 @@ const appRouter = createBrowserRouter([
     errorElement: <ErrorPage/>,
     children: [
       {
-        element: <PermissionProvider/>,
+        element: <CompanyLayout/>,
         children: [
+          ...companyMenuRoutes.elements,
           {
-            element: <CompanyLayout/>,
-            children: [
-              ...companyMenuRoutes.elements,
-              {
-                path: ":companyId",
-                element: <CompanyDashboard/>
-              },
-              {
-                path: "*",
-                element: <NotFound/>
-              }
-            ]
+            path: ":companyId",
+            element: <CompanyDashboard/>
+          },
+          {
+            path: "*",
+            element: <NotFound/>
           }
         ]
       }

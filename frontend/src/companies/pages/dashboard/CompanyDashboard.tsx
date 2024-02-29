@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import NotFound from "../../../public/pages/errorPages/NotFound.tsx";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
@@ -7,18 +7,19 @@ import {
   useNotification
 } from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
-import usePermission from "../../../authentication/hooks/usePermission.ts";
+import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 
 export default function CompanyDashboard() {
+  const {loading: permissionsLoading, permissions: companyPermissions} = usePermissions();
+
   const companyId = useParams()?.companyId;
-  const [loading, setLoading] = useState(true);
+  const [companyLoading, setCompanyLoading] = useState(true);
   const [company, setCompany] = useState<CompanyResponsePrivateDto | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
-  const permission = usePermission();
+  const navigate = useNavigate();
+
+  const idIsValid = companyId && !isNaN(parseInt(companyId)) && parseInt(companyId) > 0;
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -27,38 +28,51 @@ export default function CompanyDashboard() {
     });
   }
 
-  useEffect(() => {
-    async function loadCompany() {
+  async function loadCompany() {
+    try {
+      setCompanyLoading(true);
+      if (!idIsValid) {
+        setCompanyLoading(false);
+        return
+      }
       const response = await authJsonFetch({
         path: `companies/${companyId}`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         return handleErrorNotification(response?.error);
       }
-      console.log(company);
       setCompany(response.data as CompanyResponsePrivateDto);
+    } catch (e) {
+      setCompany(undefined);
+      handleErrorNotification();
+    } finally {
+      setCompanyLoading(false);
     }
+  }
 
-    if (!companyId || isNaN(parseInt(companyId)) || parseInt(companyId) < 1) {
-      setLoading(false);
+  useEffect(() => {
+    if (!permissionsLoading && companyPermissions?.length > 0) {
+      loadCompany().then();
     } else {
-      loadCompany().catch(() => {
-        handleErrorNotification();
-      }).finally(() => {
-        setLoading(false);
-      });
+      setCompanyLoading(false);
     }
-  }, []);
+  }, [permissionsLoading, companyPermissions]);
 
-  if (loading) {
+  if (!companyLoading && company && !companyPermissions?.length) {
+    handleErrorNotification("Access Denied: Insufficient privileges");
+    return navigate("/companies/");
+  }
+
+  if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
   } else if (!company) {
     return <NotFound text={"The requested company was not found."}/>;
-  } else if (permission.companyPermissions?.includes(PermissionType.COMPANY_ADMIN)) {
-    return <>Admin</>
-  } else if (permission.companyPermissions.includes(PermissionType.COMPANY_EDITOR)) {
-    return <>Editor</>
-  } else if (permission.companyPermissions.includes(PermissionType.COMPANY_EMPLOYEE)) {
-    return <>Employee</>
   }
+  return (
+    <div>
+      <h1>{company.name}</h1>
+      <p>{company.description}</p>
+      <p>Permissions: {companyPermissions?.length ? companyPermissions.join(", ") : "None"}</p>
+    </div>
+  )
 }

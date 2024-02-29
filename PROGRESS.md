@@ -43,7 +43,7 @@ React and Material UI.
 - [x] {`GlobalRole.USER`} view list of companies they are member of
 - [x] {`GlobalRole.USER`} view list of companies they can request to join
 - [x] {`GlobalRole.USER`} add new company
-- [ ] {`GlobalRole.USER`} request to join company
+- [x] {`GlobalRole.USER`} request to join company
 
 #### /companies/`:companyId`
 
