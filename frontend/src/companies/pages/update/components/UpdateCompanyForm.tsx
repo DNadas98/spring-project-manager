@@ -1,8 +1,8 @@
 import React from "react";
 import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {DomainOutlined} from "@mui/icons-material";
-import CompanyNameInput from "./CompanyNameInput.tsx";
-import CompanyDescriptionInput from "./CompanyDescriptionInput.tsx";
+import CompanyNameInput from "../../../components/CompanyNameInput.tsx";
+import CompanyDescriptionInput from "../../../components/CompanyDescriptionInput.tsx";
 import {CompanyResponsePrivateDto} from "../../../dto/CompanyResponsePrivateDto.ts";
 
 interface UpdateCompanyFormProps {

@@ -1,6 +1,6 @@
 import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
 import Companies from "../../../companies/pages/companies/Companies.tsx";
-import AddCompany from "../../../companies/pages/companies/AddCompany.tsx";
+import AddCompany from "../../../companies/pages/add/AddCompany.tsx";
 
 export const companyMenuRoutes: IMenuRoutes = {
   routePrefix: "/companies/",

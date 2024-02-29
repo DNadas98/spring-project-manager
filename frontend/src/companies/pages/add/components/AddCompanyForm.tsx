@@ -1,8 +1,8 @@
 import React from "react";
 import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {DomainAddOutlined} from "@mui/icons-material";
-import CompanyNameInput from "./CompanyNameInput.tsx";
-import CompanyDescriptionInput from "./CompanyDescriptionInput.tsx";
+import CompanyNameInput from "../../../components/CompanyNameInput.tsx";
+import CompanyDescriptionInput from "../../../components/CompanyDescriptionInput.tsx";
 
 interface AddCompanyFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
