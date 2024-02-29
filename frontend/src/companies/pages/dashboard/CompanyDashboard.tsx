@@ -7,10 +7,14 @@ import {
 } from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
+import {
+  PermissionType
+} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function CompanyDashboard() {
   const {loading: permissionsLoading, permissions: companyPermissions} = usePermissions();
-
+  const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const [companyLoading, setCompanyLoading] = useState(true);
   const [company, setCompany] = useState<CompanyResponsePrivateDto | undefined>(undefined);
@@ -57,18 +61,69 @@ export default function CompanyDashboard() {
     loadCompany().then();
   }, []);
 
+  async function deleteCompany() {
+    try {
+      setCompanyLoading(true);
+      if (!idIsValid) {
+        setCompanyError("The provided company ID is invalid");
+        setCompanyLoading(false);
+        return
+      }
+      const response = await authJsonFetch({
+        path: `companies/${companyId}`, method: "DELETE"
+      });
+      if (!response?.status || response.status > 404 || !response?.message) {
+        setCompanyError(response?.error ?? `Failed to remove company data`);
+        return handleErrorNotification(response?.error);
+      }
+      setCompany(undefined);
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center",
+        message: response.message ?? "All company data has been removed successfully"
+      })
+      navigate("/companies", {replace: true});
+    } catch (e) {
+      setCompany(undefined);
+      setCompanyError(`Failed to remove company data`);
+      handleErrorNotification();
+    } finally {
+      setCompanyLoading(false);
+    }
+  }
+
+  function handleDeleteClick() {
+    dialog.openDialog({
+      text: "Do you really wish to remove all company data, including all projects and tasks?",
+      confirmText: "Yes, delete this company", onConfirm: deleteCompany
+    });
+  }
+
 
   if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
   } else if (!companyPermissions?.length || !company) {
     handleErrorNotification(companyErrorStatus ?? "Access Denied: Insufficient permissions");
-    return navigate("/companies", {replace: true});
+    navigate("/companies", {replace: true});
+    return <></>;
   }
   return (
     <div>
       <h1>{company.name}</h1>
       <p>{company.description}</p>
-      <p>Permissions: {companyPermissions?.length ? companyPermissions.join(", ") : "None"}</p>
+      <p>Permissions: {companyPermissions.join(", ")}</p>
+      {(companyPermissions.includes(PermissionType.COMPANY_EDITOR) || companyPermissions.includes(PermissionType.COMPANY_ADMIN))
+        && <div>
+              <button onClick={() => {
+                navigate(`/companies/${companyId}/update`)
+              }}>Update company details
+              </button>
+          </div>
+      }
+      {(companyPermissions.includes(PermissionType.COMPANY_ADMIN))
+        && <div>
+              <button onClick={handleDeleteClick}>Remove all company details</button>
+          </div>
+      }
     </div>
   )
 }

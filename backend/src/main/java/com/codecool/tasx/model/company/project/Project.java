@@ -2,6 +2,7 @@ package com.codecool.tasx.model.company.project;
 
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.task.Task;
+import com.codecool.tasx.model.request.ProjectJoinRequest;
 import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,11 @@ public class Project {
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Set<Task> tasks = new HashSet<>();
+
+  @OneToMany(mappedBy = "project", orphanRemoval = true)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private Set<ProjectJoinRequest> joinRequests = new HashSet<>();
 
   @ManyToMany
   @JoinTable(name = "project_admins", joinColumns = @JoinColumn(name = "project_id"),

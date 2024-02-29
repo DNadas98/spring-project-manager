@@ -14,6 +14,7 @@ import RegisterVerificationRedirect
 import {companyMenuRoutes} from "../config/menu/companyMenuRoutes.tsx";
 import CompanyDashboard from "../../companies/pages/dashboard/CompanyDashboard.tsx";
 import CompanyLayout from "../../companies/layout/CompanyLayout.tsx";
+import UpdateCompany from "../../companies/pages/companies/UpdateCompany.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -76,6 +77,10 @@ const appRouter = createBrowserRouter([
           {
             path: ":companyId",
             element: <CompanyDashboard/>
+          },
+          {
+            path: ":companyId/update",
+            element: <UpdateCompany/>
           },
           {
             path: "*",
