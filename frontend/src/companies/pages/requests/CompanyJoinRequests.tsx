@@ -101,27 +101,35 @@ export default function CompanyJoinRequests() {
     handleErrorNotification(companyJoinRequestError ?? "Access Denied: Insufficient permissions");
     navigate(`/companies/${companyId}`, {replace: true});
     return <></>;
-  } else if (!companyJoinRequests?.length) {
-    return <div>
-      <h3>No company join requests were found for this company.</h3>
-    </div>
   }
-  return <div>
-    <h3>Company Join Requests</h3>
-    <ul>{companyJoinRequests.map(request => {
-      return <li key={request.requestId}>
-        <h4>{request.user?.username}</h4>
-        <p>{request.status}</p>
-        <button onClick={async () => {
-          await handleApproveClick(request.requestId)
-        }}>Approve
-        </button>
-        <button onClick={() => {
-          handleDeclineClick(request.requestId);
-        }}>Decline
-        </button>
-      </li>
-    })}
-    </ul>
-  </div>
+  return (<div>
+    {!companyJoinRequests?.length
+      ? <div>
+        <h3>No company join requests were found for this company.</h3>
+      </div>
+      : <div>
+        <h3>Company Join Requests</h3>
+        <ul>{companyJoinRequests.map(request => {
+          return <li key={request.requestId}>
+            <h4>{request.user?.username}</h4>
+            <p>{request.status}</p>
+            <button onClick={async () => {
+              await handleApproveClick(request.requestId)
+            }}>Approve
+            </button>
+            <button onClick={() => {
+              handleDeclineClick(request.requestId);
+            }}>Decline
+            </button>
+          </li>
+        })}
+        </ul>
+      </div>
+    }
+    <button onClick={() => {
+      navigate(`/companies/${companyId}`)
+    }}>
+      Back
+    </button>
+  </div>)
 }
