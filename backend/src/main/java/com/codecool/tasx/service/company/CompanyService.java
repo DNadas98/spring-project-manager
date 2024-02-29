@@ -67,7 +67,7 @@ public class CompanyService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_ADMIN')")
+  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EDITOR')")
   public CompanyResponsePrivateDTO updateCompany(
     CompanyUpdateRequestDto updateRequestDto, Long companyId) throws ConstraintViolationException {
     Company company = companyDao.findById(companyId).orElseThrow(

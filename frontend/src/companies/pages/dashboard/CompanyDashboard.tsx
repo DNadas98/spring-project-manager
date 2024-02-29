@@ -98,6 +98,13 @@ export default function CompanyDashboard() {
     });
   }
 
+  function handleJoinRequestClick() {
+    navigate(`/companies/${companyId}/requests`);
+  }
+
+  function handleProjectsClick() {
+    navigate(`/companies/${companyId}/projects`);
+  }
 
   if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
@@ -111,7 +118,8 @@ export default function CompanyDashboard() {
       <h1>{company.name}</h1>
       <p>{company.description}</p>
       <p>Permissions: {companyPermissions.join(", ")}</p>
-      {(companyPermissions.includes(PermissionType.COMPANY_EDITOR) || companyPermissions.includes(PermissionType.COMPANY_ADMIN))
+      <button onClick={handleProjectsClick}>View projects</button>
+      {(companyPermissions.includes(PermissionType.COMPANY_EDITOR))
         && <div>
               <button onClick={() => {
                 navigate(`/companies/${companyId}/update`)
@@ -122,6 +130,7 @@ export default function CompanyDashboard() {
       {(companyPermissions.includes(PermissionType.COMPANY_ADMIN))
         && <div>
               <button onClick={handleDeleteClick}>Remove all company details</button>
+              <button onClick={handleJoinRequestClick}>View company join requests</button>
           </div>
       }
     </div>
