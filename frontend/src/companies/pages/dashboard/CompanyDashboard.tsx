@@ -1,5 +1,4 @@
 import {useNavigate, useParams} from "react-router-dom";
-import NotFound from "../../../public/pages/errorPages/NotFound.tsx";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {CompanyResponsePrivateDto} from "../../dto/CompanyResponsePrivateDto.ts";
@@ -15,6 +14,7 @@ export default function CompanyDashboard() {
   const companyId = useParams()?.companyId;
   const [companyLoading, setCompanyLoading] = useState(true);
   const [company, setCompany] = useState<CompanyResponsePrivateDto | undefined>(undefined);
+  const [companyErrorStatus, setCompanyError] = useState<string | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
@@ -32,18 +32,21 @@ export default function CompanyDashboard() {
     try {
       setCompanyLoading(true);
       if (!idIsValid) {
+        setCompanyError("The provided company ID is invalid");
         setCompanyLoading(false);
         return
       }
       const response = await authJsonFetch({
         path: `companies/${companyId}`
       });
-      if (!response?.status || response.status > 399 || !response?.data) {
+      if (!response?.status || response.status > 404 || !response?.data) {
+        setCompanyError(response?.error ?? `Failed to load company with ID ${companyId}`);
         return handleErrorNotification(response?.error);
       }
       setCompany(response.data as CompanyResponsePrivateDto);
     } catch (e) {
       setCompany(undefined);
+      setCompanyError(`Failed to load company with ID ${companyId}`);
       handleErrorNotification();
     } finally {
       setCompanyLoading(false);
@@ -51,22 +54,15 @@ export default function CompanyDashboard() {
   }
 
   useEffect(() => {
-    if (!permissionsLoading && companyPermissions?.length > 0) {
-      loadCompany().then();
-    } else {
-      setCompanyLoading(false);
-    }
-  }, [permissionsLoading, companyPermissions]);
+    loadCompany().then();
+  }, []);
 
-  if (!companyLoading && company && !companyPermissions?.length) {
-    handleErrorNotification("Access Denied: Insufficient privileges");
-    return navigate("/companies/");
-  }
 
   if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
-  } else if (!company) {
-    return <NotFound text={"The requested company was not found."}/>;
+  } else if (!companyPermissions?.length || !company) {
+    handleErrorNotification(companyErrorStatus ?? "Access Denied: Insufficient permissions");
+    return navigate("/companies", {replace: true});
   }
   return (
     <div>

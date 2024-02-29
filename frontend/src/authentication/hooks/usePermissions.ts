@@ -1,12 +1,8 @@
 import {PermissionType} from "../dto/applicationUser/PermissionType.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {
-  useNotification
-} from "../../common/notification/context/NotificationProvider.tsx";
+import {useParams} from "react-router-dom";
 import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import {useEffect, useState} from "react";
 import {IPermissionState} from "./IPermissionState.ts";
-import {ApiResponseDto} from "../../common/api/dto/ApiResponseDto.ts";
 
 
 export default function usePermissions() {
@@ -14,26 +10,10 @@ export default function usePermissions() {
   const companyId = params.companyId;
   const projectId = params.projectId;
   const taskId = params.taskId;
-  const notification = useNotification();
   const authJsonFetch = useAuthJsonFetch();
-  const navigate = useNavigate();
 
   function isValidId(id: string | undefined) {
     return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
-  }
-
-  function openErrorNotification(message: string) {
-    notification.openNotification({
-      type: "error", horizontal: "center", vertical: "top", message: message
-    });
-  }
-
-  function handleErrorResponse(response: ApiResponseDto | void) {
-    if (response?.status === 401 || response?.status === 403) {
-      openErrorNotification(response.error ?? "Access Denied");
-      navigate(-1);
-    }
-    return [];
   }
 
   const [permissionsState, setPermissionsState] = useState<IPermissionState>({
@@ -41,14 +21,14 @@ export default function usePermissions() {
     permissions: []
   });
 
-  async function loadCompanyPermissions(): Promise<PermissionType[]> {
+  async function loadCompanyPermissions() {
     try {
       if (!isValidId(companyId)) {
         return [];
       }
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}`});
-      if (!response || !response?.data || response?.error) {
-        return handleErrorResponse(response);
+      if (!response || !response?.data || response?.error || response?.status > 399) {
+        return [];
       }
       return response.data as PermissionType[];
     } catch (e) {
@@ -56,14 +36,14 @@ export default function usePermissions() {
     }
   }
 
-  async function loadProjectPermissions(): Promise<PermissionType[]> {
+  async function loadProjectPermissions() {
     try {
       if (!isValidId(companyId) || !isValidId(projectId)) {
         return [];
       }
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}`});
-      if (!response || !response?.data || response?.error) {
-        return handleErrorResponse(response);
+      if (!response || !response?.data || response?.error || response?.status > 399) {
+        return [];
       }
       return response.data as PermissionType[];
     } catch (e) {
@@ -77,8 +57,8 @@ export default function usePermissions() {
         return [];
       }
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}/tasks/${taskId}`});
-      if (!response || !response?.data || response?.error) {
-        return handleErrorResponse(response);
+      if (!response || !response?.data || response?.error || response?.status > 399) {
+        return [];
       }
       return response.data as PermissionType[];
     } catch (e) {
@@ -90,10 +70,19 @@ export default function usePermissions() {
     async function fetchPermissions() {
       setPermissionsState({loading: true, permissions: []});
       try {
+        const combinedPermissions = [];
         const companyPermissions = await loadCompanyPermissions();
+        if (companyPermissions?.length) {
+          combinedPermissions.push(...companyPermissions);
+        }
         const projectPermissions = await loadProjectPermissions();
+        if (projectPermissions?.length) {
+          combinedPermissions.push(...projectPermissions);
+        }
         const taskPermissions = await loadTaskPermissions();
-        const combinedPermissions = [...companyPermissions, ...projectPermissions, ...taskPermissions];
+        if (taskPermissions?.length) {
+          combinedPermissions.push(...taskPermissions);
+        }
         setPermissionsState({
           loading: false, permissions: combinedPermissions
         });
