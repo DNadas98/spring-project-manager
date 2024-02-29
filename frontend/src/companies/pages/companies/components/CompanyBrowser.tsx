@@ -23,6 +23,7 @@ interface CompanyBrowserProps {
   handleCompaniesWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void,
   handleViewDashboardClick: (companyId: number) => unknown,
   handleJoinRequestClick: (companyId: number) => Promise<void>
+  actionButtonDisabled: boolean;
 }
 
 export default function CompanyBrowser(props: CompanyBrowserProps) {
@@ -59,7 +60,8 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
                        companies={props.companiesWithUser}
                        notFoundText={"We haven't found any companies."}
                        onActionButtonClick={props.handleViewDashboardClick}
-                       userIsMember={true}/>
+                       userIsMember={true}
+                       actionButtonDisabled={props.actionButtonDisabled}/>
         </Stack>
       </Grid>
       <Grid item xs={10} sm={8} md={5} lg={4}>
@@ -78,7 +80,8 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
                        companies={props.companiesWithoutUser}
                        notFoundText={"We haven't found any companies to join."}
                        onActionButtonClick={props.handleJoinRequestClick}
-                       userIsMember={false}/>
+                       userIsMember={false}
+                       actionButtonDisabled={props.actionButtonDisabled}/>
         </Stack>
       </Grid>
     </Grid>

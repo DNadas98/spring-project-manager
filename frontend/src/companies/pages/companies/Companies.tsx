@@ -89,8 +89,11 @@ export default function Companies() {
     setCompaniesWithoutUserFilterValue(event.target.value.toLowerCase().trim());
   };
 
+  const [actionButtonDisabled, setActionButtonDisabled] = useState(false);
+
   async function sendCompanyJoinRequest(companyId: number) {
     try {
+      setActionButtonDisabled(true)
       const response = await authJsonFetch({
         path: `companies/${companyId}/requests`, method: "POST"
       });
@@ -111,10 +114,16 @@ export default function Companies() {
         type: "error", vertical: "top", horizontal: "center",
         message: `Failed to send join request`
       })
+    } finally {
+      setActionButtonDisabled(false);
     }
   }
 
-  const loadCompanyDashboard = (companyId: number) => navigate(`/companies/${companyId}`);
+  const loadCompanyDashboard = (companyId: number) => {
+    setActionButtonDisabled(true);
+    navigate(`/companies/${companyId}`);
+    setActionButtonDisabled(false);
+  }
 
   return (
     <CompanyBrowser companiesWithUser={companiesWithUserFiltered}
@@ -125,6 +134,6 @@ export default function Companies() {
                     handleCompaniesWithoutUserSearch={handleCompaniesWithoutUserSearch}
                     handleViewDashboardClick={loadCompanyDashboard}
                     handleJoinRequestClick={sendCompanyJoinRequest}
-    />
+                    actionButtonDisabled={actionButtonDisabled}/>
   )
 }

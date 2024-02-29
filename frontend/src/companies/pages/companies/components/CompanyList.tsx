@@ -17,10 +17,12 @@ interface CompanyListProps {
   companies: CompanyResponsePublicDto[],
   notFoundText: string,
   onActionButtonClick: (companyId: number) => unknown;
+  actionButtonDisabled: boolean;
   userIsMember: boolean;
 }
 
 export default function CompanyList(props: CompanyListProps) {
+
   return props.loading
     ? <LoadingSpinner/>
     : props.companies?.length > 0
@@ -44,8 +46,9 @@ export default function CompanyList(props: CompanyListProps) {
             </AccordionDetails>
             <AccordionActions>
               <Button sx={{textTransform: "none"}}
+                      disabled={props.actionButtonDisabled}
                       onClick={() => {
-                        props.onActionButtonClick(company.companyId)
+                        props.onActionButtonClick(company.companyId);
                       }}>
                 {props.userIsMember ? "View Dashboard" : "Request to join"}
               </Button>
