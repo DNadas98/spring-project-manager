@@ -164,7 +164,7 @@ export default function UserJoinRequests() {
       </div>
       : <div>
         <h3>Project Join Requests</h3>
-        <ul>{companyJoinRequests.map(request => {
+        <ul>{projectJoinRequests.map(request => {
           return <li key={request.requestId}>
             <h4>{request.company?.name}</h4>
             <p>{request.status}</p>
