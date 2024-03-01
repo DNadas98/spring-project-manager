@@ -129,9 +129,9 @@ export default function CompanyDashboard() {
       }
       {(companyPermissions.includes(PermissionType.COMPANY_ADMIN))
         && <div>
-              <button onClick={handleDeleteClick}>Remove all company details</button>
-              <br/>
               <button onClick={handleJoinRequestClick}>View company join requests</button>
+              <br/>
+              <button onClick={handleDeleteClick}>Remove all company details</button>
           </div>
       }
     </div>

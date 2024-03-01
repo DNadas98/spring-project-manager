@@ -7,14 +7,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
-
 public record TaskCreateRequestDto(
   @NotNull @Length(min = 1, max = 50) String name,
   @NotNull @Length(min = 1, max = 500) String description,
   @NotNull Importance importance,
   @NotNull @Min(1) @Max(5) Integer difficulty,
-  @NotNull LocalDateTime startDate,
-  @NotNull LocalDateTime deadline,
+  @NotNull String startDate,
+  @NotNull String deadline,
   @NotNull TaskStatus taskStatus) {
 }

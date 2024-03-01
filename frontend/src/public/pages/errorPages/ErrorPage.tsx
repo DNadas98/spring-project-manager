@@ -1,13 +1,7 @@
 import {Button, Grid, Typography} from "@mui/material";
-import {useRouteError} from "react-router-dom";
 import BackButton from "../../../common/utils/components/BackButton.tsx";
 
 function ErrorPage() {
-    const error: any = useRouteError();
-    console.clear();
-    console.error(`Error: ${error?.message ??
-    "An unknown error has occurred"}`);
-
     return (
         <Grid container minHeight="100vh" minWidth={"100%"} textAlign={"left"}
               alignItems="center" justifyContent="center">

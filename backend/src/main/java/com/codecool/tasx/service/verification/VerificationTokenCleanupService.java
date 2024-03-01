@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class VerificationTokenCleanupService {
 
       logger.info(String.format(
         "Scheduled job to clear expired verification tokens finished successfully, next execution at %s",
-        LocalDateTime.now().plusHours(TOKEN_EXPIRATION_MS)));
+        Instant.now().plusMillis(TOKEN_EXPIRATION_MS).atZone(ZoneId.of("UTC"))));
     } catch (Exception e) {
       logger.error(
         String.format(

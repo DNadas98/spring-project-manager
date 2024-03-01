@@ -59,13 +59,13 @@ public class TaskService {
   public TaskResponsePublicDto createTask(
     TaskCreateRequestDto createRequestDto, Long companyId, Long projectId)
     throws ConstraintViolationException {
+    Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
+    Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
+
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
 
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-
-    Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
-    Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
       project.getDeadline());
 
@@ -90,11 +90,10 @@ public class TaskService {
   public TaskResponsePublicDto updateTask(
     TaskUpdateRequestDto updateRequestDto, Long companyId, Long projectId, Long taskId)
     throws ConstraintViolationException {
-    Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
-      .orElseThrow(() -> new TaskNotFoundException(taskId));
-
     Instant taskStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
     Instant taskDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
+    Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
+      .orElseThrow(() -> new TaskNotFoundException(taskId));
     Project project = task.getProject();
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
       project.getDeadline());

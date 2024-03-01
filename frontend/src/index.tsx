@@ -15,6 +15,8 @@ import {
 } from "./common/notification/context/NotificationProvider.tsx";
 import "./index.css"
 import {DialogProvider} from "./common/dialog/context/DialogProvider.tsx";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement as HTMLElement);
@@ -24,6 +26,7 @@ root.render(
   <DevSupport ComponentPreviews={ComponentPreviews} useInitialHook={useInitial}>
     <ThemePaletteModeProvider>
       <AppThemeProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
         <NotificationProvider>
           <DialogProvider>
             <AuthenticationProvider>
@@ -31,6 +34,7 @@ root.render(
             </AuthenticationProvider>
           </DialogProvider>
         </NotificationProvider>
+        </LocalizationProvider>
       </AppThemeProvider>
     </ThemePaletteModeProvider>
   </DevSupport>
