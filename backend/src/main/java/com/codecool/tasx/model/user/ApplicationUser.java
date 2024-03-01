@@ -4,6 +4,8 @@ import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.Project;
 import com.codecool.tasx.model.company.project.task.Task;
+import com.codecool.tasx.model.request.CompanyJoinRequest;
+import com.codecool.tasx.model.request.ProjectJoinRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,6 +55,12 @@ public class ApplicationUser {
 
   @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Task> assignedTasks = new HashSet<>();
+
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
+
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private Set<ProjectJoinRequest> projectJoinRequests = new HashSet<>();
 
 
   public ApplicationUser(String username) {

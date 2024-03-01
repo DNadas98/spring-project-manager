@@ -23,7 +23,7 @@ interface ProjectBrowserProps {
   handleViewDashboardClick: (projectId: number) => unknown,
   handleJoinRequestClick: (projectId: number) => Promise<void>
   actionButtonDisabled: boolean;
-  handleAddButtonClick:()=>void;
+  handleAddButtonClick: () => void;
 }
 
 export default function ProjectBrowser(props: ProjectBrowserProps) {

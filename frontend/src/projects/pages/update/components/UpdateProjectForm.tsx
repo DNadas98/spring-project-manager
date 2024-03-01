@@ -7,10 +7,10 @@ import StartDateInput from "../../../../common/utils/components/StartDateInput.t
 import DeadlineInput from "../../../../common/utils/components/DeadlineInput.tsx";
 
 interface UpdateProjectFormProps {
-  name:string;
-  description:string;
-  startDate:Date;
-  deadline:Date;
+  name: string;
+  description: string;
+  startDate: Date;
+  deadline: Date;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 

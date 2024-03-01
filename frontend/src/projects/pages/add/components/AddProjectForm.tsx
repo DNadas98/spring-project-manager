@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Stack,
-  Typography
-} from "@mui/material";
+import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {DomainAddOutlined} from "@mui/icons-material";
 import ProjectNameInput from "../../../components/ProjectNameInput.tsx";
 import ProjectDescriptionInput from "../../../components/ProjectDescriptionInput.tsx";

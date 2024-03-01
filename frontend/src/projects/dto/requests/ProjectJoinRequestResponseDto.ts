@@ -1,4 +1,3 @@
-
 import {
   UserResponsePublicDto
 } from "../../../authentication/dto/applicationUser/UserResponsePublicDto.ts";

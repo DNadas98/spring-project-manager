@@ -13,9 +13,6 @@ import {
   PermissionType
 } from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
-import {
-  toUTCStringOmitSeconds
-} from "../../../common/dateTime/dateTimeService.ts";
 
 export default function UpdateProject() {
   const {loading: permissionsLoading, permissions} = usePermissions();

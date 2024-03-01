@@ -9,7 +9,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {toUTCStringOmitSeconds} from "../../../common/dateTime/dateTimeService.ts";
 
 export default function AddProject() {
   const {loading: permissionsLoading, permissions: companyPermissions} = usePermissions();
