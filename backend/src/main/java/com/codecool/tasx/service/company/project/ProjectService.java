@@ -14,6 +14,7 @@ import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.company.project.task.Task;
 import com.codecool.tasx.model.request.RequestStatus;
 import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.ProjectConverter;
 import com.codecool.tasx.service.datetime.DateTimeService;
@@ -118,8 +119,6 @@ public class ProjectService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public void deleteProject(Long companyId, Long projectId) {
-    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
-      () -> new ProjectNotFoundException(projectId));
-    projectDao.delete(project);
+    projectDao.deleteByIdAndCompanyId(projectId,companyId);
   }
 }

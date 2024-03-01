@@ -89,6 +89,7 @@ export default function ProjectDashboard() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "All project data has been removed successfully"
       })
+      debugger;
       navigate(`/companies/${companyId}`, {replace: true});
     } catch (e) {
       handleErrorNotification("Failed to remove project data");
