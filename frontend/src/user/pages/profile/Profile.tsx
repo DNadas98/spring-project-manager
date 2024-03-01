@@ -58,7 +58,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user/accounts/${id}`, method: "DELETE"
       });
-      if (!response?.message) {
+      if (response?.status!==200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
 
@@ -94,7 +94,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user`, method: "DELETE"
       });
-      if (!response?.message) {
+      if (response?.status!==200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
       notification.openNotification({
@@ -123,7 +123,7 @@ export default function Profile() {
     return;
   }
 
-  return loading
+  return loading||accountDeleteLoading||applicationUserDeleteLoading
     ? <LoadingSpinner/>
     : username && email && roles ? (
       <ProfileDashboard username={username}
