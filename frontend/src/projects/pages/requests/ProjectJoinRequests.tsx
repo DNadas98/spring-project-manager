@@ -13,8 +13,9 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {RequestStatus} from "../../../companies/dto/RequestStatus.ts";
 
 export default function ProjectJoinRequests() {
-  const {loading: permissionsLoading, permissions: projectPermissions} = usePermissions();
+  const {loading: permissionsLoading, permissions} = usePermissions();
   const dialog = useDialog();
+  const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const [projectJoinRequestsLoading, setProjectJoinRequestsLoading] = useState(true);
   const [projectJoinRequests, setProjectJoinRequests] = useState<ProjectJoinRequestResponseDto[]>([]);
@@ -23,7 +24,9 @@ export default function ProjectJoinRequests() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  const idIsValid = projectId && !isNaN(parseInt(projectId)) && parseInt(projectId) > 0;
+  const idIsValid = (id: string | undefined) => {
+    return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
+  };
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -36,12 +39,12 @@ export default function ProjectJoinRequests() {
     const defaultError = `Failed to load project join requests`;
     try {
       setProjectJoinRequestsLoading(true);
-      if (!idIsValid) {
+      if (!idIsValid(companyId) || !idIsValid(projectId)) {
         setProjectJoinRequestError("The provided project ID is invalid");
         return;
       }
       const response = await authJsonFetch({
-        path: `projects/${projectId}/requests`
+        path: `companies/${companyId}/projects/${projectId}/requests`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setProjectJoinRequestError(response?.error ?? defaultError);
@@ -65,7 +68,7 @@ export default function ProjectJoinRequests() {
     try {
       setProjectJoinRequestsLoading(true);
       const response = await authJsonFetch({
-        path: `projects/${projectId}/requests/${requestId}`, method: "PUT", body: {
+        path: `companies/${companyId}/projects/${projectId}/requests/${requestId}`, method: "PUT", body: {
           status: status
         }
       });
@@ -99,9 +102,9 @@ export default function ProjectJoinRequests() {
 
   if (permissionsLoading || projectJoinRequestsLoading) {
     return <LoadingSpinner/>;
-  } else if (!projectPermissions?.length || projectJoinRequestError) {
+  } else if (!permissions?.length || projectJoinRequestError) {
     handleErrorNotification(projectJoinRequestError ?? "Access Denied: Insufficient permissions");
-    navigate(`/projects/${projectId}`, {replace: true});
+    navigate(`/companies/${companyId}/projects/${projectId}`, {replace: true});
     return <></>;
   }
   return (<div>
@@ -129,7 +132,7 @@ export default function ProjectJoinRequests() {
       </div>
     }
     <button onClick={() => {
-      navigate(`/projects/${projectId}`)
+      navigate(`/companies/${companyId}/projects/${projectId}`)
     }}>
       Back
     </button>

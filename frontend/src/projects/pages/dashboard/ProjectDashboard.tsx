@@ -128,6 +128,8 @@ export default function ProjectDashboard() {
       <p>Deadline: {project.deadline.toString()}</p>
       <p>Permissions: {permissions.join(", ")}</p>
       <button onClick={handleTasksClick}>View tasks</button>
+      <br/>
+      <button onClick={handleJoinRequestClick}>View project join requests</button>
       {(permissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
               <button onClick={() => {
@@ -139,8 +141,6 @@ export default function ProjectDashboard() {
       {(permissions.includes(PermissionType.PROJECT_ADMIN))
         && <div>
               <button onClick={handleDeleteClick}>Remove project</button>
-              <br/>
-              <button onClick={handleJoinRequestClick}>View project join requests</button>
           </div>
       }
       <button onClick={() => navigate(`/companies/${companyId}/projects`)}>Back</button>
