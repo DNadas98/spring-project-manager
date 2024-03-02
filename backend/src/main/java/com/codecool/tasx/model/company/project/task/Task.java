@@ -30,11 +30,12 @@ public class Task {
   private Instant deadline;
   private TaskStatus taskStatus;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "project_id")
+  @ToString.Exclude
   private Project project;
 
-  @OneToMany(mappedBy = "task", orphanRemoval = true)
+  @OneToMany(mappedBy = "task", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Set<Expense> expenses;

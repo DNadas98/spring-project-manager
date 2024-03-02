@@ -5,9 +5,12 @@ import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserProvider {
+
+  @Transactional
   public ApplicationUser getAuthenticatedUser() throws UnauthorizedException {
     try {
       UserAccount userAccount =

@@ -35,31 +35,31 @@ public class ApplicationUser {
   @Enumerated(EnumType.STRING)
   private Set<GlobalRole> globalRoles = new HashSet<>();
 
-  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
   private Set<Company> adminCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER)
   private Set<Company> editorCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
   private Set<Company> employeeCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
   private Set<Project> adminProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER)
   private Set<Project> editorProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER)
   private Set<Project> assignedProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER)
   private Set<Task> assignedTasks = new HashSet<>();
 
-  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
 
-  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   private Set<ProjectJoinRequest> projectJoinRequests = new HashSet<>();
 
 

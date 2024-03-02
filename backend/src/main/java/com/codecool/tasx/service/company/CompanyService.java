@@ -81,8 +81,8 @@ public class CompanyService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_ADMIN')")
   public void deleteCompany(Long companyId) {
-    Company company = companyDao.findById(companyId).orElseThrow(
-      () -> new CompanyNotFoundException(companyId));
+    Company company = companyDao.findById(companyId).orElseThrow(() ->
+      new CompanyNotFoundException(companyId));
     companyDao.delete(company);
   }
 }

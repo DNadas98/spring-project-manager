@@ -26,13 +26,14 @@ public class Company {
   @Column(length = 500)
   private String description;
 
-  @OneToMany(mappedBy = "company", orphanRemoval = true)
+  @OneToMany(mappedBy = "company", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Set<Project> projects;
 
-  @OneToMany(mappedBy = "company", orphanRemoval = true)
+  @OneToMany(mappedBy = "company", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
 
   @ManyToMany

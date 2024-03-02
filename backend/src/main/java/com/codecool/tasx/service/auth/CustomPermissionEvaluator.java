@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 
@@ -44,6 +45,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
    * @return true if the permission is granted, false otherwise
    */
   @Override
+  @Transactional
   public boolean hasPermission(
     Authentication authentication, Object targetDomainObject, Object permission) {
     if ((authentication == null) || (targetDomainObject == null) ||
@@ -84,6 +86,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
    * @Warning Not type safe
    */
   @Override
+  @Transactional
   public boolean hasPermission(
     Authentication authentication, Serializable targetId, String targetType, Object permission) {
     if ((authentication == null) || (targetId == null) || (targetType.isEmpty()) ||
@@ -159,37 +162,44 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
   }
 
+  @Transactional
   public boolean hasCompanyAdminAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getAdminCompanies().contains(company);
   }
 
+  @Transactional
   public boolean hasCompanyEditorAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getEditorCompanies().contains(company);
   }
 
+  @Transactional
   public boolean hasCompanyEmployeeAccess(ApplicationUser applicationUser, Company company) {
     return applicationUser.getEmployeeCompanies().contains(company) || hasCompanyEditorAccess(
       applicationUser, company) || hasCompanyAdminAccess(applicationUser, company);
   }
 
+  @Transactional
   public boolean hasProjectAdminAccess(ApplicationUser applicationUser, Project project) {
     return project.getAdmins().contains(applicationUser) || hasCompanyAdminAccess(
       applicationUser,
       project.getCompany());
   }
 
+  @Transactional
   public boolean hasProjectEditorAccess(ApplicationUser applicationUser, Project project) {
     return project.getEditors().contains(applicationUser) || hasCompanyEditorAccess(
       applicationUser,
       project.getCompany());
   }
 
+  @Transactional
   public boolean hasProjectAssignedEmployeeAccess(
     ApplicationUser applicationUser, Project project) {
     return project.getAssignedEmployees().contains(applicationUser) || hasProjectEditorAccess(
       applicationUser, project) || hasProjectAdminAccess(applicationUser, project);
   }
 
+  @Transactional
   public boolean hasTaskAssignedEmployeeAccess(ApplicationUser applicationUser, Task task) {
     return task.getAssignedEmployees().contains(applicationUser) ||
       hasProjectAssignedEmployeeAccess(applicationUser, task.getProject());

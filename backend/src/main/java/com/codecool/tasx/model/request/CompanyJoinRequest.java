@@ -17,12 +17,14 @@ public class CompanyJoinRequest {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "company_id")
+  @ToString.Exclude
   private Company company;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "user_id")
+  @ToString.Exclude
   private ApplicationUser applicationUser;
 
   @Enumerated(EnumType.STRING)

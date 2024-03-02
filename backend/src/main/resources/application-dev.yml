@@ -65,8 +65,10 @@ spring:
 
 logging:
   level:
-    root: info
-    org.springframework: info
+    root: error
+    org.springframework: error
     org.hibernate: info
-    org.springframework.security: trace
-    org.springframework.mail: trace
+    org.hibernate.sql: trace
+    org.springframework.transaction: trace
+    org.springframework.security: error
+    org.springframework.mail: error
