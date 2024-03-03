@@ -22,6 +22,10 @@ import AddProject from "../../projects/pages/add/AddProject.tsx";
 import ProjectDashboard from "../../projects/pages/dashboard/ProjectDashboard.tsx";
 import UpdateProject from "../../projects/pages/update/UpdateProject.tsx";
 import ProjectJoinRequests from "../../projects/pages/requests/ProjectJoinRequests.tsx";
+import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
+import AddTask from "../../tasks/pages/add/AddTask.tsx";
+import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
+import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -106,6 +110,20 @@ const appRouter = createBrowserRouter([
           {
             path: ":companyId/projects/:projectId/requests",
             element: <ProjectJoinRequests/>
+          },
+          {
+            path: ":companyId/projects/:projectId/tasks", element: <Tasks/>
+          },
+          {
+            path: ":companyId/projects/:projectId/tasks/create", element: <AddTask/>
+          },
+          {
+            path: ":companyId/projects/:projectId/tasks/:taskId",
+            element: <TaskDashboard/>
+          },
+          {
+            path: ":companyId/projects/:projectId/tasks/:taskId/update",
+            element: <UpdateTask/>
           },
           {
             path: "*", element: <NotFound/>

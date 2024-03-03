@@ -39,18 +39,42 @@ public class TaskService {
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
+
     List<Task> tasks = project.getTasks().stream().toList();
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
-  public List<TaskResponsePublicDto> getTasksByStatus(
-    Long companyId, Long projectId, TaskStatus status)
+  public List<TaskResponsePublicDto> getAllTasks(Long companyId, Long projectId, Boolean withUser)
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    List<Task> tasks = taskDao.findAllByProjectAndTaskStatus(project, status);
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<Task> tasks;
+    if (withUser) {
+      tasks = taskDao.findAllByProjectAndApplicationUser(project, user);
+    } else {
+      tasks = taskDao.findAllByProjectAndWithoutApplicationUser(project, user);
+    }
+    return taskConverter.getTaskResponsePublicDtos(tasks);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
+  public List<TaskResponsePublicDto> getAllTasks(
+    Long companyId, Long projectId, Boolean withUser, TaskStatus taskStatus)
+    throws ProjectNotFoundException, UnauthorizedException {
+    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<Task> tasks;
+    if (withUser) {
+      tasks = taskDao.findAllByProjectAndTaskStatusAndApplicationUser(project, taskStatus, user);
+    } else {
+      tasks = taskDao.findAllByProjectAndTaskStatusAndWithoutApplicationUser(project, taskStatus,
+        user);
+    }
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
 

@@ -24,13 +24,15 @@ public class TaskController {
   @GetMapping
   public ResponseEntity<?> getAllTasks(
     @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @RequestParam(name = "withUser", required = false) Boolean withUser,
     @RequestParam(name = "taskStatus", required = false) TaskStatus taskStatus) {
     List<TaskResponsePublicDto> tasks;
-    if (taskStatus != null) {
-      tasks = taskService.getTasksByStatus(companyId, projectId,
-        taskStatus);
-    } else {
+    if (withUser == null) {
       tasks = taskService.getAllTasks(companyId, projectId);
+    } else if (taskStatus == null) {
+      tasks = taskService.getAllTasks(companyId, projectId, withUser);
+    } else {
+      tasks = taskService.getAllTasks(companyId, projectId, withUser, taskStatus);
     }
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", tasks));
   }
