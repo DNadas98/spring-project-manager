@@ -13,7 +13,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 
 export default function ProjectDashboard() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
@@ -88,8 +88,7 @@ export default function ProjectDashboard() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "All project data has been removed successfully"
-      })
-      debugger;
+      });
       navigate(`/companies/${companyId}`, {replace: true});
     } catch (e) {
       handleErrorNotification("Failed to remove project data");
@@ -115,7 +114,7 @@ export default function ProjectDashboard() {
 
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length || !project) {
+  } else if ((!projectPermissions?.length) || !project) {
     handleErrorNotification(projectError ?? "Access Denied: Insufficient permissions");
     navigate(`/companies/${companyId}/projects`, {replace: true});
     return <></>;
@@ -126,11 +125,11 @@ export default function ProjectDashboard() {
       <p>{project.description}</p>
       <p>Start date: {project.startDate.toString()}</p>
       <p>Deadline: {project.deadline.toString()}</p>
-      <p>Permissions: {permissions.join(", ")}</p>
+      <p>Project permissions: {projectPermissions.join(", ")}</p>
       <button onClick={handleTasksClick}>View tasks</button>
       <br/>
       <button onClick={handleJoinRequestClick}>View project join requests</button>
-      {(permissions.includes(PermissionType.PROJECT_EDITOR))
+      {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
               <button onClick={() => {
                 navigate(`/companies/${companyId}/projects/${projectId}/update`);
@@ -138,7 +137,7 @@ export default function ProjectDashboard() {
               </button>
           </div>
       }
-      {(permissions.includes(PermissionType.PROJECT_ADMIN))
+      {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
         && <div>
               <button onClick={handleDeleteClick}>Remove project</button>
           </div>

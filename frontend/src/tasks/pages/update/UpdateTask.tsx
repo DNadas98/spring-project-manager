@@ -17,7 +17,7 @@ import {TaskUpdateRequestDto} from "../../dto/TaskUpdateRequestDto.ts";
 import UpdateTaskForm from "./components/UpdateTaskForm.tsx";
 
 export default function UpdateTask() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, taskPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
@@ -126,8 +126,8 @@ export default function UpdateTask() {
   };
   if (permissionsLoading || taskLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length
-    || !(permissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE) || permissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE))
+  } else if (!taskPermissions?.length
+    || !taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE)
     || !task) {
     handleError(taskError ?? "Access Denied: Insufficient permissions");
     navigate(`/companies/${companyId}/projects/${projectId}/tasks`, {replace: true});

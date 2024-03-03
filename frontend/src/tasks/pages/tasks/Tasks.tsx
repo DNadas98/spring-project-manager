@@ -11,7 +11,7 @@ import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 
 export default function Tasks() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const [tasksWithUserLoading, setTasksWithUserLoading] = useState<boolean>(true);
@@ -158,9 +158,9 @@ export default function Tasks() {
 
   if (permissionsLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length) {
+  } else if (!projectPermissions?.length) {
     handleErrorNotification("Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}`, {replace: true});
+    navigate(`/companies/${companyId}/projects`, {replace: true});
     return <></>;
   }
 

@@ -13,7 +13,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {RequestStatus} from "../../../companies/dto/RequestStatus.ts";
 
 export default function ProjectJoinRequests() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
@@ -68,7 +68,9 @@ export default function ProjectJoinRequests() {
     try {
       setProjectJoinRequestsLoading(true);
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/requests/${requestId}`, method: "PUT", body: {
+        path: `companies/${companyId}/projects/${projectId}/requests/${requestId}`,
+        method: "PUT",
+        body: {
           status: status
         }
       });
@@ -102,9 +104,9 @@ export default function ProjectJoinRequests() {
 
   if (permissionsLoading || projectJoinRequestsLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length || projectJoinRequestError) {
+  } else if (!projectPermissions?.length || projectJoinRequestError) {
     handleErrorNotification(projectJoinRequestError ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}`, {replace: true});
+    navigate(`/companies/${companyId}/projects`, {replace: true});
     return <></>;
   }
   return (<div>

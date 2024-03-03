@@ -11,7 +11,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 
 export default function AddProject() {
-  const {loading: permissionsLoading, permissions: companyPermissions} = usePermissions();
+  const {loading: permissionsLoading, companyPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
@@ -66,7 +66,7 @@ export default function AddProject() {
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
     });
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/companies`, {replace: true});
     return <></>;
   }
 

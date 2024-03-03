@@ -4,7 +4,6 @@ import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import {useEffect, useState} from "react";
 import {IPermissionState} from "./IPermissionState.ts";
 
-
 export default function usePermissions() {
   const params = useParams();
   const companyId = params.companyId;
@@ -16,85 +15,93 @@ export default function usePermissions() {
     return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
   }
 
-  const [permissionsState, setPermissionsState] = useState<IPermissionState>({
-    loading: true,
-    permissions: []
-  });
+  const [companyPermissionsLoading, setCompanyPermissionsLoading] = useState<boolean>(true);
+  const [companyPermissions, setCompanyPermissions] = useState<PermissionType[]>([]);
+  const [projectPermissionsLoading, setProjectPermissionsLoading] = useState<boolean>(true);
+  const [projectPermissions, setProjectPermissions] = useState<PermissionType[]>([]);
+  const [taskPermissionsLoading, setTaskPermissionsLoading] = useState<boolean>(true);
+  const [taskPermissions, setTaskPermissions] = useState<PermissionType[]>([]);
 
-  async function loadCompanyPermissions() {
+
+  const loading = companyPermissionsLoading || projectPermissionsLoading || taskPermissionsLoading;
+
+  async function loadCompanyPermissions(): Promise<void> {
     try {
       if (!isValidId(companyId)) {
-        return [];
+        setCompanyPermissions([]);
+        return;
       }
+      setCompanyPermissionsLoading(true);
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
-        return [];
+        setCompanyPermissions([]);
+        return;
       }
-      return response.data as PermissionType[];
+      setCompanyPermissions(response.data as PermissionType[]);
     } catch (e) {
-      return [];
+      setCompanyPermissions([]);
+    } finally {
+      setCompanyPermissionsLoading(false);
     }
   }
 
-  async function loadProjectPermissions() {
+  async function loadProjectPermissions(): Promise<void> {
     try {
       if (!isValidId(companyId) || !isValidId(projectId)) {
-        return [];
+        setProjectPermissions([]);
+        return;
       }
+      setProjectPermissionsLoading(true);
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
-        return [];
+        setProjectPermissions([]);
+        return;
       }
-      return response.data as PermissionType[];
+      setProjectPermissions(response.data as PermissionType[]);
     } catch (e) {
-      return [];
+      setProjectPermissions([]);
+    } finally {
+      setProjectPermissionsLoading(false);
     }
   }
 
-  async function loadTaskPermissions() {
+  async function loadTaskPermissions(): Promise<void> {
     try {
       if (!isValidId(companyId) || !isValidId(projectId) || !isValidId(taskId)) {
-        return [];
+        setTaskPermissions([]);
+        return;
       }
+      setTaskPermissionsLoading(true);
       const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}/tasks/${taskId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
-        return [];
+        setTaskPermissions([]);
+        return;
       }
-      return response.data as PermissionType[];
+      setTaskPermissions(response.data as PermissionType[]);
     } catch (e) {
-      return [];
+      setTaskPermissions([]);
+      return;
+    } finally {
+      setTaskPermissionsLoading(false);
     }
   }
 
   useEffect(() => {
-    async function fetchPermissions() {
-      setPermissionsState({loading: true, permissions: []});
-      try {
-        const combinedPermissions = [];
-        const companyPermissions = await loadCompanyPermissions();
-        if (companyPermissions?.length) {
-          combinedPermissions.push(...companyPermissions);
-        }
-        const projectPermissions = await loadProjectPermissions();
-        if (projectPermissions?.length) {
-          combinedPermissions.push(...projectPermissions);
-        }
-        const taskPermissions = await loadTaskPermissions();
-        if (taskPermissions?.length) {
-          combinedPermissions.push(...taskPermissions);
-        }
-        setPermissionsState({
-          loading: false, permissions: combinedPermissions
-        });
-      } catch (e) {
-        setPermissionsState({
-          loading: false, permissions: []
-        });
-      }
-    }
+    loadCompanyPermissions().then();
+  }, [companyId]);
 
-    fetchPermissions().then();
-  }, [companyId, projectId, taskId]);
+  useEffect(() => {
+    loadProjectPermissions().then();
+  }, [projectId]);
 
-  return permissionsState;
+  useEffect(() => {
+    loadTaskPermissions().then();
+  }, [taskId]);
+
+  return {
+    loading,
+    companyPermissions,
+    projectPermissions,
+    taskPermissions,
+  } as IPermissionState;
 }

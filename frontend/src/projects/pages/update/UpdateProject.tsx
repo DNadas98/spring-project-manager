@@ -15,7 +15,7 @@ import {
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
 
 export default function UpdateProject() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
@@ -76,7 +76,9 @@ export default function UpdateProject() {
 
   const updateProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
-      path: `companies/${companyId}/projects/${projectId}`, method: "PUT", body: requestDto
+      path: `companies/${companyId}/projects/${projectId}`,
+      method: "PUT",
+      body: requestDto
     });
   };
 
@@ -90,7 +92,12 @@ export default function UpdateProject() {
       const startDate = new Date(formData.get("startDate") as string).toISOString();
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 
-      const requestDto: ProjectUpdateRequestDto = {name, description, startDate, deadline};
+      const requestDto: ProjectUpdateRequestDto = {
+        name,
+        description,
+        startDate,
+        deadline
+      };
       const response = await updateProject(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.data) {
@@ -110,11 +117,11 @@ export default function UpdateProject() {
   };
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length
-    || !(permissions.includes(PermissionType.PROJECT_EDITOR) || permissions.includes(PermissionType.PROJECT_EDITOR))
+  } else if (!projectPermissions?.length
+    || !projectPermissions.includes(PermissionType.PROJECT_EDITOR)
     || !project) {
     handleError(projectErrorStatus ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/companies/${companyId}/projects/${projectId}`, {replace: true});
     return <></>;
   }
   return <UpdateProjectForm onSubmit={handleSubmit}

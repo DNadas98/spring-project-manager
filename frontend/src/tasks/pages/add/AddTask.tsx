@@ -13,7 +13,7 @@ import {Importance} from "../../dto/Importance.ts";
 import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
 
 export default function AddTask() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const authJsonFetch = useAuthJsonFetch();
@@ -73,9 +73,9 @@ export default function AddTask() {
 
   if (permissionsLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length) {
+  } else if (!projectPermissions?.length) {
     handleError("Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks`, {replace: true});
+    navigate(`/companies/${companyId}/projects`, {replace: true});
     return <></>;
   }
 

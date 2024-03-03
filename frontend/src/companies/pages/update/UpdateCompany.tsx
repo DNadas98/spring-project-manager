@@ -15,7 +15,7 @@ import {
 import UpdateCompanyForm from "./components/UpdateCompanyForm.tsx";
 
 export default function UpdateCompany() {
-  const {loading: permissionsLoading, permissions: companyPermissions} = usePermissions();
+  const {loading, companyPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
@@ -100,13 +100,13 @@ export default function UpdateCompany() {
       setCompanyLoading(false);
     }
   };
-  if (permissionsLoading || companyLoading) {
+  if (loading || companyLoading) {
     return <LoadingSpinner/>;
   } else if (!companyPermissions?.length
-    || !(companyPermissions.includes(PermissionType.COMPANY_EDITOR) || companyPermissions.includes(PermissionType.COMPANY_ADMIN))
+    || !companyPermissions.includes(PermissionType.COMPANY_EDITOR)
     || !company) {
     handleError(companyErrorStatus ?? "Access Denied: Insufficient permissions");
-    navigate("/companies", {replace: true});
+    navigate(`/companies/${companyId}`, {replace: true});
     return <></>;
   }
   return <UpdateCompanyForm onSubmit={handleSubmit} company={company}/>

@@ -13,7 +13,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 
 export default function TaskDashboard() {
-  const {loading: permissionsLoading, permissions} = usePermissions();
+  const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
@@ -135,9 +135,9 @@ export default function TaskDashboard() {
 
   if (permissionsLoading || taskLoading) {
     return <LoadingSpinner/>;
-  } else if (!permissions?.length || !task) {
+  } else if (!projectPermissions?.length || !task) {
     handleErrorNotification(taskError ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks`, {replace: true});
+    navigate(`/companies/${companyId}/projects`, {replace: true});
     return <></>;
   }
   return (
@@ -149,10 +149,10 @@ export default function TaskDashboard() {
       <p>Difficulty: {task.difficulty}</p>
       <p>Start date: {task.startDate.toString()}</p>
       <p>Deadline: {task.deadline.toString()}</p>
-      <p>Permissions: {permissions.join(", ")}</p>
+      <p>Task Permissions: {taskPermissions.join(", ")}</p>
       <button onClick={handleExpensesClick}>View expenses</button>
       <br/>
-      {(permissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE))
+      {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE))
         && <div>
               <button onClick={() => {
                 navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}/update`);
