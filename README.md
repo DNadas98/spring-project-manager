@@ -82,7 +82,7 @@ system.
 ### Frontend
 
 [![React JS](https://img.shields.io/badge/-React_JS-60D9FA?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-
+[![Material UI](https://img.shields.io/badge/-Material_UI-003a75?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/material-ui/getting-started/)
 ### Backend
 
 [![Java](https://img.shields.io/badge/-Java-ED8B00?style=for-the-badge)](https://www.java.com/en/)
@@ -232,14 +232,23 @@ The project uses Material UI.
 
 ### Home page
 
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/homepage.png" alt="Homepage">
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/01-home.png" alt="Home page">
 
 ### Sign-up form
 
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/sign_up_form.png" alt="Sign-up form">
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/03-sign-up.png" alt="Sign-up form">
 
-### Update project form
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/update_project_details_form.png" alt="Update project form">
+### User profile page
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/05-user.png" alt="Profile page">
+
+### Light versus dark mode
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/08-light-dark-mode.png" alt="Light vs dark mode">
+
+### Add new task form
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/07-task-form.png" alt="Add new task form">
+
+### Project list
+<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/09-project-list.png" alt="Project list">
 
 ## Contact
 

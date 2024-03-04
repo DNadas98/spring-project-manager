@@ -43,6 +43,7 @@ export default function AddProject() {
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 
       const requestDto: ProjectCreateRequestDto = {name, description, startDate, deadline};
+      debugger;
       const response = await addProject(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {
