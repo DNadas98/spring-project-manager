@@ -2,6 +2,7 @@ package com.codecool.tasx.model.company.project;
 
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.project.task.Task;
+import com.codecool.tasx.model.request.ProjectJoinRequest;
 import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,14 +28,19 @@ public class Project {
   private Instant startDate;
   private Instant deadline;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @OneToMany(mappedBy = "project", orphanRemoval = true)
+  @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Set<Task> tasks = new HashSet<>();
+
+  @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private Set<ProjectJoinRequest> joinRequests = new HashSet<>();
 
   @ManyToMany
   @JoinTable(name = "project_admins", joinColumns = @JoinColumn(name = "project_id"),

@@ -61,7 +61,7 @@ public class CompanyRequestService {
     CompanyJoinRequest joinRequest = requestDao.findByIdAndApplicationUser(
       requestId,
       applicationUser).orElseThrow(() -> new CompanyJoinRequestNotFoundException(requestId));
-    requestDao.delete(joinRequest);
+    requestDao.deleteById(joinRequest.getId());
   }
 
   @Transactional(readOnly = true)

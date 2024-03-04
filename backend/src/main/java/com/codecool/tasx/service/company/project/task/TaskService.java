@@ -39,18 +39,42 @@ public class TaskService {
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
+
     List<Task> tasks = project.getTasks().stream().toList();
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
-  public List<TaskResponsePublicDto> getTasksByStatus(
-    Long companyId, Long projectId, TaskStatus status)
+  public List<TaskResponsePublicDto> getAllTasks(Long companyId, Long projectId, Boolean withUser)
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    List<Task> tasks = taskDao.findAllByProjectAndTaskStatus(project, status);
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<Task> tasks;
+    if (withUser) {
+      tasks = taskDao.findAllByProjectAndApplicationUser(project, user);
+    } else {
+      tasks = taskDao.findAllByProjectAndWithoutApplicationUser(project, user);
+    }
+    return taskConverter.getTaskResponsePublicDtos(tasks);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
+  public List<TaskResponsePublicDto> getAllTasks(
+    Long companyId, Long projectId, Boolean withUser, TaskStatus taskStatus)
+    throws ProjectNotFoundException, UnauthorizedException {
+    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<Task> tasks;
+    if (withUser) {
+      tasks = taskDao.findAllByProjectAndTaskStatusAndApplicationUser(project, taskStatus, user);
+    } else {
+      tasks = taskDao.findAllByProjectAndTaskStatusAndWithoutApplicationUser(project, taskStatus,
+        user);
+    }
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
 
@@ -59,13 +83,13 @@ public class TaskService {
   public TaskResponsePublicDto createTask(
     TaskCreateRequestDto createRequestDto, Long companyId, Long projectId)
     throws ConstraintViolationException {
+    Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
+    Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
+
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
 
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-
-    Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
-    Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
       project.getDeadline());
 
@@ -90,11 +114,10 @@ public class TaskService {
   public TaskResponsePublicDto updateTask(
     TaskUpdateRequestDto updateRequestDto, Long companyId, Long projectId, Long taskId)
     throws ConstraintViolationException {
-    Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
-      .orElseThrow(() -> new TaskNotFoundException(taskId));
-
     Instant taskStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
     Instant taskDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
+    Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
+      .orElseThrow(() -> new TaskNotFoundException(taskId));
     Project project = task.getProject();
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
       project.getDeadline());

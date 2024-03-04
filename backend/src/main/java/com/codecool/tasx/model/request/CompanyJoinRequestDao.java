@@ -3,8 +3,10 @@ package com.codecool.tasx.model.request;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +25,10 @@ public interface CompanyJoinRequestDao extends JpaRepository<CompanyJoinRequest,
   Optional<CompanyJoinRequest> findByIdAndApplicationUser(Long id, ApplicationUser applicationUser);
 
   List<CompanyJoinRequest> findByApplicationUser(ApplicationUser applicationUser);
+
+  @Override
+  @Transactional
+  @Modifying
+  @Query("delete from CompanyJoinRequest c where c.id = :id")
+  void deleteById(Long id);
 }

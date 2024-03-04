@@ -116,10 +116,10 @@ public class ProjectService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public void deleteProject(Long companyId, Long projectId) {
-    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
-      () -> new ProjectNotFoundException(projectId));
+    Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(() ->
+      new ProjectNotFoundException(projectId));
     projectDao.delete(project);
   }
 }

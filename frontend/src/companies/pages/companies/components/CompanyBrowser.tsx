@@ -15,12 +15,15 @@ import {FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 interface CompanyBrowserProps {
-  companiesWithUserLoading: boolean;
-  companiesWithUser: CompanyResponsePublicDto[];
-  companiesWithoutUserLoading: boolean;
-  companiesWithoutUser: CompanyResponsePublicDto[];
-  handleCompaniesWithUserSearch: (event: FormEvent<HTMLInputElement>) => void;
-  handleCompaniesWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void;
+  companiesWithUserLoading: boolean,
+  companiesWithUser: CompanyResponsePublicDto[],
+  companiesWithoutUserLoading: boolean,
+  companiesWithoutUser: CompanyResponsePublicDto[],
+  handleCompaniesWithUserSearch: (event: FormEvent<HTMLInputElement>) => void,
+  handleCompaniesWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void,
+  handleViewDashboardClick: (companyId: number) => unknown,
+  handleJoinRequestClick: (companyId: number) => Promise<void>
+  actionButtonDisabled: boolean;
 }
 
 export default function CompanyBrowser(props: CompanyBrowserProps) {
@@ -56,7 +59,9 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
           <CompanyList loading={props.companiesWithUserLoading}
                        companies={props.companiesWithUser}
                        notFoundText={"We haven't found any companies."}
-                       userIsMember={true}/>
+                       onActionButtonClick={props.handleViewDashboardClick}
+                       userIsMember={true}
+                       actionButtonDisabled={props.actionButtonDisabled}/>
         </Stack>
       </Grid>
       <Grid item xs={10} sm={8} md={5} lg={4}>
@@ -74,7 +79,9 @@ export default function CompanyBrowser(props: CompanyBrowserProps) {
           <CompanyList loading={props.companiesWithoutUserLoading}
                        companies={props.companiesWithoutUser}
                        notFoundText={"We haven't found any companies to join."}
-                       userIsMember={false}/>
+                       onActionButtonClick={props.handleJoinRequestClick}
+                       userIsMember={false}
+                       actionButtonDisabled={props.actionButtonDisabled}/>
         </Stack>
       </Grid>
     </Grid>

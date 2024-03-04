@@ -1,12 +1,17 @@
 import {TextField} from "@mui/material";
 
-export default function CompanyNameInput() {
+interface CompanyNameInputProps {
+  name?: string;
+}
+
+export default function CompanyNameInput(props: CompanyNameInputProps) {
   return (
 
     <TextField variant={"outlined"}
                color={"secondary"}
                label={"Company name"}
                name={"name"}
+               defaultValue={props?.name ?? ""}
                type={"text"}
                autoFocus={true}
                required

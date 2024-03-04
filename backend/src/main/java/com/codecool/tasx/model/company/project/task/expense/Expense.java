@@ -18,7 +18,7 @@ public class Expense {
   private double price;
   private boolean paid;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "task_id")
   private Task task;
 

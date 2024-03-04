@@ -5,6 +5,7 @@ import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {
   useNotification
 } from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNavigate} from "react-router-dom";
 
 export default function Companies() {
   const [companiesWithUserLoading, setCompaniesWithUserLoading] = useState<boolean>(true);
@@ -14,9 +15,10 @@ export default function Companies() {
 
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    async function loadCompaniesWithUser() {
+  async function loadCompaniesWithUser() {
+    try {
       const response = await authJsonFetch({
         path: `companies?withUser=true`
       });
@@ -28,9 +30,15 @@ export default function Companies() {
         return;
       }
       setCompaniesWithUser(response.data as CompanyResponsePublicDto[]);
+    } catch (e) {
+      setCompaniesWithUser([]);
+    } finally {
+      setCompaniesWithUserLoading(false);
     }
+  }
 
-    async function loadCompaniesWithoutUser() {
+  async function loadCompaniesWithoutUser() {
+    try {
       const response = await authJsonFetch({
         path: `companies?withUser=false`
       });
@@ -42,18 +50,16 @@ export default function Companies() {
         return;
       }
       setCompaniesWithoutUser(response.data as CompanyResponsePublicDto[]);
-    }
-
-    loadCompaniesWithUser().catch(() => {
-      setCompaniesWithUser([]);
-    }).finally(() => {
-      setCompaniesWithUserLoading(false);
-    });
-    loadCompaniesWithoutUser().catch(() => {
+    } catch (e) {
       setCompaniesWithoutUser([]);
-    }).finally(() => {
+    } finally {
       setCompaniesWithoutUserLoading(false);
-    });
+    }
+  }
+
+  useEffect(() => {
+    loadCompaniesWithUser().then();
+    loadCompaniesWithoutUser().then();
   }, []);
 
   const [companiesWithUserFilterValue, setCompaniesWithUserFilterValue] = useState<string>("");
@@ -83,6 +89,42 @@ export default function Companies() {
     setCompaniesWithoutUserFilterValue(event.target.value.toLowerCase().trim());
   };
 
+  const [actionButtonDisabled, setActionButtonDisabled] = useState(false);
+
+  async function sendCompanyJoinRequest(companyId: number) {
+    try {
+      setActionButtonDisabled(true)
+      const response = await authJsonFetch({
+        path: `companies/${companyId}/requests`, method: "POST"
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to send join request"}`
+        })
+        return;
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center",
+        message: "Your request to join the selected company was sent successfully"
+      });
+      await loadCompaniesWithoutUser();
+    } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: `Failed to send join request`
+      })
+    } finally {
+      setActionButtonDisabled(false);
+    }
+  }
+
+  const loadCompanyDashboard = (companyId: number) => {
+    setActionButtonDisabled(true);
+    navigate(`/companies/${companyId}`);
+    setActionButtonDisabled(false);
+  }
+
   return (
     <CompanyBrowser companiesWithUser={companiesWithUserFiltered}
                     companiesWithUserLoading={companiesWithUserLoading}
@@ -90,6 +132,8 @@ export default function Companies() {
                     companiesWithoutUserLoading={companiesWithoutUserLoading}
                     handleCompaniesWithUserSearch={handleCompaniesWithUserSearch}
                     handleCompaniesWithoutUserSearch={handleCompaniesWithoutUserSearch}
-    />
+                    handleViewDashboardClick={loadCompanyDashboard}
+                    handleJoinRequestClick={sendCompanyJoinRequest}
+                    actionButtonDisabled={actionButtonDisabled}/>
   )
 }

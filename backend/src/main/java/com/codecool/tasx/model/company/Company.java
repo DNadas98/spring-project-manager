@@ -1,6 +1,7 @@
 package com.codecool.tasx.model.company;
 
 import com.codecool.tasx.model.company.project.Project;
+import com.codecool.tasx.model.request.CompanyJoinRequest;
 import com.codecool.tasx.model.user.ApplicationUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,10 +26,15 @@ public class Company {
   @Column(length = 500)
   private String description;
 
-  @OneToMany(mappedBy = "company", orphanRemoval = true)
+  @OneToMany(mappedBy = "company", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Set<Project> projects;
+
+  @OneToMany(mappedBy = "company", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
 
   @ManyToMany
   @JoinTable(name = "company_admins", joinColumns = @JoinColumn(name = "company_id"),

@@ -17,12 +17,16 @@ public class ProjectJoinRequest {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "project_id")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Project project;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "user_id")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private ApplicationUser applicationUser;
 
   @Enumerated(EnumType.STRING)

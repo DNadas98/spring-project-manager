@@ -1,6 +1,10 @@
 import {styled, TextareaAutosize} from "@mui/material";
 
-export default function CompanyDescriptionInput() {
+interface TaskDescriptionInputProps {
+  description?: string;
+}
+
+export default function TaskDescriptionInput(props: TaskDescriptionInputProps) {
   const CustomTextareaAutosize = styled(TextareaAutosize)(
     ({theme}) => `
   box-sizing: border-box;
@@ -35,8 +39,9 @@ export default function CompanyDescriptionInput() {
   return (
     <CustomTextareaAutosize
       color={"secondary"}
-      placeholder={"Describe your company in a few lines"}
+      placeholder={"Describe your task in a few lines"}
       name={"description"}
+      defaultValue={props?.description ?? ""}
       required
       minRows={12}
       minLength={1}

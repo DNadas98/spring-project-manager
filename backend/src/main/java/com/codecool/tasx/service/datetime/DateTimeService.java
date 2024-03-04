@@ -2,21 +2,35 @@ package com.codecool.tasx.service.datetime;
 
 import com.codecool.tasx.exception.datetime.*;
 import com.codecool.tasx.model.company.project.task.Task;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class DateTimeService {
-  public Instant toStoredDate(LocalDateTime displayedDate) {
-    return displayedDate.toInstant(ZoneOffset.UTC);
+  public Instant toStoredDate(String zonedDateTimeString) {
+    try {
+      ZonedDateTime zdt = ZonedDateTime.parse(zonedDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
+      Instant instant = zdt.toInstant();
+      log.debug("received time string: " + zonedDateTimeString + " storing Instant: " + instant);
+      return instant;
+    } catch (Exception e) {
+      throw new InvalidDateTimeReceivedException();
+    }
   }
 
-  public LocalDateTime toDisplayedDate(Instant storedDate) {
-    return storedDate.atOffset(ZoneOffset.UTC).toLocalDateTime();
+  public String toDisplayedDate(Instant storedDate) {
+    ZonedDateTime zonedDateTime = storedDate.atZone(ZoneId.of("UTC"));
+    String formattedDateTime = zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    log.debug("retrieved Instant: " + storedDate + " returning UTC ZonedDateTime String: " +
+      formattedDateTime);
+    return formattedDateTime;
   }
 
   public void validateTaskDates(

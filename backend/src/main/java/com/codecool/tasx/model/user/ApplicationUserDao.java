@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long> {
+  void deleteAllByUsernameNotLike(String username);
 }

@@ -12,6 +12,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {
   UserAccountResponseDto
 } from "../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,6 +28,7 @@ export default function Profile() {
   const email = authentication.getEmail();
   const accountType = authentication.getAccountType();
   const logout = useLogout();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadAccounts() {
@@ -56,7 +58,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user/accounts/${id}`, method: "DELETE"
       });
-      if (!response?.message) {
+      if (response?.status!==200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
 
@@ -83,6 +85,7 @@ export default function Profile() {
       onConfirm: () => deleteAccount(id)
     });
   }
+
   async function deleteApplicationUser(): Promise<void> {
     const defaultError =
       "Failed to remove user data.\n Please try again later, if the issue still persists, please contact our administrators";
@@ -91,7 +94,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user`, method: "DELETE"
       });
-      if (!response?.message) {
+      if (response?.status!==200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
       notification.openNotification({
@@ -120,7 +123,7 @@ export default function Profile() {
     return;
   }
 
-  return loading
+  return loading||accountDeleteLoading||applicationUserDeleteLoading
     ? <LoadingSpinner/>
     : username && email && roles ? (
       <ProfileDashboard username={username}
@@ -130,6 +133,10 @@ export default function Profile() {
                         onAccountDelete={openDeleteAccountDialog}
                         accountDeleteLoading={accountDeleteLoading}
                         onApplicationUserDelete={openDeleteApplicationUserDialog}
-                        applicationUserDeleteLoading={applicationUserDeleteLoading}/>
-  ) : <></>
+                        applicationUserDeleteLoading={applicationUserDeleteLoading}
+                        onRequestsClick={() => {
+                          navigate("/user/requests")
+                        }}
+      />
+    ) : <></>
 }
