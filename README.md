@@ -230,6 +230,8 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 The frontend is still work in progress.
 The project uses Material UI.
 
+[View all images](https://github.com/DNadas98/spring-project-manager/tree/master/images)
+
 ### Home page
 
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/01-home.png" alt="Home page">
