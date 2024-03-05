@@ -19,7 +19,7 @@ export default function AddProject() {
   const [loading, setLoading] = useState<boolean>(false);
   const addProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
-      path: `/companies/${companyId}/projects`, method: "POST", body: requestDto
+      path: `companies/${companyId}/projects`, method: "POST", body: requestDto
     });
   };
 
@@ -43,7 +43,6 @@ export default function AddProject() {
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 
       const requestDto: ProjectCreateRequestDto = {name, description, startDate, deadline};
-      debugger;
       const response = await addProject(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {

@@ -22,7 +22,7 @@ export default function AddTask() {
   const [loading, setLoading] = useState<boolean>(false);
   const addTask = async (requestDto: TaskCreateRequestDto) => {
     return await authJsonFetch({
-      path: `/companies/${companyId}/projects/${projectId}/tasks`,
+      path: `companies/${companyId}/projects/${projectId}/tasks`,
       method: "POST",
       body: requestDto
     });
