@@ -71,8 +71,10 @@
 
 ## About The Project
 
-The application allows users to create local accounts or sign in via Google, Facebook or GitHub accounts. (OAuth 2.0)<br>
-Authenticated users can join companies, create, and manage projects. Projects include tasks with start dates, deadlines,
+The application allows users to create local accounts or sign in via Google, Facebook or GitHub
+accounts. (OAuth 2.0)<br>
+Authenticated users can join companies, create, and manage projects. Projects include tasks with
+start dates, deadlines,
 expenses, and varying levels of importance and difficulty. Employees request to be assigned to
 projects and receive rewards for completed tasks, incorporating a gamification aspect with a scoring
 system.
@@ -83,6 +85,7 @@ system.
 
 [![React JS](https://img.shields.io/badge/-React_JS-60D9FA?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Material UI](https://img.shields.io/badge/-Material_UI-003a75?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/material-ui/getting-started/)
+
 ### Backend
 
 [![Java](https://img.shields.io/badge/-Java-ED8B00?style=for-the-badge)](https://www.java.com/en/)
@@ -122,14 +125,17 @@ The project uses Nginx as reverse-proxy and static file server.
 - Optional: [Node.js, NPM](https://nodejs.org/en/download)
   - The frontend is developed using the latest Node and NPM versions currently available
   - The frontend project is set up using [Vite JS](https://vitejs.dev/)
-- Optional: Obtain OAuth 2.0 client credentials for Google, Facebook and Github to test the OAuth 2.0 Sign-in features
+- Optional: Obtain OAuth 2.0 client credentials for Google, Facebook and Github to test the OAuth
+  2.0 Sign-in features
   - [Google Cloud Console OAuth 2.0 Credentials](https://developers.google.com/identity/protocols/oauth2)
   - [Facebook OAuth 2.0 Credentials](https://developers.facebook.com/docs/development/create-an-app/facebook-login-use-case)
   - [GitHub OAuth 2.0 Credentials](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
-  - <strong>The app can start without this and provides local registration and login option too.</strong> If left out,
+  - <strong>The app can start without this and provides local registration and login option
+    too.</strong> If left out,
     only the OAuth 2.0 Sing-In options will not work.
   - To test the OAuth 2.0 Sign-in options, the app requires a valid client ID and client
-    secret. Use the linked guides to add the application as client, then copy the client ID and secret. Paste these to their respective lines in the `.env` file
+    secret. Use the linked guides to add the application as client, then copy the client ID and
+    secret. Paste these to their respective lines in the `.env` file
 
 ### Setup & Run
 
@@ -165,6 +171,9 @@ The project uses Nginx as reverse-proxy and static file server.
 - Nginx reverse proxy configuration: `nginx/nginx.conf`
 
 ### Authentication, authorization
+
+- <strong>If no real OAuth2 and/or SMTP credentials are provided, sign-in is still possible using
+  the default admin e-mail and password found in the `.env` file</strong>
 
 The application supports OAuth2 for login, allowing users to sign in with external accounts like
 Google, GitHub, and Facebook. This method simplifies login procedures by using existing social media
@@ -227,6 +236,7 @@ for available endpoints and API usage guide
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Images
+
 The frontend is still work in progress.
 The project uses Material UI.
 
@@ -241,15 +251,19 @@ The project uses Material UI.
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/03-sign-up.png" alt="Sign-up form">
 
 ### User profile page
+
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/05-user.png" alt="Profile page">
 
 ### Light versus dark mode
+
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/08-light-dark-mode.png" alt="Light vs dark mode">
 
 ### Add new task form
+
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/07-task-form.png" alt="Add new task form">
 
 ### Project list
+
 <img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/09-project-list.png" alt="Project list">
 
 ## Contact
