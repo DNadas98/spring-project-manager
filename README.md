@@ -139,6 +139,8 @@ The project uses Nginx as reverse-proxy and static file server.
 
 ### Setup & Run
 
+- <strong>If no real SSL certs are supplied, run the project in development mode</strong>
+
 - Copy `env.txt` template and rename to `.env`, modify values (see details in the
   template)
 - Copy `frontend/env.txt` template and rename to `.env`, values can be left as is, this one contains
@@ -149,7 +151,7 @@ The project uses Nginx as reverse-proxy and static file server.
   - Modify SSL configuration in `nginx/nginx.conf`
     <br><br>
 - Run `docker compose up -d` in the project root to start the project with Docker Compose,
-- OR for easier, faster development
+- OR for <strong> development mode</strong>
   - Run the development database in the `docker-compose.dev.yml`
   - Start the spring boot application in "dev" profile (the default Spring profile)
   - From the frontend folder, start the javascript application using `npm run dev`
