@@ -11,6 +11,7 @@ import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.user.ApplicationUser;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class RefreshService {
     return jwtService.generateRefreshToken(payloadDto);
   }
 
+  @Transactional(readOnly = true)
   public RefreshResponseDto refresh(RefreshRequestDto refreshRequest) {
     String refreshToken = refreshRequest.refreshToken();
     TokenPayloadDto payload = jwtService.verifyRefreshToken(refreshToken);

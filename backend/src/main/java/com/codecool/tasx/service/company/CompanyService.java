@@ -13,6 +13,7 @@ import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.service.auth.UserProvider;
 import com.codecool.tasx.service.converter.CompanyConverter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -43,10 +44,12 @@ public class CompanyService {
   @Transactional(readOnly = true)
   public List<CompanyResponsePublicDTO> getCompaniesWithUser() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Hibernate.initialize(applicationUser.getEmployeeCompanies());
     List<Company> companies = applicationUser.getEmployeeCompanies().stream().toList();
     return companyConverter.getCompanyResponsePublicDtos(companies);
   }
 
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public CompanyResponsePrivateDTO getCompanyById(Long companyId)
     throws CompanyNotFoundException, UnauthorizedException {

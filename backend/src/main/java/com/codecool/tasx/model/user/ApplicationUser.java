@@ -10,10 +10,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -28,38 +32,38 @@ public class ApplicationUser {
   @Column(nullable = false)
   private String username;
 
-  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER,
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY,
     orphanRemoval = true, cascade = CascadeType.ALL)
   private Set<UserAccount> accounts = new HashSet<>();
 
   @Enumerated(EnumType.STRING)
   private Set<GlobalRole> globalRoles = new HashSet<>();
 
-  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Company> adminCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
   private Set<Company> editorCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
   private Set<Company> employeeCompanies = new HashSet<>();
 
-  @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Project> adminProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "editors", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
   private Set<Project> editorProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.LAZY)
   private Set<Project> assignedProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.LAZY)
   private Set<Task> assignedTasks = new HashSet<>();
 
-  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
 
-  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private Set<ProjectJoinRequest> projectJoinRequests = new HashSet<>();
 
 
