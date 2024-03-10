@@ -28,7 +28,6 @@ public class TaskRoleService {
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#taskId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public Set<PermissionType> getUserPermissionsForTask(
     Long companyId, Long projectId, Long taskId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
@@ -40,7 +39,7 @@ public class TaskRoleService {
     }
 
     Set<PermissionType> permissions = new HashSet<>();
-    if (permissionEvaluator.hasTaskAssignedEmployeeAccess(user, task)) {
+    if (permissionEvaluator.hasTaskAssignedEmployeeAccess(user.getId(), task)) {
       permissions.add(PermissionType.TASK_ASSIGNED_EMPLOYEE);
     }
     return permissions;

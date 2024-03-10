@@ -31,7 +31,6 @@ public class ProjectRoleService {
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_EMPLOYEE')")
   public Set<PermissionType> getUserPermissionsForProject(Long companyId, Long projectId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
@@ -44,10 +43,10 @@ public class ProjectRoleService {
 
     Set<PermissionType> permissions = new HashSet<>();
     permissions.add(PermissionType.PROJECT_ASSIGNED_EMPLOYEE);
-    if (permissionEvaluator.hasProjectEditorAccess(user, project)) {
+    if (permissionEvaluator.hasProjectEditorAccess(user.getId(), project)) {
       permissions.add(PermissionType.PROJECT_EDITOR);
     }
-    if (permissionEvaluator.hasProjectAdminAccess(user, project)) {
+    if (permissionEvaluator.hasProjectAdminAccess(user.getId(), project)) {
       permissions.add(PermissionType.PROJECT_ADMIN);
     }
     return permissions;

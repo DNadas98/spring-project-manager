@@ -2,8 +2,11 @@ package com.codecool.tasx.filter.auth;
 
 import com.codecool.tasx.dto.auth.TokenPayloadDto;
 import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.exception.user.UserNotFoundException;
 import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.auth.account.UserAccountDao;
+import com.codecool.tasx.model.user.ApplicationUser;
+import com.codecool.tasx.model.user.ApplicationUserDao;
 import com.codecool.tasx.service.auth.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -22,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -42,6 +46,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserAccountDao accountDao;
+  private final ApplicationUserDao applicationUserDao;
   private final JwtService jwtService;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -70,8 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       TokenPayloadDto payload = jwtService.verifyAccessToken(accessToken);
       UserAccount account = accountDao.findOneByEmailAndAccountType(
         payload.email(), payload.accountType()).orElseThrow(() -> new UnauthorizedException());
-
-      AbstractAuthenticationToken authenticationToken =
+      UsernamePasswordAuthenticationToken authenticationToken =
         getAuthenticationToken(account);
 
       SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -82,18 +86,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
   }
 
-  private AbstractAuthenticationToken getAuthenticationToken(UserAccount account) {
+  private UsernamePasswordAuthenticationToken getAuthenticationToken(UserAccount account) {
     switch (account.getAccountType()) {
       case LOCAL -> {
         UserDetails userDetails = (UserDetails) account;
         return new UsernamePasswordAuthenticationToken(
-          userDetails, null, userDetails.getAuthorities()
+          account.getApplicationUser().getId(), null, userDetails.getAuthorities()
         );
       }
       default -> {
         OAuth2User oAuth2User = (OAuth2User) account;
         return new UsernamePasswordAuthenticationToken(
-          oAuth2User, null, oAuth2User.getAuthorities()
+          account.getApplicationUser().getId(), null, oAuth2User.getAuthorities()
         );
       }
     }

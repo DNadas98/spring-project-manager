@@ -1,6 +1,8 @@
 package com.codecool.tasx.service.auth.oauth2;
 
 import com.codecool.tasx.exception.auth.OAuth2ProcessingException;
+import com.codecool.tasx.exception.auth.UnauthorizedException;
+import com.codecool.tasx.exception.user.UserNotFoundException;
 import com.codecool.tasx.model.auth.account.*;
 import com.codecool.tasx.model.user.ApplicationUser;
 import com.codecool.tasx.model.user.ApplicationUserDao;
@@ -91,7 +93,9 @@ public class OAuth2UserAccountService extends DefaultOAuth2UserService {
     if (accountsWithMatchingEmail.isEmpty()) {
       return applicationUserDao.save(new ApplicationUser(username));
     }
-    return accountsWithMatchingEmail.stream().toList().getFirst().getApplicationUser();
+    UserAccount matchingAccount = accountsWithMatchingEmail.stream().toList().getFirst();
+    ApplicationUser user = matchingAccount.getApplicationUser();
+    return user;
   }
 
   private Optional<UserAccount> findExistingOAuth2Account(

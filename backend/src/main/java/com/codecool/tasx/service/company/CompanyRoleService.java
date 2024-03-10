@@ -31,7 +31,6 @@ public class CompanyRoleService {
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public Set<PermissionType> getUserPermissionsForCompany(Long companyId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     Company company = companyDao.findById(companyId).orElseThrow(
@@ -44,10 +43,10 @@ public class CompanyRoleService {
 
     Set<PermissionType> permissions = new HashSet<>();
     permissions.add(PermissionType.COMPANY_EMPLOYEE);
-    if (permissionEvaluator.hasCompanyEditorAccess(user, company)) {
+    if (permissionEvaluator.hasCompanyEditorAccess(user.getId(), company)) {
       permissions.add(PermissionType.COMPANY_EDITOR);
     }
-    if (permissionEvaluator.hasCompanyAdminAccess(user, company)) {
+    if (permissionEvaluator.hasCompanyAdminAccess(user.getId(), company)) {
       permissions.add(PermissionType.COMPANY_ADMIN);
     }
     return permissions;

@@ -5,6 +5,7 @@ import com.codecool.tasx.model.auth.account.UserAccountDao;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.ProjectDao;
 import com.codecool.tasx.model.company.project.task.TaskDao;
+import com.codecool.tasx.model.user.ApplicationUserDao;
 import com.codecool.tasx.service.auth.CookieService;
 import com.codecool.tasx.service.auth.CustomPermissionEvaluator;
 import com.codecool.tasx.service.auth.RefreshService;
@@ -46,8 +47,7 @@ public class SecurityConfig {
   public UserDetailsService userDetailsService(UserAccountDao userAccountDao) {
     return username -> (UserDetails) userAccountDao.findOneByEmailAndAccountType(
       username, AccountType.LOCAL).orElseThrow(() -> new UsernameNotFoundException(
-      String.format(
-        "%s account not found with the provided e-mail address",
+      String.format("%s account not found with the provided e-mail address",
         AccountType.LOCAL.getDisplayName())));
   }
 
@@ -98,10 +98,11 @@ public class SecurityConfig {
    */
   @Bean
   public MethodSecurityExpressionHandler expressionHandler(
-    CompanyDao companyDao, ProjectDao projectDao, TaskDao taskDao) {
+    ApplicationUserDao applicationUserDao, CompanyDao companyDao, ProjectDao projectDao,
+    TaskDao taskDao) {
     var expressionHandler = new DefaultMethodSecurityExpressionHandler();
     expressionHandler.setPermissionEvaluator(
-      new CustomPermissionEvaluator(companyDao, projectDao, taskDao));
+      new CustomPermissionEvaluator(applicationUserDao, companyDao, projectDao, taskDao));
     return expressionHandler;
   }
 }
