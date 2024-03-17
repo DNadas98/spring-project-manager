@@ -3,7 +3,7 @@ package net.dnadas.monolith.model.request;
 import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.project.Project;
-import net.dnadas.monolith.model.user.ApplicationUser;
+import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 @Entity
 @Table(name = "project_join_request")

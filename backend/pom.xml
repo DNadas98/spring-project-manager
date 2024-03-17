@@ -12,8 +12,9 @@
   <description>Spring Project Manager</description>
 
   <modules>
-    <module>monolith</module>
     <module>eureka-server</module>
+    <module>monolith</module>
+    <module>email</module>
   </modules>
 
   <properties>

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.project.Project;
 import net.dnadas.monolith.model.request.CompanyJoinRequest;
-import net.dnadas.monolith.model.user.ApplicationUser;
+import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 import java.util.HashSet;
 import java.util.Set;

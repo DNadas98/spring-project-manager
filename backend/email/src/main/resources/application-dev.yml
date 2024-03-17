@@ -1,0 +1,41 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: email
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+
+  mail:
+    host: ${BACKEND_SMTP_HOST}
+    port: ${BACKEND_SMTP_PORT}
+    username: ${BACKEND_SMTP_USERNAME}
+    password: ${BACKEND_SMTP_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+            port: ${BACKEND_SMTP_PORT}
+            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+            trust: ${BACKEND_SMTP_HOST}
+          auth: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+logging:
+  level:
+    root: info
+#    org.springframework.web: trace
+#    org.springframework.transaction: trace
+#    org.springframework.mail: trace

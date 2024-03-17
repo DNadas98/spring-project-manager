@@ -2,7 +2,7 @@ package net.dnadas.monolith.model.company.project;
 
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.model.user.ApplicationUser;
+import net.dnadas.monolith.auth.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

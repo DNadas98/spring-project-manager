@@ -5,7 +5,7 @@ import lombok.*;
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.request.ProjectJoinRequest;
-import net.dnadas.monolith.model.user.ApplicationUser;
+import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 import java.time.Instant;
 import java.util.HashSet;

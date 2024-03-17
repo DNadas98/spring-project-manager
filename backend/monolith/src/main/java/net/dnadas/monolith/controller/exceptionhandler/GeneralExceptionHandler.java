@@ -1,6 +1,12 @@
 package net.dnadas.monolith.controller.exceptionhandler;
 
-import net.dnadas.monolith.exception.auth.*;
+import net.dnadas.monolith.auth.exception.account.AccountAlreadyExistsException;
+import net.dnadas.monolith.auth.exception.account.AccountLinkingRequiredException;
+import net.dnadas.monolith.auth.exception.account.AccountNotFound;
+import net.dnadas.monolith.auth.exception.account.OnlyOneAccountFoundException;
+import net.dnadas.monolith.auth.exception.authentication.InvalidCredentialsException;
+import net.dnadas.monolith.auth.exception.authentication.UnauthorizedException;
+import net.dnadas.monolith.auth.exception.oauth2.OAuth2ProcessingException;
 import net.dnadas.monolith.exception.company.CompanyJoinRequestNotFoundException;
 import net.dnadas.monolith.exception.company.CompanyNotFoundException;
 import net.dnadas.monolith.exception.company.DuplicateCompanyJoinRequestException;
@@ -11,8 +17,8 @@ import net.dnadas.monolith.exception.company.project.ProjectNotFoundException;
 import net.dnadas.monolith.exception.company.project.UserAlreadyInProjectException;
 import net.dnadas.monolith.exception.company.project.task.TaskNotFoundException;
 import net.dnadas.monolith.exception.company.project.task.expense.ExpenseNotFoundException;
-import net.dnadas.monolith.exception.user.UserNotFoundException;
-import net.dnadas.monolith.exception.verification.VerificationTokenAlreadyExistsException;
+import net.dnadas.monolith.auth.exception.user.UserNotFoundException;
+import net.dnadas.monolith.auth.exception.verification.VerificationTokenAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -196,6 +202,6 @@ public class GeneralExceptionHandler {
   public ResponseEntity<?> handleOAuth2ProcessingException(OAuth2ProcessingException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-      Map.of("error", "An error occurred while processing the authentication request"));
+      Map.of("error", "An error occurred while processing the account request"));
   }
 }

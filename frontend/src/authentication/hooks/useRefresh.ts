@@ -5,7 +5,7 @@ import {RefreshResponseDto} from "../dto/RefreshResponseDto.ts";
 
 export default function useRefresh() {
   const authentication = useAuthentication();
-  const defaultErrorMessage="Failed to refresh authentication";
+  const defaultErrorMessage="Failed to refresh account";
   const refresh = async (): Promise<RefreshResponseDto> => {
     try {
       const refreshResponse = await apiService.publicJsonFetch({

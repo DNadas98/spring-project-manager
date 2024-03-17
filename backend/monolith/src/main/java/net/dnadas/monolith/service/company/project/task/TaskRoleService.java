@@ -1,16 +1,16 @@
 package net.dnadas.monolith.service.company.project.task;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.dto.user.UserResponsePublicDto;
+import net.dnadas.monolith.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.exception.company.project.task.TaskNotFoundException;
-import net.dnadas.monolith.model.auth.PermissionType;
+import net.dnadas.monolith.auth.model.authorization.PermissionType;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.company.project.task.TaskDao;
-import net.dnadas.monolith.model.user.ApplicationUser;
-import net.dnadas.monolith.model.user.GlobalRole;
-import net.dnadas.monolith.service.auth.CustomPermissionEvaluator;
-import net.dnadas.monolith.service.auth.UserProvider;
-import net.dnadas.monolith.service.converter.UserConverter;
+import net.dnadas.monolith.auth.model.user.ApplicationUser;
+import net.dnadas.monolith.auth.model.user.GlobalRole;
+import net.dnadas.monolith.auth.service.authorization.CustomPermissionEvaluator;
+import net.dnadas.monolith.auth.service.user.UserProvider;
+import net.dnadas.monolith.auth.service.user.UserConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

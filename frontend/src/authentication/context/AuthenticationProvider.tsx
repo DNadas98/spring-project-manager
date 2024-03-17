@@ -29,7 +29,7 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
       || !authentication.userInfo.roles?.length
       || !authentication.userInfo?.roles?.includes(GlobalRole.USER)
       || !authentication.userInfo?.accountType) {
-      throw new Error("The received authentication is invalid");
+      throw new Error("The received account is invalid");
     }
     setAuthentication(authentication);
   };

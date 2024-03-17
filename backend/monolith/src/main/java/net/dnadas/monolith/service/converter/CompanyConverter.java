@@ -1,6 +1,7 @@
 package net.dnadas.monolith.service.converter;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.monolith.auth.service.user.UserConverter;
 import net.dnadas.monolith.dto.company.CompanyResponsePrivateDTO;
 import net.dnadas.monolith.dto.company.CompanyResponsePublicDTO;
 import net.dnadas.monolith.dto.requests.CompanyJoinRequestResponseDto;
