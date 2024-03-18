@@ -1,18 +1,13 @@
 package net.dnadas.monolith.service.company;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.auth.dto.user.UserResponsePublicDto;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.exception.company.CompanyNotFoundException;
-import net.dnadas.monolith.auth.exception.user.UserNotFoundException;
-import net.dnadas.monolith.auth.model.authorization.PermissionType;
+import net.dnadas.monolith.model.authorization.PermissionType;
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.company.CompanyDao;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.model.user.ApplicationUserDao;
-import net.dnadas.monolith.auth.model.user.GlobalRole;
-import net.dnadas.monolith.auth.service.authorization.CustomPermissionEvaluator;
-import net.dnadas.monolith.auth.service.user.UserProvider;
-import net.dnadas.monolith.auth.service.user.UserConverter;
+import net.dnadas.monolith.service.authorization.CustomPermissionEvaluator;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,28 +20,21 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CompanyRoleService {
   private final CompanyDao companyDao;
-  private final ApplicationUserDao applicationUserDao;
-  private final UserConverter userConverter;
   private final UserProvider userProvider;
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
   public Set<PermissionType> getUserPermissionsForCompany(Long companyId) {
-    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
 
-    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
-      return Set.of(PermissionType.COMPANY_EMPLOYEE, PermissionType.COMPANY_EDITOR,
-        PermissionType.COMPANY_ADMIN);
-    }
-
     Set<PermissionType> permissions = new HashSet<>();
     permissions.add(PermissionType.COMPANY_EMPLOYEE);
-    if (permissionEvaluator.hasCompanyEditorAccess(user.getId(), company)) {
+    if (permissionEvaluator.hasCompanyEditorAccess(userId, company)) {
       permissions.add(PermissionType.COMPANY_EDITOR);
     }
-    if (permissionEvaluator.hasCompanyAdminAccess(user.getId(), company)) {
+    if (permissionEvaluator.hasCompanyAdminAccess(userId, company)) {
       permissions.add(PermissionType.COMPANY_ADMIN);
     }
     return permissions;
@@ -57,7 +45,8 @@ public class CompanyRoleService {
   public List<UserResponsePublicDto> getEmployees(Long companyId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    return userConverter.getUserResponsePublicDtos(company.getEmployees().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -65,9 +54,7 @@ public class CompanyRoleService {
   public void addEmployee(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.addEmployee(applicationUser);
+    company.addEmployee(userId);
     companyDao.save(company);
   }
 
@@ -76,9 +63,7 @@ public class CompanyRoleService {
   public void removeEmployee(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.removeEmployee(applicationUser);
+    company.removeEmployee(userId);
     companyDao.save(company);
   }
 
@@ -87,7 +72,8 @@ public class CompanyRoleService {
   public List<UserResponsePublicDto> getEditors(Long companyId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    return userConverter.getUserResponsePublicDtos(company.getEditors().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -95,9 +81,7 @@ public class CompanyRoleService {
   public void addEditor(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.addEditor(applicationUser);
+    company.addEditor(userId);
     companyDao.save(company);
   }
 
@@ -106,9 +90,7 @@ public class CompanyRoleService {
   public void removeEditor(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.removeEditor(applicationUser);
+    company.removeEditor(userId);
     companyDao.save(company);
   }
 
@@ -117,7 +99,8 @@ public class CompanyRoleService {
   public List<UserResponsePublicDto> getAdmins(Long companyId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    return userConverter.getUserResponsePublicDtos(company.getAdmins().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -125,9 +108,7 @@ public class CompanyRoleService {
   public void addAdmin(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.addAdmin(applicationUser);
+    company.addAdmin(userId);
     companyDao.save(company);
   }
 
@@ -136,9 +117,7 @@ public class CompanyRoleService {
   public void removeAdmin(Long companyId, Long userId) {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    company.removeAdmin(applicationUser);
+    company.removeAdmin(userId);
     companyDao.save(company);
   }
 }

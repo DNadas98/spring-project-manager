@@ -1,19 +1,17 @@
 package net.dnadas.monolith.service.company;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.dto.company.CompanyCreateRequestDto;
 import net.dnadas.monolith.dto.company.CompanyResponsePrivateDTO;
 import net.dnadas.monolith.dto.company.CompanyResponsePublicDTO;
 import net.dnadas.monolith.dto.company.CompanyUpdateRequestDto;
-import net.dnadas.monolith.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.exception.company.CompanyNotFoundException;
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.company.CompanyDao;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.service.user.UserProvider;
 import net.dnadas.monolith.service.converter.CompanyConverter;
-import org.hibernate.Hibernate;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -35,17 +33,16 @@ public class CompanyService {
 
   @Transactional(readOnly = true)
   public List<CompanyResponsePublicDTO> getCompaniesWithoutUser() throws UnauthorizedException {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     List<Company> companies = companyDao.findAllWithoutEmployeeAndJoinRequest(
-      applicationUser, List.of(RequestStatus.PENDING, RequestStatus.DECLINED));
+      userId, List.of(RequestStatus.PENDING, RequestStatus.DECLINED));
     return companyConverter.getCompanyResponsePublicDtos(companies);
   }
 
   @Transactional(readOnly = true)
   public List<CompanyResponsePublicDTO> getCompaniesWithUser() throws UnauthorizedException {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    Hibernate.initialize(applicationUser.getEmployeeCompanies());
-    List<Company> companies = applicationUser.getEmployeeCompanies().stream().toList();
+    Long userId = userProvider.getAuthenticatedUserId();
+    List<Company> companies = companyDao.findAllWithEmployee(userId).stream().toList();
     return companyConverter.getCompanyResponsePublicDtos(companies);
   }
 
@@ -61,10 +58,10 @@ public class CompanyService {
   @Transactional(rollbackFor = Exception.class)
   public CompanyResponsePrivateDTO createCompany(
     CompanyCreateRequestDto createRequestDto) throws ConstraintViolationException {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Company company = new Company(
-      createRequestDto.name(), createRequestDto.description(), applicationUser);
-    company.addEmployee(applicationUser);
+      createRequestDto.name(), createRequestDto.description(), userId);
+    company.addEmployee(userId);
     companyDao.save(company);
     return companyConverter.getCompanyResponsePrivateDto(company);
   }

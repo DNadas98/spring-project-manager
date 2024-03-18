@@ -18,5 +18,25 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  psql_auth:
+    container_name: postgres-dev-auth
+    image: postgres
+    environment:
+      POSTGRES_DB: projectmanagerauthdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      PGDATA: /data/postgres
+    volumes:
+      - db2:/data/postgres
+    ports:
+      - "54322:5432"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   db:
+  db2:

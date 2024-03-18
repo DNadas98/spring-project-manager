@@ -3,7 +3,6 @@ package net.dnadas.monolith.model.request;
 import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.project.Project;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 @Entity
 @Table(name = "project_join_request")
@@ -18,23 +17,22 @@ public class ProjectJoinRequest {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "project_id")
+  @JoinColumn(name = "project_id", nullable = false)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Project project;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
+  @Column(nullable = false)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private ApplicationUser applicationUser;
+  private Long userId;
 
   @Enumerated(EnumType.STRING)
   private RequestStatus status;
 
-  public ProjectJoinRequest(Project project, ApplicationUser applicationUser) {
+  public ProjectJoinRequest(Project project, Long userId) {
     this.project = project;
-    this.applicationUser = applicationUser;
+    this.userId = userId;
     this.status = RequestStatus.PENDING;
   }
 }

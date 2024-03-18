@@ -1,11 +1,11 @@
 package net.dnadas.monolith.service.company.project;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.dto.company.project.ProjectCreateRequestDto;
 import net.dnadas.monolith.dto.company.project.ProjectResponsePrivateDTO;
 import net.dnadas.monolith.dto.company.project.ProjectResponsePublicDTO;
 import net.dnadas.monolith.dto.company.project.ProjectUpdateRequestDto;
-import net.dnadas.monolith.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.exception.company.CompanyNotFoundException;
 import net.dnadas.monolith.exception.company.project.ProjectNotFoundException;
 import net.dnadas.monolith.model.company.Company;
@@ -14,10 +14,9 @@ import net.dnadas.monolith.model.company.project.Project;
 import net.dnadas.monolith.model.company.project.ProjectDao;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.service.user.UserProvider;
 import net.dnadas.monolith.service.converter.ProjectConverter;
 import net.dnadas.monolith.service.datetime.DateTimeService;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -40,11 +39,11 @@ public class ProjectService {
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithoutUser(Long companyId)
     throws UnauthorizedException {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
     List<Project> projects = projectDao.findAllWithoutEmployeeAndJoinRequestInCompany(
-      applicationUser, List.of(RequestStatus.PENDING, RequestStatus.DECLINED), company);
+      userId, List.of(RequestStatus.PENDING, RequestStatus.DECLINED), company);
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
@@ -52,10 +51,10 @@ public class ProjectService {
   @PreAuthorize("hasPermission(#companyId, 'Company', 'COMPANY_EMPLOYEE')")
   public List<ProjectResponsePublicDTO> getProjectsWithUser(Long companyId)
     throws UnauthorizedException {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    List<Project> projects = projectDao.findAllWithEmployeeAndCompany(applicationUser, company);
+    List<Project> projects = projectDao.findAllWithEmployeeAndCompany(userId, company);
     return projectConverter.getProjectResponsePublicDtos(projects);
   }
 
@@ -75,14 +74,14 @@ public class ProjectService {
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
 
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
 
     Instant projectStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
     Instant projectDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
     dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
 
     Project project = new Project(createRequestDto.name(), createRequestDto.description(),
-      projectStartDate, projectDeadline, applicationUser, company);
+      projectStartDate, projectDeadline, userId, company);
     projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(project);
   }

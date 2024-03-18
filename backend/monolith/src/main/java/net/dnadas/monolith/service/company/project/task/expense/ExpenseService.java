@@ -1,10 +1,10 @@
 package net.dnadas.monolith.service.company.project.task.expense;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.dto.company.project.task.expense.ExpenseCreateRequestDto;
 import net.dnadas.monolith.dto.company.project.task.expense.ExpenseResponseDto;
 import net.dnadas.monolith.dto.company.project.task.expense.ExpenseUpdateRequestDto;
-import net.dnadas.monolith.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.exception.company.project.ProjectNotFoundException;
 import net.dnadas.monolith.exception.company.project.task.TaskNotFoundException;
 import net.dnadas.monolith.exception.company.project.task.expense.ExpenseNotFoundException;

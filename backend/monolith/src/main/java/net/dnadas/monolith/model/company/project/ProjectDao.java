@@ -2,7 +2,6 @@ package net.dnadas.monolith.model.company.project;
 
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,21 +20,21 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT p FROM Project p" +
-      " WHERE :applicationUser MEMBER OF p.assignedEmployees" +
+      " WHERE :userId MEMBER OF p.assignedEmployees" +
       " AND p.company = :company")
   List<Project> findAllWithEmployeeAndCompany(
-    @Param("applicationUser") ApplicationUser applicationUser, @Param("company") Company company);
+    @Param("userId") Long userId, @Param("company") Company company);
 
   @Query(
     "SELECT p FROM Project p" +
       " WHERE :applicationUser NOT MEMBER OF p.assignedEmployees" +
       " AND p.id NOT IN " +
       "(SELECT pr.project.id FROM ProjectJoinRequest pr" +
-      " WHERE pr.applicationUser = :applicationUser" +
+      " WHERE pr.userId = :userId" +
       " AND pr.status IN (:statuses))" +
       " AND p.company = :company")
   List<Project> findAllWithoutEmployeeAndJoinRequestInCompany(
-    @Param("applicationUser") ApplicationUser applicationUser,
+    @Param("userId") Long userId,
     @Param("statuses") List<RequestStatus> statuses,
     @Param("company") Company company);
 }

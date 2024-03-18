@@ -1,7 +1,6 @@
 package net.dnadas.monolith.model.request;
 
 import net.dnadas.monolith.model.company.Company;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,12 +20,12 @@ public interface CompanyJoinRequestDao extends JpaRepository<CompanyJoinRequest,
 
   List<CompanyJoinRequest> findByCompanyAndStatus(Company company, RequestStatus status);
 
-  Optional<CompanyJoinRequest> findOneByCompanyAndApplicationUser(
-    Company company, ApplicationUser applicationUser);
+  Optional<CompanyJoinRequest> findOneByCompanyAndUserId(
+    Company company, Long userId);
 
-  Optional<CompanyJoinRequest> findByIdAndApplicationUser(Long id, ApplicationUser applicationUser);
+  Optional<CompanyJoinRequest> findByIdAndUserId(Long id, Long userId);
 
-  List<CompanyJoinRequest> findByApplicationUser(ApplicationUser applicationUser);
+  List<CompanyJoinRequest> findByUserId(Long userId);
 
   @Override
   @Transactional

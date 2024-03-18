@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.project.Project;
 import net.dnadas.monolith.model.company.project.task.expense.Expense;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -40,18 +39,16 @@ public class Task {
   @ToString.Exclude
   private Set<Expense> expenses;
 
-  @ManyToMany
-  @JoinTable(name = "task_assigned_employees", joinColumns = @JoinColumn(name = "task_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> assignedEmployees;
+  private Set<Long> assignedEmployees;
 
 
   public Task(
     String name, String description, Importance importance, Integer difficulty,
     Instant startDate, Instant deadline, TaskStatus taskStatus, Project project,
-    ApplicationUser taskCreator) {
+    Long taskCreatorId) {
     this.name = name;
     this.description = description;
     this.importance = importance;
@@ -61,7 +58,7 @@ public class Task {
     this.taskStatus = taskStatus;
     this.project = project;
     this.assignedEmployees = new HashSet<>();
-    this.assignedEmployees.add(taskCreator);
+    this.assignedEmployees.add(taskCreatorId);
     this.expenses = new HashSet<>();
   }
 
@@ -77,15 +74,15 @@ public class Task {
     this.expenses.remove(expense);
   }
 
-  public Set<ApplicationUser> getAssignedEmployees() {
+  public Set<Long> getAssignedEmployees() {
     return Set.copyOf(this.assignedEmployees);
   }
 
-  public void assignEmployee(ApplicationUser applicationUser) {
-    this.assignedEmployees.add(applicationUser);
+  public void assignEmployee(Long userId) {
+    this.assignedEmployees.add(userId);
   }
 
-  public void removeEmployee(ApplicationUser applicationUser) {
-    this.assignedEmployees.remove(applicationUser);
+  public void removeEmployee(Long userId) {
+    this.assignedEmployees.remove(userId);
   }
 }

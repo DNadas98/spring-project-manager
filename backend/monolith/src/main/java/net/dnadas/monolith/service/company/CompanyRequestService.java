@@ -12,9 +12,8 @@ import net.dnadas.monolith.model.company.CompanyDao;
 import net.dnadas.monolith.model.request.CompanyJoinRequest;
 import net.dnadas.monolith.model.request.CompanyJoinRequestDao;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.service.user.UserProvider;
 import net.dnadas.monolith.service.converter.CompanyConverter;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,35 +31,34 @@ public class CompanyRequestService {
   private final CompanyConverter companyConverter;
 
   public List<CompanyJoinRequestResponseDto> getOwnJoinRequests() {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    List<CompanyJoinRequest> requests = requestDao.findByApplicationUser(applicationUser);
+    Long userId = userProvider.getAuthenticatedUserId();
+    List<CompanyJoinRequest> requests = requestDao.findByUserId(userId);
     return companyConverter.getCompanyJoinRequestResponseDtos(requests);
   }
 
   @Transactional(rollbackFor = Exception.class)
   public CompanyJoinRequestResponseDto createJoinRequest(Long companyId) {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Company company = companyDao.findById(companyId).orElseThrow(
       () -> new CompanyNotFoundException(companyId));
-    if (company.getEmployees().contains(applicationUser)) {
+    if (company.getEmployees().contains(userId)) {
       throw new UserAlreadyInCompanyException();
     }
-    Optional<CompanyJoinRequest> duplicateRequest = requestDao.findOneByCompanyAndApplicationUser(
-      company, applicationUser);
+    Optional<CompanyJoinRequest> duplicateRequest = requestDao.findOneByCompanyAndUserId(
+      company, userId);
     if (duplicateRequest.isPresent()) {
       throw new DuplicateCompanyJoinRequestException();
     }
-    CompanyJoinRequest joinRequest = new CompanyJoinRequest(company, applicationUser);
+    CompanyJoinRequest joinRequest = new CompanyJoinRequest(company, userId);
     CompanyJoinRequest savedRequest = requestDao.save(joinRequest);
     return companyConverter.getCompanyJoinRequestResponseDto(savedRequest);
   }
 
   @Transactional(rollbackFor = Exception.class)
   public void deleteOwnJoinRequestById(Long requestId) {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    CompanyJoinRequest joinRequest = requestDao.findByIdAndApplicationUser(
-      requestId,
-      applicationUser).orElseThrow(() -> new CompanyJoinRequestNotFoundException(requestId));
+    Long userId = userProvider.getAuthenticatedUserId();
+    CompanyJoinRequest joinRequest = requestDao.findByIdAndUserId(requestId, userId).orElseThrow(
+      () -> new CompanyJoinRequestNotFoundException(requestId));
     requestDao.deleteById(joinRequest.getId());
   }
 
@@ -83,7 +81,7 @@ public class CompanyRequestService {
       () -> new CompanyJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
-      companyRoleService.addEmployee(companyId, request.getApplicationUser().getId());
+      companyRoleService.addEmployee(companyId, request.getUserId());
       requestDao.delete(request);
     }
   }

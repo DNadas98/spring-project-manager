@@ -5,7 +5,6 @@ import lombok.*;
 import net.dnadas.monolith.model.company.Company;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.request.ProjectJoinRequest;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -42,37 +41,31 @@ public class Project {
   @ToString.Exclude
   private Set<ProjectJoinRequest> joinRequests = new HashSet<>();
 
-  @ManyToMany
-  @JoinTable(name = "project_admins", joinColumns = @JoinColumn(name = "project_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> admins = new HashSet<>();
+  private Set<Long> admins = new HashSet<>();
 
-  @ManyToMany
-  @JoinTable(name = "project_editors", joinColumns = @JoinColumn(name = "project_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> editors = new HashSet<>();
+  private Set<Long> editors = new HashSet<>();
 
-  @ManyToMany
-  @JoinTable(name = "project_assigned_employees", joinColumns = @JoinColumn(name = "project_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> assignedEmployees = new HashSet<>();
+  private Set<Long> assignedEmployees = new HashSet<>();
 
   public Project(
     String name, String description, Instant startDate, Instant deadline,
-    ApplicationUser projectCreator, Company company) {
+    Long projectCreatorId, Company company) {
     this.name = name;
     this.description = description;
     this.startDate = startDate;
     this.deadline = deadline;
-    admins.add(projectCreator);
-    editors.add(projectCreator);
-    assignedEmployees.add(projectCreator);
+    admins.add(projectCreatorId);
+    editors.add(projectCreatorId);
+    assignedEmployees.add(projectCreatorId);
     this.company = company;
   }
 
@@ -88,39 +81,39 @@ public class Project {
     this.tasks.remove(task);
   }
 
-  public Set<ApplicationUser> getAdmins() {
+  public Set<Long> getAdmins() {
     return Set.copyOf(admins);
   }
 
-  public void addAdmin(ApplicationUser applicationUser) {
-    this.admins.add(applicationUser);
+  public void addAdmin(Long userId) {
+    this.admins.add(userId);
   }
 
-  public void removeAdmin(ApplicationUser applicationUser) {
-    this.admins.remove(applicationUser);
+  public void removeAdmin(Long userId) {
+    this.admins.remove(userId);
   }
 
-  public Set<ApplicationUser> getEditors() {
+  public Set<Long> getEditors() {
     return Set.copyOf(editors);
   }
 
-  public void addEditor(ApplicationUser applicationUser) {
-    this.editors.add(applicationUser);
+  public void addEditor(Long userId) {
+    this.editors.add(userId);
   }
 
-  public void removeEditor(ApplicationUser applicationUser) {
-    this.editors.remove(applicationUser);
+  public void removeEditor(Long userId) {
+    this.editors.remove(userId);
   }
 
-  public Set<ApplicationUser> getAssignedEmployees() {
+  public Set<Long> getAssignedEmployees() {
     return Set.copyOf(assignedEmployees);
   }
 
-  public void assignEmployee(ApplicationUser applicationUser) {
-    this.assignedEmployees.add(applicationUser);
+  public void assignEmployee(Long userId) {
+    this.assignedEmployees.add(userId);
   }
 
-  public void removeEmployee(ApplicationUser applicationUser) {
-    this.assignedEmployees.remove(applicationUser);
+  public void removeEmployee(Long userId) {
+    this.assignedEmployees.remove(userId);
   }
 }

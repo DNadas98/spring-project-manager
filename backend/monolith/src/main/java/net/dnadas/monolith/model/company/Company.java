@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.project.Project;
 import net.dnadas.monolith.model.request.CompanyJoinRequest;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,36 +35,30 @@ public class Company {
   @ToString.Exclude
   private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
 
-  @ManyToMany
-  @JoinTable(name = "company_admins", joinColumns = @JoinColumn(name = "company_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> admins;
+  private Set<Long> admins;
 
-  @ManyToMany
-  @JoinTable(name = "company_editors", joinColumns = @JoinColumn(name = "company_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> editors;
+  private Set<Long> editors;
 
-  @ManyToMany
-  @JoinTable(name = "company_employees", joinColumns = @JoinColumn(name = "company_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @ElementCollection(fetch = FetchType.LAZY)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> employees;
+  private Set<Long> employees;
 
-  public Company(String name, String description, ApplicationUser companyCreator) {
+  public Company(String name, String description, Long companyCreatorId) {
     this.name = name;
     this.description = description;
     this.admins = new HashSet<>();
     this.editors = new HashSet<>();
     this.employees = new HashSet<>();
-    this.admins.add(companyCreator);
-    this.editors.add(companyCreator);
-    this.employees.add(companyCreator);
+    this.admins.add(companyCreatorId);
+    this.editors.add(companyCreatorId);
+    this.employees.add(companyCreatorId);
     this.projects = new HashSet<>();
   }
 
@@ -73,39 +66,39 @@ public class Company {
     return Set.copyOf(projects);
   }
 
-  public Set<ApplicationUser> getAdmins() {
+  public Set<Long> getAdmins() {
     return Set.copyOf(admins);
   }
 
-  public void addAdmin(ApplicationUser applicationUser) {
-    admins.add(applicationUser);
+  public void addAdmin(Long userId) {
+    admins.add(userId);
   }
 
-  public void removeAdmin(ApplicationUser applicationUser) {
-    admins.remove(applicationUser);
+  public void removeAdmin(Long userId) {
+    admins.remove(userId);
   }
 
-  public Set<ApplicationUser> getEditors() {
+  public Set<Long> getEditors() {
     return Set.copyOf(editors);
   }
 
-  public void addEditor(ApplicationUser applicationUser) {
-    editors.add(applicationUser);
+  public void addEditor(Long userId) {
+    editors.add(userId);
   }
 
-  public void removeEditor(ApplicationUser applicationUser) {
-    editors.remove(applicationUser);
+  public void removeEditor(Long userId) {
+    editors.remove(userId);
   }
 
-  public Set<ApplicationUser> getEmployees() {
+  public Set<Long> getEmployees() {
     return Set.copyOf(employees);
   }
 
-  public void addEmployee(ApplicationUser applicationUser) {
-    employees.add(applicationUser);
+  public void addEmployee(Long userId) {
+    employees.add(userId);
   }
 
-  public void removeEmployee(ApplicationUser applicationUser) {
-    employees.remove(applicationUser);
+  public void removeEmployee(Long userId) {
+    employees.remove(userId);
   }
 }

@@ -15,6 +15,7 @@
     <module>eureka-server</module>
     <module>monolith</module>
     <module>email</module>
+    <module>auth</module>
   </modules>
 
   <properties>

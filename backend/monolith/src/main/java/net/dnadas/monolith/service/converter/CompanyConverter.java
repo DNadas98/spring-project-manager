@@ -1,7 +1,7 @@
 package net.dnadas.monolith.service.converter;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.auth.service.user.UserConverter;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.dto.company.CompanyResponsePrivateDTO;
 import net.dnadas.monolith.dto.company.CompanyResponsePublicDTO;
 import net.dnadas.monolith.dto.requests.CompanyJoinRequestResponseDto;
@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CompanyConverter {
-  private final UserConverter userConverter;
 
   public List<CompanyResponsePublicDTO> getCompanyResponsePublicDtos(List<Company> companies) {
     return companies.stream().map(
@@ -35,9 +34,10 @@ public class CompanyConverter {
 
   public CompanyJoinRequestResponseDto getCompanyJoinRequestResponseDto(
     CompanyJoinRequest request) {
+    //TODO: implement
     return new CompanyJoinRequestResponseDto(request.getId(),
       getCompanyResponsePublicDto(request.getCompany()),
-      userConverter.getUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
+      new UserResponsePublicDto(request.getUserId(), "username"), request.getStatus());
   }
 
   public List<CompanyJoinRequestResponseDto> getCompanyJoinRequestResponseDtos(

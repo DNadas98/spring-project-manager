@@ -3,7 +3,6 @@ package net.dnadas.monolith.model.request;
 import jakarta.persistence.*;
 import lombok.*;
 import net.dnadas.monolith.model.company.Company;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
 
 @Entity
 @Table(name = "company_join_request")
@@ -18,21 +17,20 @@ public class CompanyJoinRequest {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "company_id")
+  @JoinColumn(name = "company_id", nullable = false)
   @ToString.Exclude
   private Company company;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
   @ToString.Exclude
-  private ApplicationUser applicationUser;
+  @Column(nullable = false)
+  private Long userId;
 
   @Enumerated(EnumType.STRING)
   private RequestStatus status;
 
-  public CompanyJoinRequest(Company company, ApplicationUser applicationUser) {
+  public CompanyJoinRequest(Company company, Long userId) {
     this.company = company;
-    this.applicationUser = applicationUser;
+    this.userId = userId;
     this.status = RequestStatus.PENDING;
   }
 }

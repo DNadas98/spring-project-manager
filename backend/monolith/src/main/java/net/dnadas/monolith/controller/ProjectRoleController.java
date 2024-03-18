@@ -2,7 +2,7 @@ package net.dnadas.monolith.controller;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.auth.dto.user.UserResponsePublicDto;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.service.company.project.ProjectRoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

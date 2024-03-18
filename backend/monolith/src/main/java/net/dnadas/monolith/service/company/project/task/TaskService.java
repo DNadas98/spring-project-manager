@@ -1,10 +1,10 @@
 package net.dnadas.monolith.service.company.project.task;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.dto.company.project.task.TaskCreateRequestDto;
 import net.dnadas.monolith.dto.company.project.task.TaskResponsePublicDto;
 import net.dnadas.monolith.dto.company.project.task.TaskUpdateRequestDto;
-import net.dnadas.monolith.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.monolith.exception.company.project.ProjectNotFoundException;
 import net.dnadas.monolith.exception.company.project.task.TaskNotFoundException;
 import net.dnadas.monolith.model.company.project.Project;
@@ -12,10 +12,9 @@ import net.dnadas.monolith.model.company.project.ProjectDao;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.company.project.task.TaskDao;
 import net.dnadas.monolith.model.company.project.task.TaskStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.service.user.UserProvider;
 import net.dnadas.monolith.service.converter.TaskConverter;
 import net.dnadas.monolith.service.datetime.DateTimeService;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -50,12 +49,12 @@ public class TaskService {
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     List<Task> tasks;
     if (withUser) {
-      tasks = taskDao.findAllByProjectAndApplicationUser(project, user);
+      tasks = taskDao.findAllByProjectAndApplicationUser(project, userId);
     } else {
-      tasks = taskDao.findAllByProjectAndWithoutApplicationUser(project, user);
+      tasks = taskDao.findAllByProjectAndWithoutApplicationUser(project, userId);
     }
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
@@ -67,13 +66,13 @@ public class TaskService {
     throws ProjectNotFoundException, UnauthorizedException {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     List<Task> tasks;
     if (withUser) {
-      tasks = taskDao.findAllByProjectAndTaskStatusAndApplicationUser(project, taskStatus, user);
+      tasks = taskDao.findAllByProjectAndTaskStatusAndApplicationUser(project, taskStatus, userId);
     } else {
       tasks = taskDao.findAllByProjectAndTaskStatusAndWithoutApplicationUser(project, taskStatus,
-        user);
+        userId);
     }
     return taskConverter.getTaskResponsePublicDtos(tasks);
   }
@@ -89,13 +88,13 @@ public class TaskService {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
 
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
       project.getDeadline());
 
     Task task = new Task(createRequestDto.name(), createRequestDto.description(),
       createRequestDto.importance(), createRequestDto.difficulty(), taskStartDate, taskDeadline,
-      createRequestDto.taskStatus(), project, applicationUser);
+      createRequestDto.taskStatus(), project, userId);
     taskDao.save(task);
     return taskConverter.getTaskResponsePublicDto(task);
   }

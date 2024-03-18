@@ -1,16 +1,13 @@
 package net.dnadas.monolith.service.company.project.task;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.auth.dto.user.UserResponsePublicDto;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.exception.company.project.task.TaskNotFoundException;
-import net.dnadas.monolith.auth.model.authorization.PermissionType;
+import net.dnadas.monolith.model.authorization.PermissionType;
 import net.dnadas.monolith.model.company.project.task.Task;
 import net.dnadas.monolith.model.company.project.task.TaskDao;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.model.user.GlobalRole;
-import net.dnadas.monolith.auth.service.authorization.CustomPermissionEvaluator;
-import net.dnadas.monolith.auth.service.user.UserProvider;
-import net.dnadas.monolith.auth.service.user.UserConverter;
+import net.dnadas.monolith.service.authorization.CustomPermissionEvaluator;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,22 +21,17 @@ import java.util.Set;
 public class TaskRoleService {
   private final TaskDao taskDao;
   private final UserProvider userProvider;
-  private final UserConverter userConverter;
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
   public Set<PermissionType> getUserPermissionsForTask(
     Long companyId, Long projectId, Long taskId) {
-    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
 
-    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
-      return Set.of(PermissionType.TASK_ASSIGNED_EMPLOYEE);
-    }
-
     Set<PermissionType> permissions = new HashSet<>();
-    if (permissionEvaluator.hasTaskAssignedEmployeeAccess(user.getId(), task)) {
+    if (permissionEvaluator.hasTaskAssignedEmployeeAccess(userId, task)) {
       permissions.add(PermissionType.TASK_ASSIGNED_EMPLOYEE);
     }
     return permissions;
@@ -51,7 +43,8 @@ public class TaskRoleService {
     Long companyId, Long projectId, Long taskId) {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
-    return userConverter.getUserResponsePublicDtos(task.getAssignedEmployees().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -59,8 +52,8 @@ public class TaskRoleService {
   public void assignSelf(Long companyId, Long projectId, Long taskId) {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    task.assignEmployee(applicationUser);
+    Long userId = userProvider.getAuthenticatedUserId();
+    task.assignEmployee(userId);
     taskDao.save(task);
   }
 
@@ -69,8 +62,8 @@ public class TaskRoleService {
   public void removeSelf(Long companyId, Long projectId, Long taskId) {
     Task task = taskDao.findByCompanyIdAndProjectIdAndTaskId(companyId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    task.removeEmployee(applicationUser);
+    Long userId = userProvider.getAuthenticatedUserId();
+    task.removeEmployee(userId);
     taskDao.save(task);
   }
 }

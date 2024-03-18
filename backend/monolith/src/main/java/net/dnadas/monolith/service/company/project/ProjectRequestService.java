@@ -1,6 +1,7 @@
 package net.dnadas.monolith.service.company.project;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.dto.requests.ProjectJoinRequestResponseDto;
 import net.dnadas.monolith.dto.requests.ProjectJoinRequestUpdateDto;
 import net.dnadas.monolith.exception.company.project.DuplicateProjectJoinRequestException;
@@ -12,15 +13,15 @@ import net.dnadas.monolith.model.company.project.ProjectDao;
 import net.dnadas.monolith.model.request.ProjectJoinRequest;
 import net.dnadas.monolith.model.request.ProjectJoinRequestDao;
 import net.dnadas.monolith.model.request.RequestStatus;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.service.user.UserProvider;
 import net.dnadas.monolith.service.converter.ProjectConverter;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,35 +33,42 @@ public class ProjectRequestService {
   private final ProjectConverter projectConverter;
 
   public List<ProjectJoinRequestResponseDto> getOwnJoinRequests() {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    List<ProjectJoinRequest> requests = requestDao.findByApplicationUser(applicationUser);
-    return projectConverter.getProjectJoinRequestResponseDtos(requests);
+    Long userId = userProvider.getAuthenticatedUserId();
+    List<ProjectJoinRequest> requests = requestDao.findByUserId(userId);
+    //TODO: implement
+    List<ProjectJoinRequestResponseDto> requestResponseDtos = requests.stream().map(request ->
+      new ProjectJoinRequestResponseDto(request.getId(),
+        projectConverter.getProjectResponsePublicDto(request.getProject()),
+        new UserResponsePublicDto(request.getUserId(), "username"), request.getStatus())).collect(
+      Collectors.toList());
+    return requestResponseDtos;
   }
 
   @Transactional(rollbackFor = Exception.class)
   public ProjectJoinRequestResponseDto createJoinRequest(Long companyId, Long projectId) {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    if (project.getAssignedEmployees().contains(applicationUser)) {
+    if (project.getAssignedEmployees().contains(userId)) {
       throw new UserAlreadyInProjectException();
     }
-    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndApplicationUser(
-      project, applicationUser);
+    Optional<ProjectJoinRequest> duplicateRequest = requestDao.findByProjectAndUserId(
+      project, userId);
     if (duplicateRequest.isPresent()) {
       throw new DuplicateProjectJoinRequestException();
     }
-    ProjectJoinRequest savedRequest = requestDao.save(
-      new ProjectJoinRequest(project, applicationUser));
-    return projectConverter.getProjectJoinRequestResponseDto(savedRequest);
+    ProjectJoinRequest savedRequest = requestDao.save(new ProjectJoinRequest(project, userId));
+    //TODO: implement
+    return new ProjectJoinRequestResponseDto(savedRequest.getId(),
+      projectConverter.getProjectResponsePublicDto(savedRequest.getProject()),
+      new UserResponsePublicDto(savedRequest.getUserId(), "username"), savedRequest.getStatus());
   }
 
   @Transactional(rollbackFor = Exception.class)
   public void deleteOwnJoinRequestById(Long requestId) {
-    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    ProjectJoinRequest joinRequest = requestDao.findByIdAndApplicationUser(
-      requestId,
-      applicationUser).orElseThrow(() -> new ProjectJoinRequestNotFoundException(requestId));
+    Long userId = userProvider.getAuthenticatedUserId();
+    ProjectJoinRequest joinRequest = requestDao.findByIdAndUserId(requestId, userId).orElseThrow(
+      () -> new ProjectJoinRequestNotFoundException(requestId));
     requestDao.delete(joinRequest);
   }
 
@@ -73,7 +81,13 @@ public class ProjectRequestService {
     List<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(
       project,
       RequestStatus.PENDING);
-    return projectConverter.getProjectJoinRequestResponseDtos(requests);
+    //TODO: implement
+    List<ProjectJoinRequestResponseDto> requestResponseDtos = requests.stream().map(request ->
+      new ProjectJoinRequestResponseDto(request.getId(),
+        projectConverter.getProjectResponsePublicDto(request.getProject()),
+        new UserResponsePublicDto(request.getUserId(), "username"), request.getStatus())).collect(
+      Collectors.toList());
+    return requestResponseDtos;
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -85,7 +99,7 @@ public class ProjectRequestService {
       () -> new ProjectJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
-      projectRoleService.assignEmployee(companyId, projectId, request.getApplicationUser().getId());
+      projectRoleService.assignEmployee(companyId, projectId, request.getUserId());
       requestDao.delete(request);
     }
   }

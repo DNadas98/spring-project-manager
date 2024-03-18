@@ -1,18 +1,13 @@
 package net.dnadas.monolith.service.company.project;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.monolith.auth.dto.user.UserResponsePublicDto;
+import net.dnadas.auth.dto.user.UserResponsePublicDto;
 import net.dnadas.monolith.exception.company.project.ProjectNotFoundException;
-import net.dnadas.monolith.auth.exception.user.UserNotFoundException;
-import net.dnadas.monolith.auth.model.authorization.PermissionType;
+import net.dnadas.monolith.model.authorization.PermissionType;
 import net.dnadas.monolith.model.company.project.Project;
 import net.dnadas.monolith.model.company.project.ProjectDao;
-import net.dnadas.monolith.auth.model.user.ApplicationUser;
-import net.dnadas.monolith.auth.model.user.ApplicationUserDao;
-import net.dnadas.monolith.auth.model.user.GlobalRole;
-import net.dnadas.monolith.auth.service.authorization.CustomPermissionEvaluator;
-import net.dnadas.monolith.auth.service.user.UserProvider;
-import net.dnadas.monolith.auth.service.user.UserConverter;
+import net.dnadas.monolith.service.authorization.CustomPermissionEvaluator;
+import net.dnadas.monolith.service.user.UserProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,28 +20,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ProjectRoleService {
   private final ProjectDao projectDao;
-  private final ApplicationUserDao applicationUserDao;
-  private final UserConverter userConverter;
   private final UserProvider userProvider;
   private final CustomPermissionEvaluator permissionEvaluator;
 
   @Transactional(readOnly = true)
   public Set<PermissionType> getUserPermissionsForProject(Long companyId, Long projectId) {
-    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Long userId = userProvider.getAuthenticatedUserId();
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-
-    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
-      return Set.of(PermissionType.PROJECT_ASSIGNED_EMPLOYEE, PermissionType.PROJECT_EDITOR,
-        PermissionType.PROJECT_ADMIN);
-    }
-
     Set<PermissionType> permissions = new HashSet<>();
     permissions.add(PermissionType.PROJECT_ASSIGNED_EMPLOYEE);
-    if (permissionEvaluator.hasProjectEditorAccess(user.getId(), project)) {
+    if (permissionEvaluator.hasProjectEditorAccess(userId, project)) {
       permissions.add(PermissionType.PROJECT_EDITOR);
     }
-    if (permissionEvaluator.hasProjectAdminAccess(user.getId(), project)) {
+    if (permissionEvaluator.hasProjectAdminAccess(userId, project)) {
       permissions.add(PermissionType.PROJECT_ADMIN);
     }
     return permissions;
@@ -57,8 +44,9 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getAssignedEmployees(Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(
-      project.getAssignedEmployees().stream().toList());
+    //TODO: implement
+    return List.of();
+
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -66,9 +54,7 @@ public class ProjectRoleService {
   public void assignEmployee(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.assignEmployee(applicationUser);
+    project.assignEmployee(userId);
     projectDao.save(project);
   }
 
@@ -77,9 +63,7 @@ public class ProjectRoleService {
   public void removeAssignedEmployee(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.removeEmployee(applicationUser);
+    project.removeEmployee(userId);
     projectDao.save(project);
   }
 
@@ -88,7 +72,8 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getEditors(Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(project.getEditors().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -96,9 +81,7 @@ public class ProjectRoleService {
   public void addEditor(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.addEditor(applicationUser);
+    project.addEditor(userId);
     projectDao.save(project);
   }
 
@@ -107,9 +90,7 @@ public class ProjectRoleService {
   public void removeEditor(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.removeEditor(applicationUser);
+    project.removeEditor(userId);
     projectDao.save(project);
   }
 
@@ -118,7 +99,8 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getAdmins(Long companyId, Long projectId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(project.getAdmins().stream().toList());
+    //TODO: implement
+    return List.of();
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -126,9 +108,7 @@ public class ProjectRoleService {
   public void addAdmin(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.addAdmin(applicationUser);
+    project.addAdmin(userId);
     projectDao.save(project);
   }
 
@@ -137,9 +117,7 @@ public class ProjectRoleService {
   public void removeAdmin(Long companyId, Long projectId, Long userId) {
     Project project = projectDao.findByIdAndCompanyId(projectId, companyId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-    project.removeAdmin(applicationUser);
+    project.removeAdmin(userId);
     projectDao.save(project);
   }
 }
