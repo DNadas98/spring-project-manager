@@ -6,6 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 
 @Profile({"dev"})
 @Configuration
-@PropertySource(value = "file:./.env")
+@PropertySource(value = "file:./auth.env")
 public class DevPropertyConfig {
 }

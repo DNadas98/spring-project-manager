@@ -1,0 +1,17 @@
+# Copy and rename to email.env, fill out all fields
+
+BACKEND_APP_PORT=8080
+SPRING_PROFILES_ACTIVE=prod
+
+# JWT Authentication
+# Expiration: [ms]
+# (!) Please generate safer secrets for a production environment
+#   Example: Node.js: require("crypto").randomBytes(64).toString('hex');
+BACKEND_ACCESS_TOKEN_SECRET=accesssecretaccesssecretaccesssecretaccesssecretaccesssecretaccesssecret
+BACKEND_ACCESS_TOKEN_EXPIRATION=600000
+
+# SMTP
+BACKEND_SMTP_HOST=localhost
+BACKEND_SMTP_PORT=465
+BACKEND_SMTP_USERNAME=test@test.test
+BACKEND_SMTP_PASSWORD=testsmtppassword

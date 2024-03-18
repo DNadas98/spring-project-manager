@@ -1,4 +1,4 @@
-# Copy and rename to .env, fill out all fields
+# Copy and rename to auth.env, fill out all fields
 
 BACKEND_APP_PORT=8080
 FRONTEND_BASE_URL=https://localhost:4430
@@ -35,23 +35,8 @@ BACKEND_OAUTH2_FACEBOOK_CLIENT_SECRET=facebookclientsecretfacebookclientsecretfa
 BACKEND_OAUTH2_GITHUB_CLIENT_ID=githubclientidgithubclientidgithubclientidgithubclientid
 BACKEND_OAUTH2_GITHUB_CLIENT_SECRET=githubclientsecretgithubclientsecretgithubclientsecret
 
-# Database
-# The default config connects to the database on the internal docker network
-#   The service name is used as hostname, and the default database port is 5432
-DB_HOST=psql
-DB_PORT=5432
-DB_NAME=projectmanagerdb
-DB_USERNAME=devuser
-DB_PASSWORD=devpassword
-
 AUTH_DB_HOST=psql
 AUTH_DB_PORT=5432
 AUTH_DB_NAME=projectmanagerauthdb
 AUTH_DB_USERNAME=devuser
 AUTH_DB_PASSWORD=devpassword
-
-# SMTP
-BACKEND_SMTP_HOST=localhost
-BACKEND_SMTP_PORT=465
-BACKEND_SMTP_USERNAME=test@test.test
-BACKEND_SMTP_PASSWORD=testsmtppassword
