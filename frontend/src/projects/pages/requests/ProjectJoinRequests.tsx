@@ -3,12 +3,8 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
-import {
-  ProjectJoinRequestResponseDto
-} from "../../dto/requests/ProjectJoinRequestResponseDto.ts";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
+import {ProjectJoinRequestResponseDto} from "../../dto/requests/ProjectJoinRequestResponseDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {RequestStatus} from "../../../companies/dto/RequestStatus.ts";
 

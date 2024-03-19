@@ -3,9 +3,7 @@ import ProfileDashboard from "./components/ProfileDashboard.tsx";
 import {useEffect, useState} from "react";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import useLogout from "../../../authentication/hooks/useLogout.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
@@ -58,7 +56,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user/accounts/${id}`, method: "DELETE"
       });
-      if (response?.status!==200) {
+      if (response?.status !== 200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
 
@@ -94,7 +92,7 @@ export default function Profile() {
       const response = await authJsonFetch({
         path: `user`, method: "DELETE"
       });
-      if (response?.status!==200) {
+      if (response?.status !== 200) {
         return notifyOnError(defaultError, response ?? undefined);
       }
       notification.openNotification({
@@ -123,7 +121,7 @@ export default function Profile() {
     return;
   }
 
-  return loading||accountDeleteLoading||applicationUserDeleteLoading
+  return loading || accountDeleteLoading || applicationUserDeleteLoading
     ? <LoadingSpinner/>
     : username && email && roles ? (
       <ProfileDashboard username={username}

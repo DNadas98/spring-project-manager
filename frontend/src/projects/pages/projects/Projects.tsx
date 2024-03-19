@@ -1,9 +1,7 @@
 import ProjectBrowser from "./components/ProjectBrowser.tsx";
 import {FormEvent, useEffect, useMemo, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {ProjectResponsePublicDto} from "../../dto/ProjectResponsePublicDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";

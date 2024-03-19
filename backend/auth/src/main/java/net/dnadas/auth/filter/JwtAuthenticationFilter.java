@@ -7,10 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.auth.dto.authentication.TokenPayloadDto;
+import net.dnadas.auth.dto.authentication.UserInfoDto;
 import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.auth.model.account.UserAccount;
 import net.dnadas.auth.model.account.UserAccountDao;
-import net.dnadas.auth.model.user.ApplicationUserDao;
+import net.dnadas.auth.model.user.ApplicationUser;
+import net.dnadas.auth.model.user.GlobalRole;
 import net.dnadas.auth.service.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +20,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * {@inheritDoc}
@@ -42,7 +45,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserAccountDao accountDao;
-  private final ApplicationUserDao applicationUserDao;
   private final JwtService jwtService;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -64,17 +66,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       if (jwtService.isAccessTokenExpired(accessToken)) {
         logger.error("Access Token is expired");
-        setAccessTokenExpiredResponse(response);
+        setAccessTokenExpired(response);
         return;
       }
 
-      TokenPayloadDto payload = jwtService.verifyAccessToken(accessToken);
+      UserInfoDto userInfoDto = jwtService.verifyAccessToken(accessToken);
       UserAccount account = accountDao.findOneByEmailAndAccountType(
-        payload.email(), payload.accountType()).orElseThrow(() -> new UnauthorizedException());
-      UsernamePasswordAuthenticationToken authenticationToken =
-        getAuthenticationToken(account);
+        userInfoDto.email(), userInfoDto.accountType()).orElseThrow(
+        () -> new UnauthorizedException());
 
-      SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+      //TODO: implement -- USER INFO MIGHT CHANGE
+
+      ApplicationUser applicationUser = account.getApplicationUser();
+
+      SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+        new UserInfoDto(applicationUser.getId(), applicationUser.getUsername(), account.getEmail(),
+          account.getAccountType(), applicationUser.getGlobalRoles()), null,
+        getAuthorities(applicationUser.getGlobalRoles())));
       filterChain.doFilter(request, response);
     } catch (JwtException | UnauthorizedException e) {
       logger.error(e.getMessage());
@@ -82,24 +90,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
   }
 
-  private UsernamePasswordAuthenticationToken getAuthenticationToken(UserAccount account) {
-    switch (account.getAccountType()) {
-      case LOCAL -> {
-        UserDetails userDetails = (UserDetails) account;
-        return new UsernamePasswordAuthenticationToken(
-          account.getApplicationUser().getId(), null, userDetails.getAuthorities()
-        );
-      }
-      default -> {
-        OAuth2User oAuth2User = (OAuth2User) account;
-        return new UsernamePasswordAuthenticationToken(
-          account.getApplicationUser().getId(), null, oAuth2User.getAuthorities()
-        );
-      }
-    }
+  private Set<SimpleGrantedAuthority> getAuthorities(Set<GlobalRole> globalRoles) {
+    return globalRoles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(
+      Collectors.toSet());
   }
 
-  private void setAccessTokenExpiredResponse(HttpServletResponse response) throws IOException {
+  private void setAccessTokenExpired(HttpServletResponse response) throws IOException {
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.getWriter().write("{\"error\":\"Unauthorized\", \"isAccessTokenExpired\": true}");

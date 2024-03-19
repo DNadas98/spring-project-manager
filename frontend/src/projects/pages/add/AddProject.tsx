@@ -1,7 +1,5 @@
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddProjectForm from "./components/AddProjectForm.tsx";
 import {FormEvent, useState} from "react";
 import {ProjectCreateRequestDto} from "../../dto/ProjectCreateRequestDto.ts";

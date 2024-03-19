@@ -53,9 +53,7 @@ public class AuthenticationController {
     LoginResponseDto loginResponse = localUserAccountService.loginLocalAccount(loginRequest);
 
     String refreshToken = refreshService.getNewRefreshToken(
-      new TokenPayloadDto(
-        loginResponse.userInfo().email(),
-        loginResponse.userInfo().accountType()));
+      loginResponse.userInfo());
     cookieService.addRefreshCookie(refreshToken, response);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));
   }

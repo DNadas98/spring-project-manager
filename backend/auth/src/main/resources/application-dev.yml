@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8060
 
 spring:
   application:
@@ -56,16 +56,16 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://devadmin:devpassword@localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 
 logging:
   level:
     root: info
-#    org.springframework.web: trace
-#    org.hibernate: trace
-#    org.hibernate.type.descriptor.sql: trace
-#    org.springframework.transaction: trace
-#    org.springframework.security: trace
+    #    org.springframework.web: trace
+    #    org.hibernate: trace
+    #    org.hibernate.type.descriptor.sql: trace
+    #    org.springframework.transaction: trace
+    org.springframework.security: trace
 #    org.springframework.mail: trace

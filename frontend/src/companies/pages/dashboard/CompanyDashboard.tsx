@@ -2,14 +2,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {CompanyResponsePrivateDto} from "../../dto/CompanyResponsePrivateDto.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function CompanyDashboard() {
@@ -121,18 +117,18 @@ export default function CompanyDashboard() {
       <button onClick={handleProjectsClick}>View projects</button>
       {(companyPermissions.includes(PermissionType.COMPANY_EDITOR))
         && <div>
-              <button onClick={() => {
-                navigate(`/companies/${companyId}/update`)
-              }}>Update company details
-              </button>
-          </div>
+          <button onClick={() => {
+            navigate(`/companies/${companyId}/update`)
+          }}>Update company details
+          </button>
+        </div>
       }
       {(companyPermissions.includes(PermissionType.COMPANY_ADMIN))
         && <div>
-              <button onClick={handleJoinRequestClick}>View company join requests</button>
-              <br/>
-              <button onClick={handleDeleteClick}>Remove all company details</button>
-          </div>
+          <button onClick={handleJoinRequestClick}>View company join requests</button>
+          <br/>
+          <button onClick={handleDeleteClick}>Remove all company details</button>
+        </div>
       }
     </div>
   )

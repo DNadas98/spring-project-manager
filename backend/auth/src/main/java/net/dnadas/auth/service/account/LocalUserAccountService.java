@@ -2,7 +2,10 @@ package net.dnadas.auth.service.account;
 
 
 import lombok.AllArgsConstructor;
-import net.dnadas.auth.dto.authentication.*;
+import net.dnadas.auth.dto.authentication.LoginRequestDto;
+import net.dnadas.auth.dto.authentication.LoginResponseDto;
+import net.dnadas.auth.dto.authentication.RegisterRequestDto;
+import net.dnadas.auth.dto.authentication.UserInfoDto;
 import net.dnadas.auth.dto.verification.VerificationTokenDto;
 import net.dnadas.auth.exception.account.AccountAlreadyExistsException;
 import net.dnadas.auth.exception.authentication.InvalidCredentialsException;
@@ -112,11 +115,13 @@ public class LocalUserAccountService {
     UserAccount account = accountDao.findOneByEmailAndAccountType(
       loginRequest.email(), AccountType.LOCAL).orElseThrow(() -> new InvalidCredentialsException());
     ApplicationUser user = account.getApplicationUser();
-    TokenPayloadDto payloadDto = new TokenPayloadDto(account.getEmail(), account.getAccountType());
-    String accessToken = jwtService.generateAccessToken(payloadDto);
+    String accessToken = jwtService.generateAccessToken(new UserInfoDto(
+      user.getId(), user.getUsername(), account.getEmail(), account.getAccountType(),
+      user.getGlobalRoles()));
     return new LoginResponseDto(
       accessToken,
-      new UserInfoDto(user.getUsername(), account.getEmail(), account.getAccountType(),
+      new UserInfoDto(
+        user.getId(), user.getUsername(), account.getEmail(), account.getAccountType(),
         user.getGlobalRoles()));
   }
 }

@@ -3,7 +3,7 @@ package net.dnadas.auth.service.oauth2;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import net.dnadas.auth.dto.authentication.TokenPayloadDto;
+import net.dnadas.auth.dto.authentication.UserInfoDto;
 import net.dnadas.auth.exception.oauth2.OAuth2ProcessingException;
 import net.dnadas.auth.model.account.OAuth2UserAccount;
 import net.dnadas.auth.service.CookieService;
@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
   @Override
+  @Transactional(readOnly = true)
   public void onAuthenticationSuccess(
     HttpServletRequest request, HttpServletResponse response, Authentication authentication)
     throws IOException, OAuth2ProcessingException {
@@ -36,8 +38,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
     requestService.removeAuthorizationRequest(request, response);
     OAuth2UserAccount userAccount = getAccount(authentication);
-    String refreshToken = refreshService.getNewRefreshToken(new TokenPayloadDto(
-      userAccount.getEmail(), userAccount.getAccountType()
+    String refreshToken = refreshService.getNewRefreshToken(new UserInfoDto(
+      userAccount.getApplicationUser().getId(), userAccount.getApplicationUser().getUsername(),
+      userAccount.getEmail(), userAccount.getAccountType(),
+      userAccount.getApplicationUser().getGlobalRoles()
     ));
     cookieService.addRefreshCookie(refreshToken, response);
     super.getRedirectStrategy().sendRedirect(request, response, FRONTEND_REDIRECT_URI);

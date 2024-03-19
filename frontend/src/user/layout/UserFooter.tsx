@@ -11,7 +11,7 @@ export default function UserFooter() {
   const currentYear = new Date().getFullYear();
   const {siteName, githubRepoUrl} = siteConfig;
   const menu: IMenuRoutes = userMenuProfileRoutes;
-  const publicMenu:IMenuRoutes = userMenuRoutes;
+  const publicMenu: IMenuRoutes = userMenuRoutes;
 
   return (
     <AppBar position="sticky"

@@ -1,7 +1,5 @@
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {CompanyCreateRequestDto} from "../../dto/CompanyCreateRequestDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,9 +7,7 @@ import {CompanyResponsePrivateDto} from "../../dto/CompanyResponsePrivateDto.ts"
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {CompanyUpdateRequestDto} from "../../dto/CompanyUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import UpdateCompanyForm from "./components/UpdateCompanyForm.tsx";
 
 export default function UpdateCompany() {

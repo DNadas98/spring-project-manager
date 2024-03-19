@@ -6,7 +6,7 @@ import CompanyDescriptionInput from "../../../components/CompanyDescriptionInput
 import {CompanyResponsePrivateDto} from "../../../dto/CompanyResponsePrivateDto.ts";
 
 interface UpdateCompanyFormProps {
-  company:CompanyResponsePrivateDto;
+  company: CompanyResponsePrivateDto;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
 }
 

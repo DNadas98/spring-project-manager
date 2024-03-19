@@ -32,7 +32,7 @@ export default function usePermissions() {
         return;
       }
       setCompanyPermissionsLoading(true);
-      const response = await authJsonFetch({path: `user/permissions/companies/${companyId}`});
+      const response = await authJsonFetch({path: `companies/permissions/${companyId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
         setCompanyPermissions([]);
         return;
@@ -52,7 +52,7 @@ export default function usePermissions() {
         return;
       }
       setProjectPermissionsLoading(true);
-      const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}`});
+      const response = await authJsonFetch({path: `companies/permissions/${companyId}/projects/${projectId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
         setProjectPermissions([]);
         return;
@@ -72,7 +72,7 @@ export default function usePermissions() {
         return;
       }
       setTaskPermissionsLoading(true);
-      const response = await authJsonFetch({path: `user/permissions/companies/${companyId}/projects/${projectId}/tasks/${taskId}`});
+      const response = await authJsonFetch({path: `companies/permissions/${companyId}/projects/${projectId}/tasks/${taskId}`});
       if (!response || !response?.data || response?.error || response?.status > 399) {
         setTaskPermissions([]);
         return;

@@ -4,8 +4,7 @@ import ErrorPage from "../../public/pages/errorPages/ErrorPage.tsx";
 import {publicMenuRoutes} from "../config/menu/publicMenuRoutes.tsx";
 import NotFound from "../../public/pages/errorPages/NotFound.tsx";
 import OAuth2Redirect from "../../authentication/pages/redirect/OAuth2Redirect.tsx";
-import RequireAuthentication
-  from "../../authentication/components/RequireAuthentication.tsx";
+import RequireAuthentication from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
 import UserLayout from "../../user/layout/UserLayout.tsx";
 import {userMenuProfileRoutes} from "../config/menu/userMenuProfileRoutes.tsx";

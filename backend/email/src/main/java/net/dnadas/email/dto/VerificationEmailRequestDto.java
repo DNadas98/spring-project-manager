@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.UUID;
-
 public record VerificationEmailRequestDto(
   @NotNull @Min(1) Long verificationId,
   @NotNull @Length(min = 1,

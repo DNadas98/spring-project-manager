@@ -25,7 +25,7 @@ public class EMailController {
 
   @PostMapping("/send/registration-verification")
   public ResponseEntity<?> sendRegistrationVerificationEmail(
-    @RequestBody VerificationEmailRequestDto dto) throws MessagingException{
+    @RequestBody VerificationEmailRequestDto dto) throws MessagingException {
     try {
       String registrationEmailContent = emailTemplateService.getRegistrationEmailContent(
         dto.verificationCode(), dto.verificationId(), dto.username());

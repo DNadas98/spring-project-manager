@@ -53,11 +53,11 @@ export default function TaskBrowser(props: TaskBrowserProps) {
             </CardContent>
           </Card>
           <TaskList loading={props.tasksWithUserLoading}
-                       tasks={props.tasksWithUser}
-                       notFoundText={"We haven't found any tasks."}
-                       onActionButtonClick={props.handleViewDashboardClick}
-                       userIsMember={true}
-                       actionButtonDisabled={false}/>
+                    tasks={props.tasksWithUser}
+                    notFoundText={"We haven't found any tasks."}
+                    onActionButtonClick={props.handleViewDashboardClick}
+                    userIsMember={true}
+                    actionButtonDisabled={false}/>
         </Stack>
       </Grid>
       <Grid item xs={10} sm={8} md={5} lg={4}>
@@ -73,11 +73,11 @@ export default function TaskBrowser(props: TaskBrowserProps) {
             </CardContent>
           </Card>
           <TaskList loading={props.tasksWithoutUserLoading}
-                       tasks={props.tasksWithoutUser}
-                       notFoundText={"We haven't found any tasks to join."}
-                       onActionButtonClick={props.handleJoinRequestClick}
-                       userIsMember={false}
-                       actionButtonDisabled={props.actionButtonDisabled}/>
+                    tasks={props.tasksWithoutUser}
+                    notFoundText={"We haven't found any tasks to join."}
+                    onActionButtonClick={props.handleJoinRequestClick}
+                    userIsMember={false}
+                    actionButtonDisabled={props.actionButtonDisabled}/>
         </Stack>
       </Grid>
     </Grid>

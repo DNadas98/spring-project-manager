@@ -60,7 +60,15 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
 
   return (
     <AuthenticationContext.Provider
-      value={{authenticate, logout, getUsername, getEmail, getRoles, getAccessToken, getAccountType}}>
+      value={{
+        authenticate,
+        logout,
+        getUsername,
+        getEmail,
+        getRoles,
+        getAccessToken,
+        getAccountType
+      }}>
       {children}
     </AuthenticationContext.Provider>
   );

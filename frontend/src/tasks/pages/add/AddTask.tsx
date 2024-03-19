@@ -1,7 +1,5 @@
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddTaskForm from "./components/AddTaskForm.tsx";
 import {FormEvent, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";

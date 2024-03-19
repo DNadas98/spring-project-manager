@@ -1,6 +1,4 @@
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import LoginCard from "./components/LoginCard.tsx";

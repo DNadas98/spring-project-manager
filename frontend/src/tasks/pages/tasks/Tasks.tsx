@@ -1,9 +1,7 @@
 import TaskBrowser from "./components/TaskBrowser.tsx";
 import {FormEvent, useEffect, useMemo, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
@@ -167,13 +165,13 @@ export default function Tasks() {
   return (
     <TaskBrowser tasksWithUser={tasksWithUserFiltered}
                  tasksWithUserLoading={tasksWithUserLoading}
-                    tasksWithoutUser={tasksWithoutUserFiltered}
-                    tasksWithoutUserLoading={tasksWithoutUserLoading}
-                    handleTasksWithUserSearch={handleTasksWithUserSearch}
-                    handleTasksWithoutUserSearch={handleTasksWithoutUserSearch}
-                    handleViewDashboardClick={loadTaskDashboard}
-                    handleJoinRequestClick={assignSelfToTask}
-                    actionButtonDisabled={actionButtonDisabled}
-                    handleAddButtonClick={handleAddButtonClick}/>
+                 tasksWithoutUser={tasksWithoutUserFiltered}
+                 tasksWithoutUserLoading={tasksWithoutUserLoading}
+                 handleTasksWithUserSearch={handleTasksWithUserSearch}
+                 handleTasksWithoutUserSearch={handleTasksWithoutUserSearch}
+                 handleViewDashboardClick={loadTaskDashboard}
+                 handleJoinRequestClick={assignSelfToTask}
+                 actionButtonDisabled={actionButtonDisabled}
+                 handleAddButtonClick={handleAddButtonClick}/>
   )
 }

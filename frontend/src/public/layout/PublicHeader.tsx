@@ -1,8 +1,7 @@
 import {AppBar, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
 import {IMenuRoutes} from "../../common/routing/IMenuRoutes.ts";
 import {publicMenuRoutes} from "../../common/config/menu/publicMenuRoutes.tsx";
-import ThemePaletteModeSwitch
-  from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
+import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import siteConfig from "../../common/config/siteConfig.ts";
@@ -20,8 +19,8 @@ export default function PublicHeader() {
           {siteName}
         </Typography>
         {isSmallScreen
-            ? <MenuSmall menu={menu}/>
-            : <MenuLarge menu={menu}/>
+          ? <MenuSmall menu={menu}/>
+          : <MenuLarge menu={menu}/>
         }
         <ThemePaletteModeSwitch/>
       </Toolbar>

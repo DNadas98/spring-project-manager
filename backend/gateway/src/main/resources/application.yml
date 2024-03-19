@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+        id: eureka
+        url: http://devuser:devpassword@localhost:8761/eureka
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://devuser:devpassword@localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+logging:
+  level:
+    root: TRACE
+    org.apache.tomcat.util.net: INFO

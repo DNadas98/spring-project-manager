@@ -1,15 +1,11 @@
 import {FormEvent, useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ExpenseResponseDto} from "../../dto/ExpenseResponseDto.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import {ExpenseAddUpdateRequestDto} from "../../dto/ExpenseAddUpdateRequestDto.ts";
 
 export default function Expenses() {
@@ -128,7 +124,7 @@ export default function Expenses() {
     }
   }
 
-  const handleDelete = async (expenseId:number) => {
+  const handleDelete = async (expenseId: number) => {
     try {
       setExpensesLoading(true);
       const response = await authJsonFetch({
@@ -164,37 +160,39 @@ export default function Expenses() {
       <h3>Expenses</h3>
       <p>Task permissions: {taskPermissions.join(", ")}</p>
       {taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE) &&
-          <form onSubmit={(event) => {
-            handleAdd(event).then();
-          }}>
-              <input type="text" name={"name"} required
-                     minLength={1} maxLength={50} placeholder={"Name"}/>
-              <input type="number" name={"price"} required min={0} placeholder={"Price"}/>
-              <label htmlFor="`paid-${expense.expenseId}`">Paid: </label>
-              <input type="checkbox" id={`paid-addExpense`} name={"paid"}/>
-              <button type={"submit"} disabled={addDisabled}>Add new expense</button>
-          </form>}
+        <form onSubmit={(event) => {
+          handleAdd(event).then();
+        }}>
+          <input type="text" name={"name"} required
+                 minLength={1} maxLength={50} placeholder={"Name"}/>
+          <input type="number" name={"price"} required min={0} placeholder={"Price"}/>
+          <label htmlFor="`paid-${expense.expenseId}`">Paid: </label>
+          <input type="checkbox" id={`paid-addExpense`} name={"paid"}/>
+          <button type={"submit"} disabled={addDisabled}>Add new expense</button>
+        </form>}
       {expenses?.length
         ? <ul>
           {expenses.map(expense => {
             return (<li key={expense.expenseId}>
               {taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE)
-                ?<div><form onSubmit={(event) => {
-                  handleUpdate(event, expense.expenseId).then();
-                }}>
-                  <input type="text" name={"name"} defaultValue={expense.name} required
-                         minLength={1} maxLength={50} placeholder={"Name"}/>
-                  <input type="number" name={"price"} defaultValue={expense.price}
-                         required min={0} step={0.0001} placeholder={"Price"}/>
-                  <label htmlFor="`paid-${expense.expenseId}`">Paid: </label>
-                  <input type="checkbox" id={`paid-${expense.expenseId}`} name={"paid"}
-                         defaultChecked={expense.paid}/>
-                  <button type={"submit"} disabled={expensesLoading}>Save</button>
-                </form>
-                  <button onClick={()=>{
+                ? <div>
+                  <form onSubmit={(event) => {
+                    handleUpdate(event, expense.expenseId).then();
+                  }}>
+                    <input type="text" name={"name"} defaultValue={expense.name} required
+                           minLength={1} maxLength={50} placeholder={"Name"}/>
+                    <input type="number" name={"price"} defaultValue={expense.price}
+                           required min={0} step={0.0001} placeholder={"Price"}/>
+                    <label htmlFor="`paid-${expense.expenseId}`">Paid: </label>
+                    <input type="checkbox" id={`paid-${expense.expenseId}`} name={"paid"}
+                           defaultChecked={expense.paid}/>
+                    <button type={"submit"} disabled={expensesLoading}>Save</button>
+                  </form>
+                  <button onClick={() => {
                     handleDelete(expense.expenseId).then()
-                  }} disabled={expensesLoading}>Remove</button>
-              </div>
+                  }} disabled={expensesLoading}>Remove
+                  </button>
+                </div>
                 : <div>
                   <h4>{expense.name}</h4>
                   <p>Price: {expense.price}</p>
@@ -204,9 +202,10 @@ export default function Expenses() {
           })}
         </ul>
         : <p>There aren't any expenses added to this task yet.</p>}
-      <button onClick={()=>{
+      <button onClick={() => {
         navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}`)
-      }}>Back</button>
+      }}>Back
+      </button>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 package net.dnadas.auth.service.user;
 
 import lombok.RequiredArgsConstructor;
+import net.dnadas.auth.dto.authentication.UserInfoDto;
 import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.auth.exception.user.UserNotFoundException;
 import net.dnadas.auth.model.user.ApplicationUser;
@@ -17,9 +18,9 @@ public class UserProvider {
   @Transactional(readOnly = true)
   public ApplicationUser getAuthenticatedUser() throws UnauthorizedException {
     try {
-      Long userId =
-        (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      ApplicationUser user = applicationUserDao.findById(userId).orElseThrow(
+      UserInfoDto userInfoDto =
+        (UserInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      ApplicationUser user = applicationUserDao.findById(userInfoDto.userId()).orElseThrow(
         () -> new UserNotFoundException());
       return user;
     } catch (Exception e) {

@@ -18,6 +18,13 @@ import java.util.Map;
 public class UserController {
   private final ApplicationUserService applicationUserService;
 
+  @GetMapping("/authenticate")
+  public ResponseEntity<?> authenticate() {
+    // JWT Filter has authenticated at this point
+    return ResponseEntity.ok().build();
+  }
+
+
   @GetMapping
   public ResponseEntity<?> getOwnApplicationUser() {
     UserResponsePrivateDto userDetails = applicationUserService.getOwnUserDetails();

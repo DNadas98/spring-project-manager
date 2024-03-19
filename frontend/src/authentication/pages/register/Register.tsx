@@ -1,7 +1,5 @@
 import RegisterCard from "./components/RegisterCard.tsx";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
 import {RegisterRequestDto} from "../../dto/RegisterRequestDto.ts";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";

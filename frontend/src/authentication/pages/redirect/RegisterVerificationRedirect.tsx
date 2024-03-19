@@ -1,6 +1,4 @@
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useEffect, useState} from "react";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNavigate, useSearchParams} from "react-router-dom";

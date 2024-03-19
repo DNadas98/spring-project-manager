@@ -1,7 +1,5 @@
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddCompanyForm from "./components/AddCompanyForm.tsx";
 import {FormEvent, useState} from "react";
 import {CompanyCreateRequestDto} from "../../dto/CompanyCreateRequestDto.ts";

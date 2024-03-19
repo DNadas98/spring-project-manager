@@ -1,14 +1,10 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 
@@ -131,16 +127,16 @@ export default function ProjectDashboard() {
       <button onClick={handleJoinRequestClick}>View project join requests</button>
       {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
-              <button onClick={() => {
-                navigate(`/companies/${companyId}/projects/${projectId}/update`);
-              }}>Update project details
-              </button>
-          </div>
+          <button onClick={() => {
+            navigate(`/companies/${companyId}/projects/${projectId}/update`);
+          }}>Update project details
+          </button>
+        </div>
       }
       {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
         && <div>
-              <button onClick={handleDeleteClick}>Remove project</button>
-          </div>
+          <button onClick={handleDeleteClick}>Remove project</button>
+        </div>
       }
       <button onClick={() => navigate(`/companies/${companyId}/projects`)}>Back</button>
     </div>

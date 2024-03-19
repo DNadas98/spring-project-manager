@@ -1,19 +1,15 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 
 export default function TaskDashboard() {
-  const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions, taskPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
@@ -154,15 +150,15 @@ export default function TaskDashboard() {
       <br/>
       {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE))
         && <div>
-              <button onClick={() => {
-                navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}/update`);
-              }}>Update task details
-              </button>
-              <br/>
-              <button onClick={handleRemoveSelfClick}>Remove assignment to task</button>
-              <br/>
-              <button onClick={handleDeleteClick}>Remove task</button>
-          </div>
+          <button onClick={() => {
+            navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}/update`);
+          }}>Update task details
+          </button>
+          <br/>
+          <button onClick={handleRemoveSelfClick}>Remove assignment to task</button>
+          <br/>
+          <button onClick={handleDeleteClick}>Remove task</button>
+        </div>
       }
       <button
         onClick={() => navigate(`/companies/${companyId}/projects/${projectId}/tasks`)}>Back

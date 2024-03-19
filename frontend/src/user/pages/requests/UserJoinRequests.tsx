@@ -2,9 +2,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {
   CompanyJoinRequestResponseDto

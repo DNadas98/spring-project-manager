@@ -24,7 +24,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       },
       MuiButton: {
         defaultProps: {
-            color: "secondary"
+          color: "secondary"
         }
       },
       MuiAlert: {

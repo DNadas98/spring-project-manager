@@ -13,7 +13,7 @@ export default function PublicFooter() {
   return (
     <AppBar position="sticky" color="primary" sx={{top: "auto", bottom: 0, marginTop: 4}}>
       <Toolbar sx={{justifyContent: "center"}}>
-          <MenuSmall menu={menu}/>
+        <MenuSmall menu={menu}/>
         <Typography mr={2}>
           {currentYear}{" "}&copy;{" "}{siteName}
         </Typography>

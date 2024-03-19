@@ -2,9 +2,7 @@ import CompanyBrowser from "./components/CompanyBrowser.tsx";
 import {FormEvent, useEffect, useMemo, useState} from "react";
 import {CompanyResponsePublicDto} from "../../dto/CompanyResponsePublicDto.ts";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate} from "react-router-dom";
 
 export default function Companies() {

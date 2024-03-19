@@ -3,17 +3,17 @@ package net.dnadas.auth.service;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import net.dnadas.auth.dto.authentication.TokenPayloadDto;
+import net.dnadas.auth.dto.authentication.UserInfoDto;
 import net.dnadas.auth.exception.authentication.UnauthorizedException;
 import net.dnadas.auth.model.account.AccountType;
+import net.dnadas.auth.model.user.GlobalRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -34,18 +34,17 @@ public class JwtService {
     this.accessTokenSecret = accessTokenSecret;
     this.accessTokenExpiration = accessTokenExpiration;
     accessTokenAlgorithm = SignatureAlgorithm.HS256;
-
     this.refreshTokenSecret = refreshTokenSecret;
     this.refreshTokenExpiration = refreshTokenExpiration;
     refreshTokenAlgorithm = SignatureAlgorithm.HS256;
   }
 
-  public String generateAccessToken(TokenPayloadDto payloadDto) {
+  public String generateAccessToken(UserInfoDto payloadDto) {
     return generateToken(
       payloadDto, accessTokenExpiration, accessTokenSecret, accessTokenAlgorithm);
   }
 
-  public String generateRefreshToken(TokenPayloadDto payloadDto) {
+  public String generateRefreshToken(UserInfoDto payloadDto) {
     return generateToken(payloadDto, refreshTokenExpiration, refreshTokenSecret,
       refreshTokenAlgorithm);
   }
@@ -58,20 +57,19 @@ public class JwtService {
     }
   }
 
-  public TokenPayloadDto verifyAccessToken(String accessToken) {
+  public UserInfoDto verifyAccessToken(String accessToken) {
     try {
       Claims claims = extractAllClaimsFromToken(
-        accessToken, accessTokenSecret, accessTokenAlgorithm);
+        accessToken, accessTokenSecret);
       return getPayloadDto(claims);
     } catch (JwtException e) {
       throw new UnauthorizedException();
     }
   }
 
-  public TokenPayloadDto verifyRefreshToken(String refreshToken) {
+  public UserInfoDto verifyRefreshToken(String refreshToken) {
     try {
-      Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
-        refreshTokenAlgorithm);
+      Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret);
       return getPayloadDto(claims);
     } catch (JwtException e) {
       throw new UnauthorizedException();
@@ -79,27 +77,36 @@ public class JwtService {
   }
 
   private String generateToken(
-    TokenPayloadDto payloadDto,
+    UserInfoDto userInfoDto,
     Long expiration, String secret, SignatureAlgorithm algorithm) {
     Date now = new Date();
     Date expirationDate = new Date(now.getTime() + expiration);
     Map claims = new HashMap();
-    claims.put("accountType", payloadDto.accountType().toString());
+    claims.put("userId", userInfoDto.userId());
+    claims.put("username", userInfoDto.username());
+    claims.put("accountType", userInfoDto.accountType().name());
+    claims.put(
+      "roles", userInfoDto.roles().stream().map(Enum::name).collect(Collectors.joining(",")));
 
     return Jwts.builder()
       .setClaims(claims)
-      .setSubject(payloadDto.email())
+      .setSubject(userInfoDto.email())
       .setIssuedAt(now)
       .setExpiration(expirationDate)
       .signWith(getSigningKey(secret), algorithm)
       .compact();
   }
 
-  private TokenPayloadDto getPayloadDto(Claims claims) {
+  private UserInfoDto getPayloadDto(Claims claims) {
     try {
       String email = claims.getSubject();
+      Long userId = Long.parseLong(claims.get("userId").toString());
+      String username = claims.get("username").toString();
       AccountType accountType = AccountType.valueOf(claims.get("accountType").toString());
-      return new TokenPayloadDto(email, accountType);
+      Set<GlobalRole> roles = Arrays.stream(claims.get("roles").toString().split(","))
+        .map(GlobalRole::valueOf)
+        .collect(Collectors.toSet());
+      return new UserInfoDto(userId, username, email, accountType, roles);
     } catch (IllegalArgumentException | NullPointerException e) {
       throw new UnauthorizedException();
     }
@@ -120,12 +127,12 @@ public class JwtService {
 
   private <T> T extractClaimFromToken(
     String token, String secret, SignatureAlgorithm algorithm, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaimsFromToken(token, secret, algorithm);
+    final Claims claims = extractAllClaimsFromToken(token, secret);
     return claimsResolver.apply(claims);
   }
 
   private Claims extractAllClaimsFromToken(
-    String token, String secret, SignatureAlgorithm algorithm) {
+    String token, String secret) {
     return Jwts.parserBuilder()
       .setSigningKey(getSigningKey(secret))
       .build()

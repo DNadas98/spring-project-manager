@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
-  Stack,
-  Typography
-} from "@mui/material";
+import {Avatar, Button, Card, CardContent, Divider, Grid, Stack, Typography} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 import OAuth2Stack from "../../../components/oauth2/OAuth2Stack.tsx";
 import UsernameInput from "../../../components/inputs/UsernameInput.tsx";
