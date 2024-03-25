@@ -13,7 +13,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 
 export default function ProjectDashboard() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;

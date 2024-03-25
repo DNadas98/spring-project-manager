@@ -13,7 +13,7 @@ import {
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function CompanyDashboard() {
-  const {loading, companyPermissions} = usePermissions();
+  const {permissionsLoading, companyPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const [companyLoading, setCompanyLoading] = useState(true);
@@ -106,7 +106,7 @@ export default function CompanyDashboard() {
     navigate(`/companies/${companyId}/projects`);
   }
 
-  if (loading || companyLoading) {
+  if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
   } else if (!companyPermissions?.length || !company) {
     handleErrorNotification(companyErrorStatus ?? "Access Denied: Insufficient permissions");

@@ -11,7 +11,7 @@ import {RequestStatus} from "../../dto/RequestStatus.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 
 export default function CompanyJoinRequests() {
-  const {loading, companyPermissions} = usePermissions();
+  const {permissionsLoading, companyPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const [companyJoinRequestsLoading, setCompanyJoinRequestsLoading] = useState(true);
@@ -95,7 +95,7 @@ export default function CompanyJoinRequests() {
     await handleJoinRequest(requestId, RequestStatus.APPROVED);
   }
 
-  if (loading || companyJoinRequestsLoading) {
+  if (permissionsLoading || companyJoinRequestsLoading) {
     return <LoadingSpinner/>;
   } else if (!companyPermissions?.length || companyJoinRequestError) {
     handleErrorNotification(companyJoinRequestError ?? "Access Denied: Insufficient permissions");

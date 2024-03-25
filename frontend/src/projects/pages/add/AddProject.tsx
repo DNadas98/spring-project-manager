@@ -11,7 +11,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 
 export default function AddProject() {
-  const {loading: permissionsLoading, companyPermissions} = usePermissions();
+  const {permissionsLoading, companyPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();

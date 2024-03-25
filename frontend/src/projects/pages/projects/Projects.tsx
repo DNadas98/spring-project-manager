@@ -10,7 +10,7 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 
 export default function Projects() {
-  const {loading: permissionsLoading, companyPermissions} = usePermissions();
+  const {permissionsLoading, companyPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const [projectsWithUserLoading, setProjectsWithUserLoading] = useState<boolean>(true);
   const [projectsWithUser, setProjectsWithUser] = useState<ProjectResponsePublicDto[]>([]);

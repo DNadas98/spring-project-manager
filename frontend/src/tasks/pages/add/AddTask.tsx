@@ -13,7 +13,7 @@ import {Importance} from "../../dto/Importance.ts";
 import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
 
 export default function AddTask() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const authJsonFetch = useAuthJsonFetch();

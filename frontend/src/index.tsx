@@ -30,7 +30,7 @@ root.render(
         <NotificationProvider>
           <DialogProvider>
             <AuthenticationProvider>
-              <RouterProvider router={router}/>
+                <RouterProvider router={router}/>
             </AuthenticationProvider>
           </DialogProvider>
         </NotificationProvider>

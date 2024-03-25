@@ -15,7 +15,7 @@ import {
 import UpdateCompanyForm from "./components/UpdateCompanyForm.tsx";
 
 export default function UpdateCompany() {
-  const {loading, companyPermissions} = usePermissions();
+  const {permissionsLoading, companyPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ export default function UpdateCompany() {
       setCompanyLoading(false);
     }
   };
-  if (loading || companyLoading) {
+  if (permissionsLoading || companyLoading) {
     return <LoadingSpinner/>;
   } else if (!companyPermissions?.length
     || !companyPermissions.includes(PermissionType.COMPANY_EDITOR)

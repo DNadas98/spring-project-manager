@@ -15,7 +15,7 @@ import {
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
 
 export default function UpdateProject() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();

@@ -13,7 +13,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {RequestStatus} from "../../../companies/dto/RequestStatus.ts";
 
 export default function ProjectJoinRequests() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;

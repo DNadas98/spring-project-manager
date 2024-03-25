@@ -1,6 +1,6 @@
 services:
   psql:
-    container_name: postgres-dev
+    container_name: postgres-tasks-dev
     image: postgres
     environment:
       POSTGRES_DB: projectmanagerdb

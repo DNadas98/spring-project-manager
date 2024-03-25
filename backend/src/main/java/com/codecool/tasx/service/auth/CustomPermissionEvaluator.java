@@ -6,7 +6,6 @@ import com.codecool.tasx.exception.company.project.ProjectNotFoundException;
 import com.codecool.tasx.exception.company.project.task.TaskNotFoundException;
 import com.codecool.tasx.exception.user.UserNotFoundException;
 import com.codecool.tasx.model.auth.PermissionType;
-import com.codecool.tasx.model.auth.account.UserAccount;
 import com.codecool.tasx.model.company.Company;
 import com.codecool.tasx.model.company.CompanyDao;
 import com.codecool.tasx.model.company.project.Project;
@@ -19,10 +18,12 @@ import com.codecool.tasx.model.user.GlobalRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @see SecurityConfig
@@ -55,17 +56,27 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
       !(permission instanceof PermissionType)) {
       return false;
     }
-    Long userId = (Long) authentication.getPrincipal();
 
-    if (targetDomainObject instanceof Company) {
-      return handleCompanyPermissions(
-        userId, (Company) targetDomainObject, (PermissionType) permission);
-    } else if (targetDomainObject instanceof Project) {
-      return handleProjectPermissions(
-        userId, (Project) targetDomainObject, (PermissionType) permission);
-    } else if (targetDomainObject instanceof Task) {
-      return handleTaskPermissions(
-        userId, (Task) targetDomainObject, (PermissionType) permission);
+    Long userId = (Long) authentication.getPrincipal();
+    if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(GlobalRole.ADMIN.name()))) {
+      return true;
+    }
+
+    switch (targetDomainObject) {
+      case Company company -> {
+        return handleCompanyPermissions(
+          userId, company, (PermissionType) permission);
+      }
+      case Project project -> {
+        return handleProjectPermissions(
+          userId, project, (PermissionType) permission);
+      }
+      case Task task -> {
+        return handleTaskPermissions(
+          userId, task, (PermissionType) permission);
+      }
+      default -> {
+      }
     }
     return false;
   }
@@ -92,7 +103,11 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
       (permission == null)) {
       return false;
     }
+
     Long userId = (Long) authentication.getPrincipal();
+    if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(GlobalRole.ADMIN.name()))) {
+      return true;
+    }
 
     Long id = (Long) targetId;
     PermissionType permissionType = PermissionType.valueOf(permission.toString());
@@ -121,48 +136,38 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Transactional(readOnly = true)
   public boolean handleCompanyPermissions(
     Long userId, Company company, PermissionType permissionType) {
-    switch (permissionType) {
-      case COMPANY_ADMIN:
-        return hasCompanyAdminAccess(userId, company);
-      case COMPANY_EDITOR:
-        return hasCompanyEditorAccess(userId, company);
-      case COMPANY_EMPLOYEE:
-        return hasCompanyEmployeeAccess(userId, company);
-      default:
-        return false;
-    }
+    return switch (permissionType) {
+      case COMPANY_ADMIN -> hasCompanyAdminAccess(userId, company);
+      case COMPANY_EDITOR -> hasCompanyEditorAccess(userId, company);
+      case COMPANY_EMPLOYEE -> hasCompanyEmployeeAccess(userId, company);
+      default -> false;
+    };
   }
 
   @Transactional(readOnly = true)
   public boolean handleProjectPermissions(
     Long userId, Project project, PermissionType permissionType) {
-    switch (permissionType) {
-      case PROJECT_ADMIN:
-        return hasProjectAdminAccess(userId, project);
-      case PROJECT_EDITOR:
-        return hasProjectEditorAccess(userId, project);
-      case PROJECT_ASSIGNED_EMPLOYEE:
-        return hasProjectAssignedEmployeeAccess(userId, project);
-      default:
-        return false;
-    }
+    return switch (permissionType) {
+      case PROJECT_ADMIN -> hasProjectAdminAccess(userId, project);
+      case PROJECT_EDITOR -> hasProjectEditorAccess(userId, project);
+      case PROJECT_ASSIGNED_EMPLOYEE -> hasProjectAssignedEmployeeAccess(userId, project);
+      default -> false;
+    };
   }
 
   @Transactional(readOnly = true)
   public boolean handleTaskPermissions(
     Long userId, Task task, PermissionType permissionType) {
-    switch (permissionType) {
-      case TASK_ASSIGNED_EMPLOYEE:
-        return hasTaskAssignedEmployeeAccess(userId, task);
-      default:
-        return false;
+    if (Objects.requireNonNull(permissionType) == PermissionType.TASK_ASSIGNED_EMPLOYEE) {
+      return hasTaskAssignedEmployeeAccess(userId, task);
     }
+    return false;
   }
 
   @Transactional(readOnly = true)
   public boolean hasCompanyAdminAccess(Long userId, Company company) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminCompanies(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getAdminCompanies().contains(company);
   }
@@ -170,7 +175,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Transactional(readOnly = true)
   public boolean hasCompanyEditorAccess(Long userId, Company company) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorCompanies(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getEditorCompanies().contains(company);
   }
@@ -178,7 +183,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Transactional(readOnly = true)
   public boolean hasCompanyEmployeeAccess(Long userId, Company company) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEmployeeCompanies(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getEmployeeCompanies().contains(company);
   }
@@ -186,7 +191,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Transactional(readOnly = true)
   public boolean hasProjectAdminAccess(Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getAdminProjects().contains(project) || hasCompanyAdminAccess(
       userId,
@@ -196,7 +201,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Transactional(readOnly = true)
   public boolean hasProjectEditorAccess(Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getEditorProjects().contains(project) || hasCompanyEditorAccess(
       userId,
@@ -207,7 +212,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   public boolean hasProjectAssignedEmployeeAccess(
     Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getAssignedProjects().contains(project) || hasCompanyEditorAccess(
       userId,
@@ -218,7 +223,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   public boolean hasTaskAssignedEmployeeAccess(
     Long userId, Task task) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedTasks(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getAssignedTasks().contains(task) || hasProjectEditorAccess(
       userId,

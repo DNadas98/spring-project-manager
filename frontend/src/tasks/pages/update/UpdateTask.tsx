@@ -17,7 +17,7 @@ import {TaskUpdateRequestDto} from "../../dto/TaskUpdateRequestDto.ts";
 import UpdateTaskForm from "./components/UpdateTaskForm.tsx";
 
 export default function UpdateTask() {
-  const {loading: permissionsLoading, taskPermissions} = usePermissions();
+  const {permissionsLoading, taskPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();

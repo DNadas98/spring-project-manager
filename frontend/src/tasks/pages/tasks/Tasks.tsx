@@ -11,7 +11,7 @@ import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 
 export default function Tasks() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const [tasksWithUserLoading, setTasksWithUserLoading] = useState<boolean>(true);

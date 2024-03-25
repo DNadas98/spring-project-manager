@@ -13,7 +13,7 @@ import {
 import {ExpenseAddUpdateRequestDto} from "../../dto/ExpenseAddUpdateRequestDto.ts";
 
 export default function Expenses() {
-  const {loading: permissionsLoading, projectPermissions, taskPermissions} = usePermissions();
+  const {permissionsLoading, projectPermissions, taskPermissions} = usePermissions();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
   const taskId = useParams()?.taskId;

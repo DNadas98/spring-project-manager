@@ -27,6 +27,7 @@ import AddTask from "../../tasks/pages/add/AddTask.tsx";
 import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
 import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
 import Expenses from "../../expenses/pages/expenses/Expenses.tsx";
+import {PermissionProvider} from "../../authentication/context/PermissionProvider.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -79,62 +80,66 @@ const appRouter = createBrowserRouter([
     errorElement: <ErrorPage/>,
     children: [
       {
-        element: <CompanyLayout/>,
-        children: [
+        element: <PermissionProvider/>, children: [
           {
-            path: "", element: <Companies/>
-          },
-          {
-            path: "create", element: <AddCompany/>
-          },
-          {
-            path: ":companyId", element: <CompanyDashboard/>
-          },
-          {
-            path: ":companyId/update", element: <UpdateCompany/>
-          },
-          {
-            path: ":companyId/requests", element: <CompanyJoinRequests/>
-          },
-          {
-            path: ":companyId/projects", element: <Projects/>
-          },
-          {
-            path: ":companyId/projects/create", element: <AddProject/>
-          },
-          {
-            path: ":companyId/projects/:projectId", element: <ProjectDashboard/>
-          },
-          {
-            path: ":companyId/projects/:projectId/update", element: <UpdateProject/>
-          },
-          {
-            path: ":companyId/projects/:projectId/requests",
-            element: <ProjectJoinRequests/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks", element: <Tasks/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/create", element: <AddTask/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/:taskId",
-            element: <TaskDashboard/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/:taskId/update",
-            element: <UpdateTask/>
-          },
-          {
-            path: ":companyId/projects/:projectId/tasks/:taskId/expenses",
-            element: <Expenses/>
-          },
-          {
-            path: "*", element: <NotFound/>
+            element: <CompanyLayout/>,
+            children: [
+              {
+                path: "", element: <Companies/>
+              },
+              {
+                path: "create", element: <AddCompany/>
+              },
+              {
+                path: ":companyId", element: <CompanyDashboard/>
+              },
+              {
+                path: ":companyId/update", element: <UpdateCompany/>
+              },
+              {
+                path: ":companyId/requests", element: <CompanyJoinRequests/>
+              },
+              {
+                path: ":companyId/projects", element: <Projects/>
+              },
+              {
+                path: ":companyId/projects/create", element: <AddProject/>
+              },
+              {
+                path: ":companyId/projects/:projectId", element: <ProjectDashboard/>
+              },
+              {
+                path: ":companyId/projects/:projectId/update", element: <UpdateProject/>
+              },
+              {
+                path: ":companyId/projects/:projectId/requests",
+                element: <ProjectJoinRequests/>
+              },
+              {
+                path: ":companyId/projects/:projectId/tasks", element: <Tasks/>
+              },
+              {
+                path: ":companyId/projects/:projectId/tasks/create", element: <AddTask/>
+              },
+              {
+                path: ":companyId/projects/:projectId/tasks/:taskId",
+                element: <TaskDashboard/>
+              },
+              {
+                path: ":companyId/projects/:projectId/tasks/:taskId/update",
+                element: <UpdateTask/>
+              },
+              {
+                path: ":companyId/projects/:projectId/tasks/:taskId/expenses",
+                element: <Expenses/>
+              },
+              {
+                path: "*", element: <NotFound/>
+              }
+            ]
           }
         ]
-      }
+      },
     ]
   }
 ]);

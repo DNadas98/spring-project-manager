@@ -13,7 +13,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 
 export default function TaskDashboard() {
-  const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
+  const {permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
   const dialog = useDialog();
   const companyId = useParams()?.companyId;
   const projectId = useParams()?.projectId;
